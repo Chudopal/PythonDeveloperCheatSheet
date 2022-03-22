@@ -9,11 +9,25 @@ class Car(ABC):
         """Drive car."""
 
 
+class CarRoad(ABC):
+
+    @abstractmethod
+    def put_in(self):
+        """Put your cat there."""
+
+
 class CarShop(ABC):
 
     @abstractmethod
     def create_car(self, name: str) -> Car:
         """Create a car."""
+
+
+class CarRoadBuilder(ABC):
+
+    @abstractmethod
+    def build_road(self) -> CarRoad:
+        """Create road for the car."""
 
 
 class PassengerCar(Car):
@@ -22,7 +36,6 @@ class PassengerCar(Car):
         self._name = name
 
     def drive(self):
-        print("-"*80)
         print(f"""Now the car {self._name} is launching""")
         print(f"Max weight 50 kg.")
 
@@ -32,11 +45,26 @@ class PassengerCar(Car):
         print("""Now the car is stopping""")
 
 
+class PassengerCarRoad(CarRoad):
+
+    def put_in(self, passenger_car: PassengerCar):
+        print("-"*80)
+        print("This is passenger car road")
+        passenger_car.drive()
+        print("The way is over.")
+
+
 class PassengerCarShop(CarShop):
 
     def create_car(self, name: str) -> Car:
         """Returns the passenger car."""
         return PassengerCar(name=name)
+
+
+class PassengerCarRoadBuilder():
+
+    def build_road(self) -> PassengerCar:
+        return PassengerCarRoad()
 
 
 class Truck(Car):
@@ -45,7 +73,6 @@ class Truck(Car):
         self._name = name
 
     def drive(self):
-        print("-"*80)
         print(f"""Now the car {self._name} is launching""")
         print(f"Max weight 500 kg.")
 
@@ -55,11 +82,26 @@ class Truck(Car):
         print("""Now the car is stopping""")
 
 
+class TruckRoad(CarRoad):
+
+    def put_in(self, truck: Truck):
+        print("-"*80)
+        print("This is truck car road")
+        truck.drive()
+        print("The way is over.")
+
+
 class TruckShop(CarShop):
 
     def create_car(self, name: str) -> Car:
         """Returns the passenger car."""
         return Truck(name=name)
+
+
+class TruckRoadBuilder(CarRoadBuilder):
+
+    def build_road(self) -> TruckRoad:
+        return TruckRoad()
 
 
 class RacingCar(Car):
@@ -68,7 +110,6 @@ class RacingCar(Car):
         self._name = name
 
     def drive(self):
-        print("-"*80)
         print(f"""Now the car {self._name} is launching""")
         print(f"Max weight 5 kg.")
 
@@ -78,11 +119,26 @@ class RacingCar(Car):
         print("""Now the car is stopping""")
 
 
+class RacingCarRoad(CarRoad):
+
+    def put_in(self, racing_car: RacingCar):
+        print("-"*80)
+        print("This is racing car road")
+        racing_car.drive()
+        print("The way is over.")
+
+
 class RacingCarShop(CarShop):
 
     def create_car(self, name: str) -> Car:
         """Returns the passenger car."""
         return RacingCar(name=name)
+
+
+class RacingCarRoadBuilder(CarRoadBuilder):
+
+    def build_road(self) -> RacingCarRoad:
+        return RacingCarRoad()
 
 
 class Infrastructure():
@@ -92,7 +148,12 @@ class Infrastructure():
 
     def launch(self):
         for car in self._cars:
-            car.drive()
+            if isinstance(car, PassengerCar):
+                PassengerCarRoadBuilder().build_road().put_in(car)
+            elif isinstance(car, Truck):
+                TruckRoadBuilder().build_road().put_in(car)
+            elif isinstance(car, RacingCar):
+                RacingCarRoadBuilder().build_road().put_in(car)
 
 
 def main():
