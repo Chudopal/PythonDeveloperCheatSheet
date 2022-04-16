@@ -4,6 +4,7 @@
 3. [List](#list)
 4. [Tuple](#tuple)
 5. [Set](#set)
+6. [Homework](./homework.py)
 
 
 ### <a name='why'>Проблема</a>
