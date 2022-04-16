@@ -1,6 +1,6 @@
 # 1. Напишите программу, которая получает от пользователя имя, его вес и рост.
 # И выводит следующее сообщение: "Привет username! Твой имт - bmi!"
-# ИМТ = m/h2, где: m — масса тела в килограммах, h — рост в метрах.
+# ИМТ = m/(h**2), где: m — масса тела в килограммах, h — рост в метрах.
 username = ...
 weight = ...
 height = ...
@@ -31,7 +31,7 @@ tasks = ...
 
 
 # 4. Упакуйте следующие элементы в коллекцию,
-# с условием того что email дожлен быть уникальным.
+# с условием того что email должен быть уникальным.
 # После, добавьте еще 2 email-a и удалите email "test@test.com"
 user_email1 = "test@test.com"
 user_email2 = "qwerty@qwerty.com"
@@ -48,7 +48,7 @@ companies_departments = [
     ["development", "QA", "sales", "marketing"], # департаменты первой компании
     ["devops", "QA", "management", "development"] # департаменты второй компании
 ]
-merged_departments = ...
+merged_departments = ... # подберите подходящую структуру данных
 
 
 # 6. Сделайте следующее сообщение в одну строку:
@@ -59,7 +59,7 @@ permissions = ["read", "write", "execute"]
 ...
 
 # 7. Вычислите сколько в среднем сотрудников в каждом отдетеле
-employees = ["Alex", "Tania", "Andry", "Vlad", "Alina"]
+employees = ["Alex", "Tania", "Andry", "Vlad", "Alina", "Vika"]
 departments_number = "3"
 
 avg_employees_per_dep = ...
