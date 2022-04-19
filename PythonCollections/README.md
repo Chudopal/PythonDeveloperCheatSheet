@@ -307,10 +307,10 @@
         "name": "Alex", # строка
         "permissions": [ 
             "read", "write", "execute" # список
-        ]
+        ],
         "job_info": { # словарь
-            "posistion": "developer",
-            "expirience": 3,
+            "position": "developer",
+            "experience": 3,
             "stuff_and_number": {
                 "monitors": 2,
                 "mouse": 1,
