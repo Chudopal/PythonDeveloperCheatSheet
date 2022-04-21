@@ -80,7 +80,7 @@
     answer = input("Do you want to see greeting message?(yes/no): ")
 
     if answer == "yes":
-        print("Hello", name, sep=',', end='!')
+        print("Hello", name, sep=', ', end='!')
 
     if answer == "no":
         print("OK.")
@@ -95,7 +95,7 @@
     negative_answers = ('no', 'n', 'nope') # кортеж отрицательных ответов
 
     if answer in positive_answers:
-        print("Hello", name, sep=',', end='!')
+        print("Hello", name, sep=', ', end='!')
 
     if answer is negative_answers:
         print("OK.")
@@ -110,7 +110,7 @@
     #negative_answers = ('no', 'n', 'nope')
 
     if answer in positive_answers:
-        print("Hello", name, sep=',', end='!')
+        print("Hello", name, sep=', ', end='!')
     else:
         print("OK.")
     ```
@@ -125,7 +125,7 @@
     negative_answers = ('no', 'n', 'nope')
 
     if answer in positive_answers:
-        print("Hello", name, sep=',', end='!')
+        print("Hello", name, sep=', ', end='!')
     else:
         if answer in negative_answers: # вложенная условная конструкция
             print("OK.")
@@ -143,10 +143,68 @@
     negative_answers = ('no', 'n', 'nope')
 
     if answer in positive_answers:
-        print("Hello", name, sep=',', end='!')
+        print("Hello", name, sep=', ', end='!')
     elif answer in negative_answers: # использование оператора elif
         print("OK.")
     else: # и в этом же коде можно использовать сразу else
         print("I don't understand you.")
     ```
     В нашем примере сразу используются команды `if`, `elif` и `else`. Так делать можно.
+
+### <a name='while'>Цикл while</a>
+- Цикл это повторение одного и того же участка кода несколько раз. Количество повторений зависит от какого-то условия.
+- Цикл `while` - это простой цикл повторения, сначала пишется ключевое слово `while`, потом условие - пока оно истинно код будет повторяться снова и снова, на следующей строке с отступом 1 `tab` пишется исполняемый код, чтобы убрать код из цикла, нужно сместиться на 1 `tab` из цикла. Пример цикла:
+    ```python
+    max_number = int(input("Enter the number of 'Hello': "))
+    counter = 1
+
+    while counter <= max_number:
+        print("Hello №", counter, sep=0)
+        counter += 1 # каждый раз увеличиваем счетчик
+
+    print("Thank you!")
+    ```
+    Данная программа просит ввести пользователя количество слов `Hello`, которое он хочет увидеть, выводит их, а потом пишет `"Thank you!"`. При каждом проходе через исполняемый код переменная `counter` увеличивается на 1. Это делается для того, чтобы цикл завершился ровно на 10 исполнениях. Цикл перед каждым исполнением кода проверяет условие, которое в нем записано `counter <= max_number`, если условие станет ложным, цикл завершится.
+- Давайте вспомним программу из прошлого раздела, которая выводит приветствие, вот ее финальный вариант:
+    ```python
+    name = input("Enter your name: ")
+    answer = input("Do you want to see greeting message?(yes/no): ")
+
+    positive_answers = ('yes', 'y', 'yep', 'yeah')
+    negative_answers = ('no', 'n', 'nope')
+
+    if answer in positive_answers:
+        print("Hello", name, sep=', ', end='!')
+    elif answer in negative_answers:
+        print("OK.")
+    else:
+        print("I don't understand you.")
+    ```
+    Можно переписать ее так, чтобы она на непредусмотренном ответе не завершалась, а просила ввести данные опять и опять и так, пока не будет введен корректный ответ:
+    ```python
+    # просим ввести имя
+    name = input("Enter your name: ")
+
+    # объявили все корректные ответы
+    positive_answers = ('yes', 'y', 'yep', 'yeah')
+    negative_answers = ('no', 'n', 'nope')
+    # для удобства занесем все ответы в один кортеж
+    correct_answers = positive_answers + negative_answers
+
+    # объявим пустую переменную ответа, чтобы на условии не было ошибки 
+    answer = None
+
+    # построим цикл, который будет повторяться, пока не будет введен корректный ответ
+    while answer not in correct_answers:
+        # просим ввести ответ
+        answer = input("Do you want to see greeting message?(yes/no): ")
+
+        if answer in positive_answers:
+            print("Hello", name, sep=', ', end='!')
+        elif answer in negative_answers:
+            print("OK.")
+        else:
+            print("I don't understand you.")
+            print("Try again...")
+    ```
+- Иногда циклы получаются бесконечными, иногда это нужно, но чаще всего это из-за какой-то ошибки программиста в условии. Чтобы остановить программу, которая зависла, или программу, в которой нечаянно появился бесконечный цикл, нужно нажать сочетание клавиш [`ctrl + c`]. Ошибки - это не страшно, главное знать как их починить =)
