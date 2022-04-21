@@ -146,32 +146,29 @@ monitors = stuff_and_number["monitors"]
 
 
 """Операторы ветвления"""
-
-
-
 a = 5
 b = 5
 
-# if a < b:
-#     print("In condition")
-# print("Without condition")
+if a < b:
+    print("In condition")
+print("Without condition")
 
 age = int(input("Enter ur age: "))
 
-# if age > 18:
-#     print("Allow")
-#     if age > 65:
-#         print("You're too old")
+if age > 18:
+    print("Allow")
+    if age > 65:
+        print("You're too old")
 
-# if age >= 18:
-#     print("Allow")
-# else:
-#     print("Access denied")
+if age >= 18:
+    print("Allow")
+else:
+    print("Access denied")
 
-# if age < 18 or age > 60:
-#     print("denied")
-# else:
-#     ...
+if age < 18 or age > 60:
+    print("denied")
+else:
+    ...
 
 if age <= 10:
     print("Тебе 1-й десяток")
