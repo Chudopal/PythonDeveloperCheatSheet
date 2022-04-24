@@ -2,8 +2,9 @@
 1. [О Python в целом](#python_general)
 2. [Среда исполнения(virlualenv)](#environment)
 3. [Типы данных и операции](#data_types)
-4. [Homework](./homework.py)
-5. [Cursed questions](#cursed)
+4. [Строки и операции над ними](#strigns)
+5. [Homework](./homework.py)
+6. [Cursed questions](#cursed)
 
 ### <a name="python_general">О Python в целом</a>
 - **Python** - высокоуровневый(работает с абстракциями, к железу имеет мало отношения) язык программирования общего назначения(не специализируется на какой-то одной задаче, как например регулярные выражения или SQL).
@@ -180,6 +181,104 @@
         is_active: bool = True
     ```
 
+### <a name='strigns'>Строки и операции над ними</a>
+- Строки в Python представляют собой набор символов, а значит можно обращаться к символам следующим образом:
+  ```python
+  name = "Bob"
+  o = name[1] # в переменной o будет символ "o"
+  ```
+  однако строки являются неизменным типом данных:
+  ```python
+  name = "Bob"
+  name[0] = "a" # сделать так нельзя, будет ошибка.
+  ```
+- Строки это набор символов, а значит их можно приводить ко всем коллекциям:
+  ```python
+  random_string = "some_string"
+  string_list = list(random_string)
+  print(string_list) # ['s', 'o', 'm', 'e', '_', 's', 't', 'r', 'i', 'n', 'g']
+  ```
+- Строки имеют множество особых методотов, которые могут помочь с работой с ними:
+    - `lower()` - метод для превращения всех букв в слове в маленькие:
+      ```python
+      name = "alEX"
+      lower_name = name.lower()
+      print(name) # alEX
+      print(lower_name) # alex
+      ```
+    - `upper()` - переводит все буквы строки в верхний регистр:
+      ```python
+      name = "alEX"
+      lower_name = name.upper()
+      print(lower_name) # ALEX
+      ```
+    - `capitalize()` - делает первую букву строки большой, а остальные маленькими:
+      ```python
+      name = "alEX"
+      lower_name = name.capitalize()
+      print(lower_name) # Alex
+      ```
+    - `join(collection)` - превращает все элементы какой-то коллекции в строку, ставя между ними, как разделитель, строку, к которой применили данный метод:
+      ```python
+      collection = ["1", "2", "3", "4", "5"]
+      some_sep = "! "
+      another_sep = "$$$"
+      collection_string = some_sep.join(collection)
+      another_collection_string = another_sep.join(collection)
+      print(collection_string) # 1! 2! 3! 4! 5
+      print(another_collection_string) # 1$$$2$$$3$$$4$$$5
+      ``` 
+    - `replace(old_label, new_label)` - создает новую строку, где заменяет все old_label на new_label:
+      ```python
+      name = "alexe"
+      changed_name = name.replace("e", "OOO")
+      print(changed_name) # alOOOxOOO
+      ```
+- Интерполяция строк - форматирование строк, где форматирование происходит при помощи [плейсхолдеров](https://blog.calltouch.ru/plejsholdery-chto-eto-takoe-i-stoit-li-ispolzovat/). Если упростить, то это процесс форматирования строк, где данные, которые пока неизвестны, заменяются на определенные символы, которые можно подставить позже. В Python представлены 3 вида интерполяции строк:
+  - через `%`:
+    ```python
+    # придумали шаблон, где заменили все неизвестные данные на плейсхолдеры
+    template = "%s is %s. He is %s."
+    ...
+    # спустя какое-то время появились данные
+    name = "Alex"
+    age = 22
+    job = "engineer"
+
+    sentance = template % (name, age, job) # подставили в шаблон все данные и положили в переменную
+    # важно помнить, что сам шаблон при этом не меняется
+    # так как строки это неизменяемый тип данных.
+    # этот шаблон потом можно переиспользовать в другом месте.
+    print(sentance) # Alex is 22. He is engineer.
+    ```
+    Интерполяция через % это довольно старый вид интерполяции, он используется только в тех случаях, где безопасность данных играет малую роль, так как он уязвим к [SQL-инъекциям](https://ru.wikipedia.org/wiki/%D0%92%D0%BD%D0%B5%D0%B4%D1%80%D0%B5%D0%BD%D0%B8%D0%B5_SQL-%D0%BA%D0%BE%D0%B4%D0%B0)
+  - через метод `format()`:
+    ```python
+    # придумали шаблон, где заменили все неизвестные данные на плейсхолдеры
+    template = "{} is {}. He is {}."
+    ...
+    # спустя какое-то время появились данные
+    name = "Alex"
+    age = 22
+    job = "engineer"
+
+    sentance = template.format(name, age, job) # подставили в шаблон все данные и положили в переменную
+    print(sentance) # Alex is 22. He is engineer.
+    ```
+  - f-строки. При данном способе интерполяции необходимо объявлять используемые переменные до шаблона:
+    ```python
+    # Сначала объявляем переменные
+    name = "Alex"
+    age = 22
+    job = "engineer"
+    
+    setnance = f"{name} is {age}. He is {job}."
+    
+    print(setnance) # Alex is 22. He is engineer.
+    ```
+    Этот способ не создает промежуточного шаблона, а сразу подставляет данные, при объявлении шаблона.
+  - Это основные виды интерполяции строк, однако каждый из них имеет свои разновидности, которые можно найти в сети Internet =)
+
 ### <a name='cursed'>Cursed questions</a>
 1. Чем Python отличается от остальных языков общего применения?
 2. Какие есть интерпретаторы Python? Какой самый популярный?
@@ -191,3 +290,4 @@
   b = "6"
   print((a * 3) + (b * 3))
   ```
+7. Какие существуют методы интерполяции строк? В чем их разница?

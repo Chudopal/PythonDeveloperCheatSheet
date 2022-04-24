@@ -166,124 +166,120 @@
 #     print("Access denied")
 
 # if age < 18 or age > 60:
-#     print("denied")
-# else:
-#     ...
+    print("denied")
+else:
+    ...
 
-# if age <= 10:
-#     print("Тебе 1-й десяток")
-# elif (10 < age <= 20):
-#     print("Тебе 2-й десяток")
-# else:
-#     print("Тебе больше 2-х десятков")
+if age <= 10:
+    print("Тебе 1-й десяток")
+elif (10 < age <= 20):
+    print("Тебе 2-й десяток")
+else:
+    print("Тебе больше 2-х десятков")
 
 
 """Цикл while"""
-# max_count = int(input("Enter value: ")) # 5
-# counter = 0
+max_count = int(input("Enter value: ")) # 5
+counter = 0
 
 
-# while (counter < max_count):
-#     print("Hello")
-#     counter += 1
-#     if counter >= 5:
-#         break
+while (counter < max_count):
+    print("Hello")
+    counter += 1
+    if counter >= 5:
+        break
 
-# print("bye")
+print("bye")
 
-# names = ["Bob", "Alice", "Nika"]
-# i = 0
+names = ["Bob", "Alice", "Nika"]
+i = 0
 
-# while i < len(names):
-#     print(names[i])
-#     i += 1
+while i < len(names):
+    print(names[i])
+    i += 1
 
 """Цикл for"""
 
-# names_ages = {"Bob": 10, "Alice": 12, "Nika": 3}
+names_ages = {"Bob": 10, "Alice": 12, "Nika": 3}
 
-# for name, age in names_ages.items():
-#     print(name, "is", age)
+for name, age in names_ages.items():
+    print(name, "is", age)
 
-# names = ["Bob", "Alice", "Nika", "Dora"]
+names = ["Bob", "Alice", "Nika", "Dora"]
 
-#for _ in range(10):
- #   print("Hello")
+for _ in range(10):
+   print("Hello")
 
-#print('Entry name')
-# print('Do you want to entry name?')
-# answer = input()
+print('Entry name')
+print('Do you want to entry name?')
+answer = input()
 
-# if answer =='Yes':
-#     name = input('entry name')
-#     print('hello',name)
-# elif answer == 'No':
-#     print('Ok!')
-# else:
-#     while answer !='Yes' and answer !='No':
-#         answer=input('Do you want entry name')
-#         if answer == 'Yes':
-#             name = input('entry name')
-#             print('hello', name)
-#         elif answer == 'No':
-#             print('Ok!')
+if answer =='Yes':
+    name = input('entry name')
+    print('hello',name)
+elif answer == 'No':
+    print('Ok!')
+else:
+    while answer !='Yes' and answer !='No':
+        answer=input('Do you want entry name')
+        if answer == 'Yes':
+            name = input('entry name')
+            print('hello', name)
+        elif answer == 'No':
+            print('Ok!')
 
 
-# answer = None
-# positive_answers = ("yes", "Yes", "y", "Y", "yep")
-# negative_answers = ("No", "no", "N", "n", "nope")
-# correct_answers = negative_answers + positive_answers
+answer = None
+positive_answers = ("yes", "Yes", "y", "Y", "yep")
+negative_answers = ("No", "no", "N", "n", "nope")
+correct_answers = negative_answers + positive_answers
 
-# while not answer in correct_answers:
-#     answer = input("Do you want to entry name?: ")
+while not answer in correct_answers:
+    answer = input("Do you want to entry name?: ")
 
-#     if answer in positive_answers:
-#         name = input("Entry name: ")
-#         print("Hello", name, sep=", ", end="!\n")
-#     elif answer in negative_answers:
-#         print("Ok.")
-#     else:
-#         print("I don't understand you")
+    if answer in positive_answers:
+        name = input("Entry name: ")
+        print("Hello", name, sep=", ", end="!\n")
+    elif answer in negative_answers:
+        print("Ok.")
+    else:
+        print("I don't understand you")
 
 
 """Строки"""
-# answer = input("Enter answer: ")
+answer = input("Enter answer: ")
 
-# modify_answer = answer.lower()
-# modify_answer = answer.upper()
-# modify_answer = answer.capitalize()
-# modify_answer = answer.replace("a", "IIIIII")
+modify_answer = answer.lower()
+modify_answer = answer.upper()
+modify_answer = answer.capitalize()
+modify_answer = answer.replace("a", "IIIIII")
 
-# print(modify_answer, answer)
+print(modify_answer, answer)
 
-# name = "Bob"
-# age = 125678654.45456754
-
-# Bob is 12
-
-# tamplate = "%s is %s, and he is awesome!"
-# result = tamplate % (name, age)
-
-# print(result)
+name = "Bob"
+age = 125678654.45456754
 
 
-# name = "Bob"
-# age = 10
+tamplate = "%s is %s, and he is awesome!"
+result = tamplate % (name, age)
 
-# template = "{} is {}"
-# result = template.format(name, age)
-
-# result = f"{name} is {age}"
-
-# print(result)
+print(result)
 
 
-# Alex is 10
-# Bob is 2
+name = "Bob"
+age = 10
+
+template = "{} is {}"
+result = template.format(name, age)
+
+result = f"{name} is {age}"
+
+print(result)
+
 
 name_age_map = {"Alex": 10, "Bob": 2}
-# result = ''
-# template = "{} is {}\n"
+result = ''
+template = "{} is {}\n"
 
 
 def print_format_str(name: str, age: int):
