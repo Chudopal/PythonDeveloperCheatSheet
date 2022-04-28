@@ -345,4 +345,32 @@
     - `min` - находит самый маленький элемент в коллекции.
 - функция `map` также принимает функцию и коллекцию, но в отличаи от `reduce`, возвращает новую коллекцию, а не сводит к одному значению. Применяется для быстрого изменения коллекции или приведения типов в ней, например:
     ```python
+    # как и для reduce, сначала завели функцию 
+    def cast_to_int(arg: any) -> int
+        return int(arg)
+    
+    print(cast_to_int("5")) # 5
+
+    trash_list = ["1", 2, "3", 4]
+
+    clear_list = list(
+        map(cast_to_int, trash_list)
+    )
+    print(clear_list) # [1,2,3,4]
     ```
+    Можно и усложнить логику, например умножить каждый элемент на 5, для этого просто нужно переписать рабочую функцию:
+    ```python
+    def cast_to_int_and_mul_5(arg: any) -> int
+        mul_arg = int(arg) * 5
+        return mul_arg
+    
+    print(cast_to_int("5")) # 25
+
+    trash_list = ["1", 2, "3", 4]
+
+    clear_list = list(
+        map(cast_to_int, trash_list)
+    )
+    print(clear_list) # [5,10,15,20]
+    ```
+    Функция `map` на самом деле более часто применяется чем `reduce`, потому она есть в стандартном пространстве имен Python.
