@@ -1,8 +1,15 @@
 """1. Увеличте все элементы
 следующей коллекции на 1"""
+import re
+from typing import List
 
+
+def cast_int(arg):
+    return int(arg)+1
 int_list = [1,2,"3",4,5,6,7,"5", "100"]
-result_list = ...
+result_list = list(map(cast_int, int_list))
+print(result_list)
+
 
 
 """2. Сложите все элементы
@@ -33,5 +40,16 @@ result_list = ...
 результат функции - [3, 8, 15].
 Предпологается, что коллекции имеют
 одинаковое количество элементов."""
+# добавить 2 варика
+def mul(
+    first_list: List[int],
+    second_list: List[int]
+) -> List[int] or None:
+    result = []
+    if len(first_list) == len(second_list):
+        result = None
+    for index  in range(0, len(first_list)):
+        result.append(first_list[index] * second_list[index])
+    return result
 
-...
+print(mul([1,2,3,4], [4,5,6,7]))

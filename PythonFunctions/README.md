@@ -410,12 +410,12 @@
         mul_arg = int(arg) * 5
         return mul_arg
 
-    print(cast_to_int("5")) # 25
+    print(cast_to_int_and_mul_5("5")) # 25
 
     trash_list = ["1", 2, "3", 4]
 
     clear_list = list(
-        map(cast_to_int, trash_list)
+        map(cast_to_int_and_mul_5, trash_list)
     )
     print(clear_list) # [5,10,15,20]
     ```
