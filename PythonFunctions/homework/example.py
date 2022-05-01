@@ -211,7 +211,6 @@ def merge_vacancies(
     return map_ids_and_vacancies(merged_vacancy_ids, full_vacancies_list)
 
 
-
 def apply_for_a_job(
     vacancy_id: int,
     get_vacancy_by_id: Callable[[int], Dict],
@@ -304,7 +303,7 @@ def validate_user_cv(raw_user_cv: Dict) -> Dict:
     return {
         "name": raw_user_cv.get("name", ""),
         "location": raw_user_cv.get("location", ""),
-        "skills": list(map(lambda skill: skill.lower(),
+        "skills": list(map(lambda skill: skill.lower(), # очистка от пробелов и разбиение строки на список
             raw_user_cv.get("skills").replace(" ", "").split(","))),
         "salary": int(raw_user_cv.get("salary", 0))
     }
@@ -346,6 +345,9 @@ def execute_console_input(**input_items: Dict) -> any:
 #####################   #####################   #####################
 # CONTROLLERS LAYER #   # CONTROLLERS LAYER #   # CONTROLLERS LAYER #
 #####################   #####################   #####################
+"""Слой, в котором происходи связь интерфейса(консоли), логики и хранилища
+контроллер сразу зависит от всех слоев, потому функции могут быть в нем больше,
+и зависеть от того, что отдают другие слои. Этот слой меняется чаще всех остальных."""
 
 
 def menu_controller() -> Dict:
@@ -377,7 +379,7 @@ def get_relevant_vacancies() -> None:
     user_cv = get_users_cv_from_dict()
     common_vacancies = []
     match_coefficient = 2
-
+    # TODO make refactoring
     common_vacancies.append(get_relevant_skills_vacancies(
         match_coefficient, user_cv.get("skills"), get_vacancies_by_skills_from_list))
     common_vacancies.append(get_relevant_salary_vacancies(
