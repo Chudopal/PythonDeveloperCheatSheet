@@ -88,9 +88,20 @@ USERS_VACANCIES = list()
 хранения. При изменении способа хранения, нужно будет периписать только
 этот блок а не всю систему."""
 
-
-def get_all_vacancies_from_list() -> List[Dict]:
+def get_vacancy_storage_from_list() -> List[Dict]:
     return VACANCIES
+
+
+def get_users_storage_from_dict() -> Dict:
+    return USERS_CV
+
+
+def add_vacancy_to_user_list(vacancy: Dict) -> None:
+    USERS_VACANCIES.append(vacancy)
+
+
+def update_cv_from_dict(cv: Dict) -> None:
+    USERS_CV.update(cv)
 
 
 def get_vacancies_by_salary_from_list(salary: int) -> List[Dict]:
@@ -101,7 +112,7 @@ def get_vacancies_by_salary_from_list(salary: int) -> List[Dict]:
         return min_salary <= salary <= max_salary
 
     return list(
-        filter(filter_salary, VACANCIES)
+        filter(filter_salary, get_vacancy_storage_from_list())
     )
 
 
@@ -109,7 +120,7 @@ def get_vacancies_by_location_from_list(location: str) -> List[Dict]:
     return list(
         filter(
             lambda vacancy: location == vacancy.get("location"),
-            VACANCIES
+            get_vacancy_storage_from_list()
         )
     )
 
@@ -121,29 +132,31 @@ def get_vacancies_by_skills_from_list(
     
     def filter_by_skills(vacancy):
         return len(
-            set(map(lambda skill: skill.lower(),
+            set(map(lambda skill: skill.lower().replace(" ", ""),
                 vacancy.get("skills"))) & set(skills)
         ) >= match_skills_number
     
     return list(
-        filter(filter_by_skills, VACANCIES)
+        filter(filter_by_skills, get_vacancy_storage_from_list())
     )
 
 
 def get_vacancy_by_id_from_list(vacancy_id: int) -> Dict:
-    return next((vacancy for vacancy in VACANCIES if vacancy.get("id") == vacancy_id))
+    vacancies = get_vacancy_storage_from_list()
+    return next((vacancy for vacancy in vacancies
+        if vacancy.get("id") == vacancy_id))
 
 
-def add_vacancy_to_user_list(vacancy: Dict) -> None:
-    USERS_VACANCIES.append(vacancy)
+def get_user_skills_from_dict() -> List:
+    return get_users_storage_from_dict().get("skills")
 
 
-def get_users_cv_from_dict() -> Dict:
-    return USERS_CV
+def get_user_salary_from_dict() -> int:
+    return get_users_storage_from_dict().get("salary")
 
 
-def update_cv_from_dict(cv: Dict) -> None:
-    USERS_CV.update(cv)
+def get_user_location_from_dict() -> str:
+    return get_users_storage_from_dict().get("location")
 
 
 ################    ################    ################    ################
@@ -160,25 +173,28 @@ def add_cv_action(cv: Dict, add_cv_func: Callable[[Dict], None]):
 
 
 def get_relevant_salary_vacancies(
-    users_salary: int,
+    get_user_salary: Callable[[], int],
     get_vacancies_by_salary: Callable[[int], List[Dict]],
 ) -> List[Dict]:
-    return get_vacancies_by_salary(users_salary)
+    user_salary = get_user_salary()
+    return get_vacancies_by_salary(user_salary)
 
 
 def get_relevant_location_vacancies(
-        users_location: int,
+        get_user_location: Callable[[], str],
         get_vacancies_by_location: Callable[[int], List[Dict]],
     ) -> List[Dict]:
-    return get_vacancies_by_location(users_location)
+    user_location = get_user_location()
+    return get_vacancies_by_location(user_location)
 
 
 def get_relevant_skills_vacancies(
-    skills_number: int,
-    users_skills: List[str],
+    match_skills_number: int,
+    get_user_skills: Callable[[], List[str]],
     get_vacancies_by_skills: Callable[[List[str]], List[Dict]]
 ) -> List[Dict]:
-    return get_vacancies_by_skills(users_skills, skills_number)
+    user_skills = get_user_skills()
+    return get_vacancies_by_skills(user_skills, match_skills_number)
 
 
 def map_ids_and_vacancies(
@@ -198,17 +214,20 @@ def merge_vacancies(
     *vacancies_lists: List[List[Dict]],
     match_coefficient: int
 ) -> List[Dict]:
-    full_vacancies_list = sum(vacancies_lists, [])
 
-    vacancy_ids = list(map(
-        lambda vacancy: vacancy.get("id"), 
-        full_vacancies_list))
+    full_vacancies_list = list(sum(vacancies_lists, []))
+    merged_vacancies = []
 
-    merged_vacancy_ids = {
-        vacancy_id for vacancy_id in vacancy_ids
-        if vacancy_ids.count(vacancy_id) >= match_coefficient
-    }
-    return map_ids_and_vacancies(merged_vacancy_ids, full_vacancies_list)
+    for vacancy in full_vacancies_list:
+        if full_vacancies_list.count(vacancy) >= match_coefficient:
+            merged_vacancies.append(vacancy)
+            full_vacancies_list = list(filter(
+                lambda x: x != vacancy,
+                full_vacancies_list
+            ))
+
+    return merged_vacancies
+
 
 
 def apply_for_a_job(
@@ -369,24 +388,33 @@ def add_cv_controller() -> None:
 
 
 def get_all_vacancies_controller() -> None:
-    vacancies = get_all_vacancies_from_list()
+    vacancies = get_vacancy_storage_from_list()
     execute_console_output(
         validate_vacancies(format_vacancies(vacancies))
     )
 
 
-def get_relevant_vacancies() -> None:
-    user_cv = get_users_cv_from_dict()
-    common_vacancies = []
-    match_coefficient = 2
-    # TODO make refactoring
-    common_vacancies.append(get_relevant_skills_vacancies(
-        match_coefficient, user_cv.get("skills"), get_vacancies_by_skills_from_list))
-    common_vacancies.append(get_relevant_salary_vacancies(
-        user_cv.get("salary"), get_vacancies_by_salary_from_list))
-    common_vacancies.append(get_relevant_location_vacancies(
-        user_cv.get("location"), get_vacancies_by_location_from_list))
+def get_lists_of_vacancies(match_coefficient):
+    return [ 
+        get_relevant_skills_vacancies(
+            match_coefficient,
+            get_user_skills_from_dict,
+            get_vacancies_by_skills_from_list
+        ),
+        get_relevant_salary_vacancies(
+            get_user_salary_from_dict,
+            get_vacancies_by_salary_from_list
+        ),
+        get_relevant_location_vacancies(
+            get_user_location_from_dict,
+            get_vacancies_by_location_from_list
+        ),
+    ]
 
+
+def get_relevant_vacancies() -> None:
+    match_coefficient = 2
+    common_vacancies = get_lists_of_vacancies(match_coefficient)
     relevant_vacancies = merge_vacancies(
         *common_vacancies,
         match_coefficient=match_coefficient
