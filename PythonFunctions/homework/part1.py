@@ -1,11 +1,11 @@
 """1. Увеличте все элементы
 следующей коллекции на 1"""
-import re
 from typing import List
 
 
 def cast_int(arg):
     return int(arg)+1
+
 int_list = [1,2,"3",4,5,6,7,"5", "100"]
 result_list = list(map(cast_int, int_list))
 print(result_list)
@@ -14,7 +14,7 @@ print(result_list)
 
 """2. Сложите все элементы
 предыдущей коллекции(result_list)"""
-
+list_sum = sum(result_list)
 
 """3. Напишите функцию, которая получает
 список элементов(аргументом может быть
@@ -23,15 +23,16 @@ print(result_list)
 строку:
 "Сумма элементов {все элементы списка через запятую} равно {сумма всех элементов}"
 """
-
-...
+def find_sum_and_format_message(int_list) -> str:
+    return f"Сумма элементов {", ".join(map(str, int_list))} равно {sum(map(int, int_list))}"
 
 """4. Перепишите предыдущую функцию,
 чтобы она принимала не лист, а
 элементы поотдельности. Количество аргументов
 должно быть неограниченно."""
 
-...
+def find_sum_and_format_message(*int_list) -> str:
+    return f"Сумма элементов {", ".join(map(str, int_list))} равно {sum(map(int, int_list))}"
 
 """5. Напишите функцию, которая будет
 последовательно перемножать элементы
