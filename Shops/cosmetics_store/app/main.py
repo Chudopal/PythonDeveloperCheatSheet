@@ -1,3 +1,5 @@
+print"Hello world"
+
 BAG = []
 CARS = [
     ('Merc', 100),
