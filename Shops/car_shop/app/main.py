@@ -1,3 +1,4 @@
+print('HelloWorld')
 bag = []
 cars = [('Merc', 100),('BMW', 1000000),('Audi', 50),('VW', 20),('Ford', 10)]
 
