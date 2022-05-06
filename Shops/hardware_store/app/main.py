@@ -13,3 +13,5 @@ def shoping():
     print('Сумма:', price)
 
 shoping()
+
+print('dasdasd')
