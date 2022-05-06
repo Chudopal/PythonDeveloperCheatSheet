@@ -14,7 +14,7 @@ print(result_list)
 
 """2. Сложите все элементы
 предыдущей коллекции(result_list)"""
-list_sum = sum(result_list)
+list_sum = sum(map(int(result_list)))
 
 """3. Напишите функцию, которая получает
 список элементов(аргументом может быть
