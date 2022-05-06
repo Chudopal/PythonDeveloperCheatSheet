@@ -82,6 +82,6 @@ def run() -> None:
         print(messagi) 
      
  
-         
- 
-run()
+      
+ run()
+ print("Удачи в написании программы")
