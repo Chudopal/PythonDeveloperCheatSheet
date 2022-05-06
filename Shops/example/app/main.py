@@ -1,4 +1,3 @@
-print("Hello world")
 
 """Программа для просмотра пабликаций.
 
@@ -27,8 +26,8 @@ ARTICLES = {
 LIKED_ARTICLES = {}
 
 
-def get_all_articles() -> List:
-    return ARTICLES
+# def get_all_articles() -> List:
+#     return ARTICLES
 
 
 def add_article(article: str, articles) -> None:
