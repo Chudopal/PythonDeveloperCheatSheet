@@ -1,72 +1,99 @@
-print"Hello world"
+"""Программа для просмотра пабликаций.
+Возможности:
+- просмотреть все публикации
+- добавить публикацию
+- отметить публикацию как понравившуюся
+- посмотреть список понравившихся публикаций
+Приверы публикаций:
+- Сегодня солнечная погода!
+- Функция - это исполняемый фрагмент кода, который можно переиспользовать множество раз.
+- Название переменной - это то, как вы можете обращаться к значению в данной переменной.
+"""
 
-BAG = []
-CARS = [
-    ('Merc', 100),
-    ('BMW', 1000000),
-    ('Audi', 50),
-    ('VW', 20),
-    ('Ford', 10)
-]
+from typing import List, Dict
+import json
+
+# ARTICLES = {
+#     1: "Сегодня солнечная погода!",
+#     2: "Функция - это исполняемый фрагмент кода, который можно переиспользовать множество раз."
+# }
+
+# LIKED_ARTICLES = {}
 
 
-def format_products(cars) -> str:
-    id = 0
-    result = '0 - Выход\n'
-    for i in cars:
-        id += 1
-        result += f'{id}.{i[0]} - ${i[1]}' + "\n"
-    return result + "Выберите товар: "
 
+def get_all_articles() -> List:
+    with open("app\storage.json") as file:
+        data = json.load(file)
+    return data.get("articles")
 
-def show_BAG():
-    total = 0
-    result = ""
-    for i in BAG:
-        result += i[0] + '\n'
-        total += i[1]
-
-    result = result + f'{total}$ - Общая сумма покупок' + "\n"
+def adaptor(data: List) -> Dict:
+    result = {}
+    for article in data:
+        result[article.get("id")]=article.get("content")
     return result
+print(adaptor(get_all_articles()))
 
 
-def make_main_choice(choice):
+
+def add_article(article: str, articles) -> None:
+    article_id = len(articles) + 1
+
+    articles[article_id] = article
+
+
+def like_article(article_id) -> None:
+    article_content = ARTICLES.get(article_id)
+    add_article(article_content, LIKED_ARTICLES)
+
+
+def get_all_like_articles() -> List:
+    return LIKED_ARTICLES
+
+
+def format_article(article_list: Dict) -> str:
+    return "\n".join([
+        f"{article_id}. {article}"
+        for article_id, article in article_list.items()
+    ])
+
+
+def menu() -> str:
+    return (
+        "*"*80 + "\n" +
+        "1. Посмотреть все публикации\n" +
+        "2. Добавить публикацию\n" + 
+        "3. Лайкнуть публикацию\n" +
+        "4. Посмотреть понравившиеся."
+    )
+
+
+def make_choice(choice: int):
     result = ""
     if choice == 1:
-        result = add_products(CARS)
+        articles = get_all_articles()
+        message = format_article(articles)
+        result = message
     elif choice == 2:
-        result = show_BAG()
-    elif choice != 0:
-        result = 'Неверный выбор'
+        article = input("Напишите публикацию: ")
+        add_article(article, ARTICLES)
+    elif choice == 3:
+        article_id = int(input("Введите номер понравившейся публикации: "))
+        like_article(article_id)
+    elif choice == 4:
+        articles = get_all_like_articles()
+        message = format_article(articles)
+        result = message
     return result
 
 
-def add_products(cars):
-    message = format_products(cars)
-    result = launch(add_product, input_message=message)
-    return result
-
-
-def add_product(choice):
-    BAG.append(CARS[choice - 1])
-    return 'Товар успешно добавлен в корзину.'
-
-
-def launch(func, input_message):
+def run() -> None:
     choice = None
-    while choice != 0:
-        choice = int(input(input_message))
-        message = func(choice)
+    while choice != 5:
+        print(menu())
+        choice = int(input("Введите пункт меню: "))
+        message = make_choice(choice)
         print(message)
-
-
-def run():
-    message = """
-        0 - Выход
-        1 - Посмотреть товары/Добавить в корзину
-        2 - Посмотреть корзину
-    """ + "\n" + "Выберите действие: "
-    launch(make_main_choice, input_message=message)
 
 
 run()
