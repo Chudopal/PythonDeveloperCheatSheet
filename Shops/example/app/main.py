@@ -14,35 +14,70 @@
 - Название переменной - это то, как вы можете обращаться к значению в данной переменной.
 """
 
+import json
 from typing import List, Dict
 
 
-ARTICLES = {
-    1: "Сегодня солнечная погода!",
-    2: "Функция - это исполняемый фрагмент кода, который можно переиспользовать множество раз."
-}
+def read_file(path, name) -> List:
+    with open(path) as file:
+        data = json.load(file)
+    return data.get(name)
 
 
-LIKED_ARTICLES = {}
+def write_file(path, data) -> None:
+    with open(path, "w") as file:
+        json.dump(data, file)
 
 
-# def get_all_articles() -> List:
-#     return ARTICLES
+def adaptor(data: List) -> Dict:
+    result = {}
+    for article in data:
+        result[article.get("id")] = article.get("content")
+    return result
 
 
-def add_article(article: str, articles) -> None:
-    article_id = len(articles) + 1
+def file_adaptor(data: Dict, name: str) -> Dict:
+    result = {
+        "arctiles": get_all_articles(),
+        "liked_articles": get_all_like_articles()
+    }
+    articles = []
+    for article_id, article_content in data.items():
+        articles.append(
+            {"id": article_id,
+            "content": article_content}
+        )
+    result[name] = articles
+    return result
 
-    articles[article_id] = article
 
-
-def like_article(article_id) -> None:
-    article_content = ARTICLES.get(article_id)
-    add_article(article_content, LIKED_ARTICLES)
+def get_all_articles() -> List:
+    data = read_file("app/storage.json", "articles")
+    return adaptor(data)
 
 
 def get_all_like_articles() -> List:
-    return LIKED_ARTICLES
+    data = read_file("app/storage.json", "liked_articles")
+    return adaptor(data)
+
+
+def calculate_id(article: str, articles):
+    article_id = len(articles) + 1
+    articles[article_id] = article
+
+
+def add_article(article: str, articles) -> None:
+    calculate_id(article, articles)
+    data = file_adaptor(articles, "articles")
+    write_file("app/storage.json", data)
+
+
+def like_article(article_id) -> None:
+    article_content = get_all_articles().get(article_id)
+    liked_articles = get_all_like_articles()
+    calculate_id(article_content, liked_articles)
+    data = file_adaptor(liked_articles, "liked_articles")
+    write_file("app/storage.json", data)
 
 
 def format_article(article_list: Dict) -> str:
@@ -70,7 +105,7 @@ def make_choice(choice: int):
         result = message
     elif choice == 2:
         article = input("Напишите публикацию: ")
-        add_article(article, ARTICLES)
+        add_article(article, get_all_articles())
     elif choice == 3:
         article_id = int(input("Введите номер понравившейся публикации: "))
         like_article(article_id)
