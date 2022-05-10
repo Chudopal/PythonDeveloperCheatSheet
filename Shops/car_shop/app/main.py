@@ -1,27 +1,66 @@
-print('HelloWorld')
-bag = []
-cars = [('Merc', 100),('BMW', 1000000),('Audi', 50),('VW', 20),('Ford', 10)]
+import json
 
-def add_products(list):
-        id = 0
-        print('0 - Выход')
-        for i in list:
-            id += 1
-            print(f'{id}.{i[0]} - ${i[1]}')
-        while True:
-            choice = int(input('Выберите товар: '))
-            if choice == 0:
-                break
-            else:
-                bag.append(list[choice - 1])
-                print('Товар успешно добавлен в корзину.')
+
+with open('my_cars.json', 'r') as f:
+    my_cars = json.load(f)
+    
+
+with open('bag.json', 'r') as f:
+    bag = json.load(f)
+
+
+def choice_cars():
+    while True:
+        count = 0
+        for i in my_cars['cars']:
+            count += 1
+            tamplate = f'{count}. model: {i["model"]}, price: ${i["price"]}'
+            print(tamplate)
+        print('0 - Назад')
+        choice = add_to_bag()
+        if choice == 0:
+            break
+
+
+def add_to_bag():
+    choice = int(input('Выберите номер авто:'))
+    if choice != 0:     
+        bag['cars'].append(my_cars['cars'][choice - 1])
+        save_bag()
+    return choice
+
+
+def save_bag():
+    with open('bag.json', 'w') as f:
+        json.dump(bag, f)
+
 
 def show_bag():
-    total = 0
-    for i in bag:
-        print(i[0])
-        total += i[1]
-    print(f'{total}$ - Общая сумма покупок')
+    while True:
+        total = 0
+        count = 0
+        for i in bag['cars']:
+            count += 1
+            total += i["price"]
+            tamplate = f'{count}. model: {i["model"]}, price: ${i["price"]}'
+            print(tamplate)
+        print(f'Общая стоимость: ${total}')
+        print('''
+        0 - Вернуться в меню
+        ''')
+        choice = del_bag()
+        if choice == 0:
+            break
+
+
+def del_bag():
+    choice = int(input('Выберите авто для удаления: '))
+    if choice != 0:
+        del bag['cars'][choice - 1]
+        print('Авто успешно удалено!')
+        save_bag()
+    return choice
+
 
 def mine_menu():
     while True:
@@ -34,10 +73,10 @@ def mine_menu():
         if choice == 0:
             break
         elif choice == 1:
-            add_products(cars)
+            choice_cars()
         elif choice == 2:
             show_bag()
         else:
             print('Неверный выбор')
 
-add_products(cars)
+mine_menu()
