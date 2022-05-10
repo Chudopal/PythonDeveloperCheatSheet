@@ -14,13 +14,11 @@ def write_file(path, data):
 
 
 def adaptor(data: list) -> dict:
-    result = {article.get('id'): article.get('price') for article in data}
-    return result
+    return {article.get('id'): article.get('price') for article in data}
 
 
 def file_adaptor(data: dict) -> list:
-    result = [{'id': product_id, 'quantity': product_cnt} for product_id, product_cnt in data.items()]
-    return result
+    return [{'id': product_id, 'quantity': product_cnt} for product_id, product_cnt in data.items()]
 
 
 def get_products_storage_from_list() -> dict:
@@ -190,7 +188,6 @@ def run():
     while True:
         choice = menu_controller()
         execute_choice(**choice)
-
 
 
 run()
