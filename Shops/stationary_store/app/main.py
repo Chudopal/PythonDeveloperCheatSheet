@@ -11,11 +11,11 @@ SBAG = ()
 BYE = 'Waiting for you again:)' 
 
 
-def username_greeting():
+def hello_username():
     name = input('Enter your name: ')
     print("Dear %s, happy to see u"%(name))
 
-def menu():
+def get_menu():
     return(
         "-"*20 + "\n" +
         '1. Product catalog \n'
@@ -23,40 +23,41 @@ def menu():
         '3. Exit \n'
         )
 
-def choice(shopping: int) -> None: 
-    result = ''
+def make_choice(shopping: int) -> None: 
     if shopping == 1:
-        result = format_catalog()
+        format_catalog()
     elif shopping == 2:
-        result = order()
+        make_order()
     elif shopping == 3:
-        result = exit() 
+        exit() 
     
 
 def format_catalog():
     for product_name in PRODUCTS:
         print(product_name, '-', PRODUCTS[product_name])
 
-
-def order():
-    for product_name in PRODUCTS:
-        print(product_name, '-', PRODUCTS[product_name])
-    SBAG = list(map(str,input('Please add a product name to sbag: ').split())) 
+def count_sbag_sum():
+    SBAG = list(input('Please add a product name to sbag: ').split())
     final_sum=0
     for i in SBAG:
         final_sum += PRODUCTS.get(i)
-    print('Final purchase cost is {}.Thank you!'.format(final_sum))           
+    print('Final purchase cost is {}.Thank you!'.format(final_sum))
+
+
+def make_order():
+    format_catalog()
+    count_sbag_sum()         
 
 def exit():
     print(BYE)
 
 
 def run():
-    username_greeting()
+    hello_username()
     shopping = None
     while shopping != 3:
-        print(menu())
+        print(get_menu())
         shopping = int(input('Choose an item: '))
-        choice(shopping)
+        make_choice(shopping)
 
 run()
