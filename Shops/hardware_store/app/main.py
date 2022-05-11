@@ -1,7 +1,14 @@
-def shoping():
+import json
 
-    price_list = {"рис": 5, "яйца": 4, "леденец": 3}
-    for product, price in price_list.items():
+path_json = '../shop_invent.json'
+
+
+def shoping(path) -> None:
+
+    with open(path, 'r', encoding='utf8') as file:
+        data = json.load(file)
+
+    for product, price in data.items():
         print(product, "-", price)
     price = 0
     while True:
@@ -9,9 +16,7 @@ def shoping():
         if product == "0":
             break;
         number = int(input("Количество штук? "))
-        price = price+price_list[product]*number
+        price = price+data[product]*number
     print('Сумма:', price)
 
-shoping()
-
-print('dasdasd')
+shoping(path_json)
