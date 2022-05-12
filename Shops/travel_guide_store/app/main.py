@@ -1,7 +1,7 @@
 from typing import List, Dict 
  
  
-menu_Shop = {  
+MENU_SHOP = {  
     "Ананас": 15, 
     "Яйца": 5, 
     "Молоко": 3, 
@@ -9,13 +9,13 @@ menu_Shop = {
     "Арбуз": 8 
 } 
  
-shopping_cart = list()  
+SHOPPING_CART = list()  
  
 def get_menu()-> List: 
-    return menu_Shop 
+    return MENU_SHOP 
  
 def make_choice()-> List: 
-    return shopping_cart 
+    return SHOPPING_CART 
  
  
 def user_menu() -> str: 
@@ -35,10 +35,10 @@ def start_shopping (fill_cart):
  
 def check_cart(sum_list): 
     coast_list= [] 
-    for x in shopping_cart: 
-        for item in menu_Shop.keys(): 
+    for x in SHOPPING_CART: 
+        for item in MENU_SHOP.keys(): 
             if x == item: 
-                y = menu_Shop[item] 
+                y = MENU_SHOP[item] 
                 coast_list.append(y)             
     sum_list = sum(coast_list) 
          
@@ -48,16 +48,16 @@ def check_cart(sum_list):
 def choice_do (choice: int): 
     result = "" 
     if choice == 1: 
-        vyvod = get_menu() 
-        messagi = show_menu(menu_Shop) 
-        result = messagi  
+        output = get_menu() 
+        message = show_menu(MENU_SHOP) 
+        result = message  
     elif choice == 2: 
-        vyvod = make_choice() 
-        messagi = start_shopping(shopping_cart) 
-        result = messagi 
+        output = make_choice() 
+        message = start_shopping(SHOPPING_CART) 
+        result = message 
     elif choice == 3: 
-        messagi = check_cart(shopping_cart)   
-        result = messagi   
+        message = check_cart(SHOPPING_CART)   
+        result = message   
     return result     
          
  
@@ -66,8 +66,8 @@ def run() -> None:
     while choice == 1 or 2 or 3:     
         print(user_menu()) 
         choice = int(input("Введите пункт меню: ")) 
-        messagi = choice_do(choice) 
-        print(messagi) 
+        message = choice_do(choice) 
+        print(message) 
      
        
 run()
