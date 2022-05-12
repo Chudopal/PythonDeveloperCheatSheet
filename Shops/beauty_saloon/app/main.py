@@ -16,6 +16,7 @@ def list_of_services():
         data  = json.load(file)
     return data["list_of_services"]
 
+
 # функция которая приводит и показывает список услуг в красивом виде
 
 def edited_list_of_services(data):
@@ -25,17 +26,30 @@ def edited_list_of_services(data):
     return result
 # print(edited_list_of_services(list_of_services()))
 
-# функция которая показывает выбранные услуги и их стоимость
+
+# функция которая показывает выбранные услуги и их стоимость по ключу
 
 def basket_of_services():
     with open("app\services_basket.json", encoding='utf-8') as file:
-        result  = json.load(file)
-        r = ''
-        counter = 0
-        for i in result["list_of_services"]:
-            counter += i['price_of_service']
-            r += (f"{i['service_number']}. {i['name_of_services']} - {i['price_of_service']}р.\n")
-    return r + f'Итого: {counter}'
+        data  = json.load(file)
+    return data["list_of_services"]
+
+
+# функция которая считает сумму json файла
+
+def summa(data):
+    counter = 0
+    for i in data:
+       counter += i['price_of_service']
+    return f'Итого: {counter}'   
+
+
+# функция которая вызывает функцию которая приводит и показывает список услуг в красивом виде
+
+def format_basket(data):
+    return edited_list_of_services(data) + summa(data)
+
+print(format_basket(basket_of_services()))
 
 
 # функция выбора услуг 
@@ -57,7 +71,6 @@ def make_main_choice(choice):
     elif choice != 4:
         result = 'Неверный выбор'
     return result
-
 
 
 # функция первого собщения меню
