@@ -13,12 +13,12 @@ import json
 
 def list_of_services():
     with open("app\list_services.json", encoding='utf-8') as file:
-        result  = json.load(file)
-        r = ''
-        for i in result["list_of_services"]:
-            r += (f"{i['service_number']}. {i['name_of_services']} - {i['price_of_service']}р.\n")
-    return r
-
+        data  = json.load(file)
+        result = ''
+        for i in data["list_of_services"]:
+            result += (f"{i['service_number']}. {i['name_of_services']} - {i['price_of_service']}р.\n")
+    return result
+print(list_of_services())
 # функция которая показывает выбранные услуги и их стоимость
 
 def basket_of_services():
