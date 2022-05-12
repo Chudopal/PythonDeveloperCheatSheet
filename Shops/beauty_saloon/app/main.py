@@ -9,16 +9,22 @@ import json
 
 # знаю что комменты нельзя. но мы же учимся:)
 
-# функция которая показывает список услуг 
+# функция которая показывает список услуг по ключу
 
 def list_of_services():
     with open("app\list_services.json", encoding='utf-8') as file:
         data  = json.load(file)
-        result = ''
-        for i in data["list_of_services"]:
-            result += (f"{i['service_number']}. {i['name_of_services']} - {i['price_of_service']}р.\n")
+    return data["list_of_services"]
+
+# функция которая приводит и показывает список услуг в красивом виде
+
+def edited_list_of_services(data):
+    result = ''
+    for i in data:
+        result += (f"{i['service_number']}. {i['name_of_services']} - {i['price_of_service']}р.\n")
     return result
-print(list_of_services())
+# print(edited_list_of_services(list_of_services()))
+
 # функция которая показывает выбранные услуги и их стоимость
 
 def basket_of_services():
