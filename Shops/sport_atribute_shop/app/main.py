@@ -12,33 +12,46 @@
 from typing import List
 
 
-PRODUCT = [
-        ("Мяч", 100),
-        ("Бутсы", 200),
-        ("Гетры", 15),
-        ("Шорты", 60),
-        ("Майка", 70), 
-        ("Щетки", 25)
+PRODUCTS = [
+        ["Мяч", 100],
+        ["Бутсы", 200],
+        ["Гетры", 15],
+        ["Шорты", 60],
+        ["Майка", 70], 
+        ["Щетки", 25]
 ]
+BASKET = []
 
-
-def format_product(product_list: any) -> str:
-    return ([f"Товар {product[0]} стоит {product[1]}" for product in product_list])
+def format_product(product_list: any) -> List:
+    return "\n".join([f"{product[0]}.Товар {product[1][0]} стоит {product[1][-1]} рублей." for product in enumerate(product_list, 1)])
 
 def menu() -> str:
     return ("1. Посмотреть все товары и цены на них\n" +
     "2. Выбрать товар\n" + 
     "3. Посмотреть сумму покупки.")
 
-def look() -> List:
-    return PRODUCT
+def get_products() -> str:
+    return PRODUCTS
     
 
-def choices():
-    ...
+def make_choice(product_list) -> List:
+    input_massage = input("Выберите товар: ")
+    for product in product_list:
+        if product[0] == input_massage:
+            BASKET.append(product)
+    
+    print(BASKET)
+            
+         
 
 def perchoice():
-    ...
+    total = 0
+    result = ""
+    for i in BASKET:
+        result += i[0] + '\n'
+        total += i[1]
+    result = result + f'{total} рублей - Общая сумма покупок' + "\n"
+    return result
 
 def run() -> None:
     print(menu())
@@ -46,12 +59,13 @@ def run() -> None:
     while True:
         choice = int(input("Выберите пункт меню: "))
         if choice == 1:
-            product = look()
+            product = get_products()
             massage = format_product(product)
             print(massage)
         elif choice == 2:
-            product = int(input("Выберите товар: "))
-            choices(product)
+            make_choice(PRODUCTS)
+            print("Товар добавлен в корзину")
+            
         elif choice == 3:
             perchoice()
         else:
