@@ -26,7 +26,8 @@ def format_product(product_list: any) -> List:
     return "\n".join([f"{product[0]}.Товар {product[1][0]} стоит {product[1][-1]} рублей." for product in enumerate(product_list, 1)])
 
 def menu() -> str:
-    return ("1. Посмотреть все товары и цены на них\n" +
+    return ("0. Выход\n" + 
+    "1. Посмотреть все товары и цены на них\n" +
     "2. Выбрать товар\n" + 
     "3. Посмотреть сумму покупки.")
 
@@ -54,9 +55,10 @@ def perchoice():
     return result
 
 def run() -> None:
-    print(menu())
+    
     choice = None
-    while True:
+    while choice != 0:
+        print(menu())
         choice = int(input("Выберите пункт меню: "))
         if choice == 1:
             product = get_products()
