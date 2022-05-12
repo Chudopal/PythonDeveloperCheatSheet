@@ -1,11 +1,13 @@
 import json
 
-BUY_PRODUCTS = dict()
 
-def read_file(path, name):
-    with open(path, encoding='utf-8') as file:
-        data = json.load(file)
-    return data.get(name)
+def read_file(path, key_name):
+    try:
+        with open(path) as file:
+            data = json.load(file).get(key_name)
+    except FileNotFoundError:
+        data = {}
+    return data
 
 
 def write_file(path, data):
@@ -13,28 +15,29 @@ def write_file(path, data):
         json.dump(data, file)
 
 
-def adaptor(data: list) -> dict:
-    return {article.get('id'): article.get('price') for article in data}
+def adaptor(data: list, name_value: str) -> dict:
+    return {article.get('id'): article.get(name_value) for article in data}
 
 
-def file_adaptor(data: dict) -> list:
-    return [{'id': product_id, 'quantity': product_cnt} for product_id, product_cnt in data.items()]
+def file_adaptor(data: dict) -> dict:
+    return {'products': [{'id': product_id, 'quantity': product_cnt} for product_id, product_cnt in data.items()]}
 
 
-def get_products_storage_from_list() -> dict:
-    raw_data = read_file('storage.json', 'products')
-    return adaptor(raw_data)
+def get_products_storage_from_list():
+    return adaptor(read_file('storage.json', 'products'), 'price')
 
 
-def get_users_prod_storage_from_dict() -> dict:
-    return BUY_PRODUCTS
+def get_users_prod_storage_from_dict():
+    return adaptor(read_file('buy_products.json', 'products'), 'quantity')
 
 
 def update_product_from_dict(buy_dict: dict) -> None:
-    BUY_PRODUCTS.update(buy_dict)
+    current_orders = get_users_prod_storage_from_dict()
+    current_orders.update(buy_dict)
+    write_file('buy_products.json', file_adaptor(current_orders))
 
 
-def add_buy_products(buy_dict: dict, add_func: callable):
+def add_buy_products(buy_dict: dict, add_func: callable) -> None:
     add_func(buy_dict)
 
 
@@ -63,7 +66,7 @@ def get_menu_items() -> dict[int, str]:
 
 def get_buy_form() -> dict:
     return {
-        "name": "Введите наименование товара: ",
+        "id": "Введите наименование товара: ",
         "quantity": "Введите кол-во товара: ",
     }
 
@@ -78,7 +81,7 @@ def get_phrase(key: str) -> dict[str, str]:
 
 def validate_buy_product(buy_product: dict) -> dict:
     return {
-        buy_product.get('name').capitalize(): int(buy_product.get('quantity', 1)),
+        buy_product.get('id').capitalize(): int(buy_product.get('quantity', 1)),
     }
 
 
@@ -86,6 +89,37 @@ def validate_user_choice(choice: dict) -> dict:
     return {
         "choice": int(choice.get("choice"))
     }
+
+
+def execute_console_output(*output_list: str) -> None:
+    for output in output_list:
+        print(output, end="", sep="")
+
+
+def execute_console_input(**input_items: dict) -> any:
+    return {
+        key: input(form)
+        for key, form in input_items.items()
+    }
+
+
+def get_sum_amt(buy_products: dict, product_list: dict) -> str:
+    result_amt = int()
+    for product_name, product_cnt in buy_products.items():
+        result_amt += product_list.get(product_name, 0) * product_cnt
+
+    return f'Общая сумма = {result_amt}р.\n'
+
+
+def menu_controller() -> dict:
+    menu = format_items(get_menu_items())
+    execute_console_output(menu)
+    raw_choice = execute_console_input(
+        **get_phrase("choice")
+    )
+    return validate_user_choice(
+        raw_choice
+    )
 
 
 def validate_product_list(product_list: dict) -> str:
@@ -105,36 +139,6 @@ def validate_buy_list(buy_list: dict) -> str:
 
     return result
 
-def execute_console_output(*output_list: str) -> None:
-    for output in output_list:
-        print(output, end="", sep="")
-
-
-def execute_console_input(**input_items: dict) -> any:
-    return {
-        key: input(form)
-        for key, form in input_items.items()
-    }
-
-
-def get_sum_amt(buy_products: dict, product_list: dict) -> str:
-    result_amt = int()
-    for product_name, product_cnt in buy_products.items():
-        result_amt += product_list.get(product_name) * product_cnt
-
-    return f'Общая сумма = {result_amt}р.\n'
-
-
-def menu_controller() -> dict:
-    menu = format_items(get_menu_items())
-    execute_console_output(menu)
-    raw_choice = execute_console_input(
-        **get_phrase("choice")
-    )
-    return validate_user_choice(
-        raw_choice
-    )
-
 
 def get_all_products_controller() -> None:
     products = get_products_storage_from_list()
@@ -143,21 +147,21 @@ def get_all_products_controller() -> None:
     )
 
 
-def select_product_controller():
+def select_product_controller() -> None:
     form = get_buy_form()
     raw_buy_product = execute_console_input(**form)
     clean_buy_product = validate_buy_product(raw_buy_product)
     add_buy_products(clean_buy_product, update_product_from_dict)
 
 
-def view_buy_products_controller():
+def view_buy_products_controller() -> None:
     buy_list = get_users_prod_storage_from_dict()
     execute_console_output(
         validate_buy_list(buy_list)
     )
 
 
-def get_sum_amt_controller():
+def get_sum_amt_controller() -> None:
     buy_list = get_users_prod_storage_from_dict()
     amt_result = get_sum_amt(buy_list, get_products_storage_from_list())
     write_file('buy_products.json', file_adaptor(buy_list))
