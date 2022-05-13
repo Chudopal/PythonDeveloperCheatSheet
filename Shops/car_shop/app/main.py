@@ -13,16 +13,14 @@ def get_cars_bag():
 
 
 def choice_cars():
-    while True:
-        count = 0
-        for i in get_cars_from_file()['cars']:
-            count += 1
-            tamplate = f'{count}. model: {i["model"]}, price: ${i["price"]}'
+    choice = None
+    while choice != 0:
+        for i in enumerate(get_cars_from_file()['cars'], 1):
+            tamplate = f'{i[0]}. model: {i[1]["model"]}, price: ${i[1]["price"]}'
             print(tamplate)
         print('0 - Назад')
         choice = add_to_bag()
-        if choice == 0:
-            break
+
 
 
 def add_to_bag():
@@ -40,7 +38,8 @@ def save_bag(cars):
 
 
 def show_bag():
-    while True:
+    choice = None
+    while choice != 0:
         total = 0
         count = 0
         for i in get_cars_bag()['cars']:
@@ -53,33 +52,33 @@ def show_bag():
         0 - Вернуться в меню
         ''')
         choice = del_bag()
-        if choice == 0:
-            break
 
 
 def del_bag():
     choice = int(input('Выберите авто для удаления: '))
     if choice != 0:
-        del get_cars_bag()['cars'][choice - 1]
+        bag = get_cars_bag()
+        bag.get("cars").pop(choice - 1)
         print('Авто успешно удалено!')
-        save_bag()
+        save_bag(bag)
     return choice
 
 
 def main_menu():
-    while True:
+    choice = None
+    while choice != 0:
         print("""
         0 - Выход
         1 - Посмотреть товары/Добавить в корзину
         2 - Посмотреть корзину
         """)
         choice = int(input('Выберите действие: '))
-        if choice == 0:
-            break
-        elif choice == 1:
+        if choice == 1:
             choice_cars()
         elif choice == 2:
             show_bag()
+        elif choice == 0:
+            print('Пока')
         else:
             print('Неверный выбор')
 
