@@ -41,9 +41,6 @@ def make_choice(product_list) -> List:
         if product[0] == input_massage:
             BASKET.append(product)
     
-    print(BASKET)
-            
-         
 
 def perchoice():
     total = 0
@@ -52,10 +49,10 @@ def perchoice():
         result += i[0] + '\n'
         total += i[1]
     result = result + f'{total} рублей - Общая сумма покупок' + "\n"
+    print(result)
     return result
 
-def run() -> None:
-    
+def run() -> None:    
     choice = None
     while choice != 0:
         print(menu())
@@ -70,6 +67,9 @@ def run() -> None:
             
         elif choice == 3:
             perchoice()
+        elif choice == 0:
+            print("Спасибо за покупку")
+            break
         else:
             print("Не корректный ввод. Попробуйте снова")
 
