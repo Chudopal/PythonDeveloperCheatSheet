@@ -1,73 +1,78 @@
-
-print("Hello world")
-
-BAG = []
-CARS = [
-    ('Merc', 100),
-    ('BMW', 1000000),
-    ('Audi', 50),
-    ('VW', 20),
-    ('Ford', 10)
-]
+CATALOG = {
+"White tea": 2,
+"Green tea": 3,
+"Red tea": 1,
+"Black tea": 4
+}
 
 
-def format_products(cars) -> str:
-    id = 0
-    result = '0 - Выход\n'
-    for i in cars:
-        id += 1
-        result += f'{id}.{i[0]} - ${i[1]}' + "\n"
-    return result + "Выберите товар: "
+ADD_CATALOG = []
 
 
-def show_BAG():
-    total = 0
+def get_all_catalog():
+    return CATALOG
+
+def get_new_catalog():
+    return ADD_CATALOG
+ 
+def format():
+    ...
+
+
+def add_product(add):
+    product_name = input("What do you want to buy? ") 
+    for i in product_name: 
+        add.append(product_name)
+        return "Product added in bag"
+
+        
+    
+def summa(sum_list):
+    coast_list= [] 
+    for x in ADD_CATALOG: 
+        for item in CATALOG.keys(): 
+            if x == item: 
+                y = CATALOG[item] 
+                coast_list.append(y) 
+
+
+                sum_list = sum(coast_list) 
+
+    return sum_list 
+
+
+def menu():
+    return(
+        "*"*50 + "\n" +
+        "1. Viewing catalog\n" +
+        "2. Add product\n" + 
+        "3. Calculate the amount"
+    )
+
+
+def make_choice(choice: int): 
     result = ""
-    for i in BAG:
-        result += i[0] + '\n'
-        total += i[1]
-
-    result = result + f'{total}$ - Общая сумма покупок' + "\n"
-    return result
-
-
-def make_main_choice(choice):
-    result = ""
+    products= ""
     if choice == 1:
-        result = add_products(CARS)
+        products = get_all_catalog() 
+        result = products
     elif choice == 2:
-        result = show_BAG()
-    elif choice != 0:
-        result = 'Неверный выбор'
+        product =  get_new_catalog
+        result = add_product(ADD_CATALOG)
+        # print(ADD_CATALOG)
+    elif choice == 3:
+        products = summa(ADD_CATALOG)
+        result = products
     return result
-
-
-def add_products(cars):
-    message = format_products(cars)
-    result = launch(add_product, input_message=message)
-    return result
-
-
-def add_product(choice):
-    BAG.append(CARS[choice - 1])
-    return 'Товар успешно добавлен в корзину.'
-
-
-def launch(func, input_message):
-    choice = None
-    while choice != 0:
-        choice = int(input(input_message))
-        message = func(choice)
-        print(message)
 
 
 def run():
-    message = """
-        0 - Выход
-        1 - Посмотреть товары/Добавить в корзину
-        2 - Посмотреть корзину
-    """ + "\n" + "Выберите действие: "
-    launch(make_main_choice, input_message=message)
+    choice = None 
+    while choice != 4:
+        print(menu())
+        choice = int(input("Input number: ")) 
+        message = make_choice(choice) 
+        print(message)
 
 
 run()
