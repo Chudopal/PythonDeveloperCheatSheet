@@ -1,15 +1,30 @@
-PRODUCTS = {
-    'pencil':2, 
-    'pen':3, 
-    'felt_pen':3,
-    'paper':5,
-    'eraser':2, 
-    'stickers':1
-    }
-
-SBAG = []
 BYE = 'Waiting for you again:)' 
 
+import json
+
+def write_file(data, filename):
+    with open(filename, "w") as file:
+        json.dump(data, file)
+
+
+def read_file(filename):
+    with open(filename) as file:
+       data = json.load(file)
+    return data
+
+
+def format_catalog_dict(filename):
+    data = read_file(filename)
+    for key, value in data.items():
+        print(key, ':', value, sep='')
+
+
+def format_catalog_list(filename):
+    data = read_file(filename)
+    for i in data:
+        print(i, sep='')
+
+SBAG = []
 
 def print_hello_username():
     name = input('Enter your name: ')
@@ -28,18 +43,13 @@ def get_menu():
 
 def make_choice(shopping: int) -> None: 
     if shopping == 1:
-        format_catalog()
+        format_catalog_dict("app/products.json")
     elif shopping == 2:
         make_order()
     elif shopping == 3:
         show_sbag()   
     elif shopping == 4:
         exit() 
-    
-
-def format_catalog():
-    for product_name in PRODUCTS:
-        print(product_name, '-', PRODUCTS[product_name])
 
 
 def add_item():
@@ -49,14 +59,14 @@ def add_item():
 
 
 def make_order():
-    format_catalog()
+    read_file("app/products.json")
     add_item()  
 
 
 def count_sbag_sum():
     final_sum=0
-    for i in SBAG:
-        final_sum += PRODUCTS.get(i)
+    for i in read_file("app/sbag.json"):
+        final_sum += read_file("app/products.json").get(i)
     print('Final purchase cost is {}.Thank you!'.format(final_sum))
 
 
