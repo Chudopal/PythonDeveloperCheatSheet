@@ -2,5 +2,5 @@ Podkas Kristina
 Stationary_Store
 
 json:
-- PRODUCTS
-- CHOSEN_PRODUCTS
+- products
+- sbag
