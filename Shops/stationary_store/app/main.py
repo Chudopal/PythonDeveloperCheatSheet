@@ -13,6 +13,19 @@ def read_file(filename):
     return data
 
 
+def add_info_file(filename, product):
+    with open(filename) as file: 
+        data = json.load(file)
+    data.append(product) 
+    with open(filename, "w") as file:
+        json.dump(data, file)
+
+
+def clean_file(filename):
+    name = open(filename, "w")
+    name.write("[]")
+    name.close()
+
 def format_catalog_dict(filename):
     data = read_file(filename)
     for key, value in data.items():
@@ -24,7 +37,6 @@ def format_catalog_list(filename):
     for i in data:
         print(i, sep='')
 
-SBAG = []
 
 def print_hello_username():
     name = input('Enter your name: ')
@@ -54,8 +66,8 @@ def make_choice(shopping: int) -> None:
 
 def add_item():
     product = input('Please add a product name to sbag(one by one): ')
-    SBAG.append(product)
-    print('Products added to SBAG. To add more back to order page')
+    add_info_file("app/sbag.json", product)
+    print('Product added to SBAG. To add more back to order page')
 
 
 def make_order():
@@ -71,7 +83,7 @@ def count_sbag_sum():
 
 
 def show_sbag():
-    print(*SBAG)
+    format_catalog_list("app/sbag.json")
     count_sbag_sum()
 
 
