@@ -42,6 +42,9 @@ class Storage:
         stored_data.pop(item)
         self.data.save(stored_data)
 
+    def clear_data(self):
+        self.data.save({})
+
 
 # ----------------- #
 # DOMAIN LAYER #
@@ -89,6 +92,9 @@ class OrdersHandler:
         processed_order = self._process_order(item, amount, price)
         self.orders.add_item(processed_order)
 
+    def clear_order(self):
+        self.orders.clear_data()
+
     def _process_order(self, item: str, amount: int, price: float) -> dict[str: dict[str: float, str: int]]:
         item_from_orders = self._get_item(item)
         new_amount = item_from_orders.get('amount') + amount
@@ -133,7 +139,6 @@ class ProductsHandler:
 
     def get_product(self, name: str) -> dict:
         product = None
-        # filter(lambda x: x.get(name), self.products.values())  # TODO: check or delete
         for category in self.products.values():
             product = category.get(name)
             if product:
@@ -176,6 +181,9 @@ class Shop:
             success = False
 
         return success
+
+    def cancel_order(self):
+        self.orders.clear_order()
 
     def get_orders(self) -> dict:
         return self.orders.get_orders()
@@ -320,10 +328,8 @@ class IOController:
 
 class ShopApplication:
 
-    def __init__(self, pizzas: str = "pizzas.json", orders: str = "ordered_pizzas.json"):
-        self.orders_storage = Storage(FilesHandler(orders))
-        self.pizzas_storage = Storage(FilesHandler(pizzas))
-        self.pizzeria = Shop(self.pizzas_storage, self.orders_storage)
+    def __init__(self, shop: Shop):
+        self.pizzeria = shop
         self.console = ConsoleView
         self.io = IOController
 
@@ -349,7 +355,7 @@ class ShopApplication:
         error_message = self.console.get_error_message(error)
         self.io.print_output(error_message)
 
-    def menu_input_controller(self) -> int:
+    def _menu_input_controller(self) -> int:
         raw_user_input = self.io.receive_input(self.console.get_input_message('action'))
         return self.io.validate_user_action(raw_user_input)
 
@@ -376,12 +382,12 @@ class ShopApplication:
         self.io.print_output(result)
 
     def clear_orders_controller(self):
-        pass
+        self.pizzeria.cancel_order()
 
     def run_app(self):
         while True:
             self.io.print_output(self.console.show_menu())
-            action = self.menu_input_controller()
+            action = self._menu_input_controller()
             self._get_action().get(action, self._show_error_message)()
 
 
@@ -390,5 +396,8 @@ class AdminShopApplication(ShopApplication):
 
 
 if __name__ == '__main__':
-    mega_pizzeria = ShopApplication()
-    mega_pizzeria.run_app()
+    pizza_storage = Storage(FilesHandler("pizzas.json"))
+    orders_storage = Storage(FilesHandler("ordered_pizzas.json"))
+    mega_pizzeria = Shop(pizza_storage, orders_storage)
+    app = ShopApplication(mega_pizzeria)
+    app.run_app()
