@@ -32,14 +32,22 @@ class Storage:
     def get_data(self) -> dict:
         return self.data.read()
 
-    def add_item(self, new_item):
+    def add_item(self, new_item: dict):
         stored_data = self.get_data()
         stored_data.update(new_item)
         self.data.save(stored_data)
 
-    def remove_item(self, item):
+    def remove_item(self, category: str, item: str):
         stored_data = self.get_data()
-        stored_data.pop(item)
+        stored_data.get(category).pop(item)
+        self.data.save(stored_data)
+
+    def add_item_category(self, new_category: dict[str: dict]):
+        self.add_item(new_category)
+
+    def remove_item_category(self, category: str):
+        stored_data = self.get_data()
+        stored_data.pop(category)
         self.data.save(stored_data)
 
     def clear_data(self):
@@ -59,25 +67,27 @@ class Product:
         self.description = description
 
     def get_info(self) -> dict[str: any]:
-        return {'name': self.name,
-                'category': self.category,
-                'price': self.price,
-                'description': self.description
-                }
+        return {
+            'name': self.name,
+            'category': self.category,
+            'price': self.price,
+            'description': self.description
+        }
 
 
-class Pizza(Product):
+class PizzaProduct(Product):
     def __init__(self, category: str, name: str, price: float, calories: int, description: str = ''):
         self.calories = calories
         super().__init__(category, name, price, description)
 
     def get_info(self) -> dict[str: any]:
-        return {'name': self.name,
-                'category': self.category,
-                'price': self.price,
-                'description': self.description,
-                'calories': self.calories
-                }
+        return {
+            'name': self.name,
+            'category': self.category,
+            'price': self.price,
+            'description': self.description,
+            'calories': self.calories
+        }
 
 
 class OrdersHandler:
@@ -129,7 +139,7 @@ class ProductsHandler:
 
     def remove_product(self, product: Product):
         self.products.get(product.category).pop(product.name)
-        self.data_at_storage.remove_item(product.name)
+        self.data_at_storage.remove_item(product.category, product.name)
 
     def remove_category(self, category: str):
         pass
@@ -165,11 +175,31 @@ class PizzaProductsHandler(ProductsHandler):
     def get_description(self, pizza: str) -> str:
         return self.get_product(pizza).get('description')
 
+    def add_product(self, product: PizzaProduct):
+        product_category = product.category
+        new_product = {
+            product.name.upper(): {
+                'price': product.price,
+                'calories': product.calories,
+                'description': product.description
+            }
+        }
+        self.products.get(product_category).update(new_product)
+        self.data_at_storage.add_item(self.products)
+
+    def remove_product(self, product: list):
+        self.products.get(product[0].upper()).pop(product[1].upper())
+        self.data_at_storage.remove_item(product[0], product[1])
+
+    def add_category(self, category: str):
+        self.products[category.upper()] = {}
+        self.data_at_storage.add_item_category({category.upper(): {}})
+
 
 class Shop:
 
     def __init__(self, goods: Storage, orders: Storage):
-        self.goods = ProductsHandler(goods)
+        self.goods = PizzaProductsHandler(goods)
         self.orders = OrdersHandler(orders)
 
     def make_order(self, product_name: str, amount: int) -> bool:
@@ -198,12 +228,16 @@ class Shop:
         return total_sum
 
 
-class ShopAdmin(Shop):
+class AdminShop(Shop):
 
-    def add_product(self, product: Product):
-        self.goods.add_product(product)
+    def add_product(self, product: Product or PizzaProduct):
+        if self.goods.get_products_in_category(product.category):
+            self.goods.add_product(product)
+        else:
+            self.goods.add_category(product.category)
+            self.goods.add_product(product)
 
-    def remove_product(self, product: Product):
+    def remove_product(self, product: list):
         self.goods.remove_product(product)
 
 
@@ -223,6 +257,16 @@ class ConsoleView:
                           '5. Quit program'
 
     @staticmethod
+    def get_input_message(key: str) -> str:
+        messages = {
+            "action": ">>> ",
+            "make_order": "What pizza would you like to order? (pizza [amount]): ",
+            "add_pizza": "Add pizza: (category, name, price, calories, [description]) ",
+            "remove_pizza": "What pizza would you want to remove from storage (category, name): "
+        }
+        return messages.get(key)
+
+    @staticmethod
     def get_error_message(error: str) -> str:
         errors = {
             'action_error': 'You choose wrong action. Try again',
@@ -232,12 +276,14 @@ class ConsoleView:
         return errors.get(error)
 
     @staticmethod
-    def get_input_message(key: str) -> str:
+    def get_success_message(message: str, arg: str = '') -> str:
         messages = {
-            "action": ">>> ",
-            "make_order": "What pizza would you like to order? (pizza [amount]): "
+            'delete_success': 'Your order has been cleared!',
+            'order_success': f'{arg} pizza added to your order',
+            'add_success': f'{arg} pizza added to storage',
+            'remove_success': f'{arg} pizza removed from storage'
         }
-        return messages.get(key)
+        return messages.get(message)
 
     @staticmethod
     def validate_order(order: list[str]) -> dict:
@@ -277,25 +323,16 @@ class ConsoleView:
 
 class AdminConsoleView(ConsoleView):
 
-    def show_menu(self) -> str:
+    @staticmethod
+    def show_menu() -> str:
         return '-' * 30 + '\nPlease choose an action:\n' \
                           '1. List of pizzas\n' \
                           '2. Order pizza\n' \
                           '3. Show order\n' \
                           '4. Clear orders\n' \
-                          '5. Add pizza to storage' \
-                          '6. Remove pizza from storage' \
+                          '5. Add pizza to storage\n' \
+                          '6. Remove pizza from storage\n' \
                           '7. Quit program'
-
-    @staticmethod
-    def get_input_message(key: str) -> str:
-        messages = {
-            "action": ">>> ",
-            "make_order": "What pizza would you like to order? (pizza [amount]): ",
-            "add_pizza": "Add pizza: (category, name, price, calories, [description]) ",
-            "remove_pizza": "What pizza would you want to remove from storage: "
-        }
-        return messages.get(key)
 
 
 # ----------------- #
@@ -324,6 +361,13 @@ class IOController:
     def validate_user_input(raw_user_input: str) -> list:
         user_input = raw_user_input.strip().upper().split(" ")
         return user_input
+
+    @staticmethod
+    def validate_admin_input(raw_admin_input: str) -> list:
+        admin_input = raw_admin_input.strip().split(",")
+        admin_input[0] = admin_input[0].upper()
+        admin_input[1] = admin_input[1].upper()
+        return admin_input
 
 
 class ShopApplication:
@@ -370,7 +414,7 @@ class ShopApplication:
         order = self.console.validate_order(user_input)
         result = self.pizzeria.make_order(order.get('product'), order.get('quantity'))
         if result:
-            output = f'{order.get("product")} pizza added to your order'
+            output = self.console.get_success_message('order_success', order.get("product"))
         else:
             output = self.console.get_error_message('no_pizza_error')
         self.io.print_output(output)
@@ -392,12 +436,50 @@ class ShopApplication:
 
 
 class AdminShopApplication(ShopApplication):
-    pass
+
+    def __init__(self, shop: AdminShop):
+        super().__init__(shop)
+        self.console = AdminConsoleView
+        self.pizzeria = shop
+
+    def _get_action(self) -> dict[int, callable]:
+        return {
+            1: self.show_all_pizzas_controller,
+            2: self.order_pizza_controller,
+            3: self.show_orders_controller,
+            4: self.clear_orders_controller,
+            5: self.add_new_pizza_controller,
+            6: self.remove_pizza_controller,
+            7: quit
+        }
+
+    def run_app(self):
+        while True:
+            self.io.print_output(self.console.show_menu())
+            action = self._menu_input_controller()
+            self._get_action().get(action, self._show_error_message)()
+
+    def add_new_pizza_controller(self):
+        raw_admin_input = self.io.receive_input(self.console.get_input_message('add_pizza'))
+        admin_input = self.io.validate_admin_input(raw_admin_input)
+        pizza = self._create_pizza(admin_input)
+        self.pizzeria.add_product(pizza)
+        self.io.print_output(self.console.get_success_message('add_success', pizza.name))
+
+    def remove_pizza_controller(self):
+        raw_admin_input = self.io.receive_input(self.console.get_input_message('remove_pizza'))
+        admin_input = self.io.validate_admin_input(raw_admin_input)
+        self.pizzeria.remove_product(admin_input)
+        self.io.print_output(self.console.get_success_message('remove_success', admin_input[1]))
+
+    @staticmethod
+    def _create_pizza(raw_data: list) -> PizzaProduct:
+        return PizzaProduct(*raw_data)
 
 
 if __name__ == '__main__':
     pizza_storage = Storage(FilesHandler("pizzas.json"))
     orders_storage = Storage(FilesHandler("ordered_pizzas.json"))
-    mega_pizzeria = Shop(pizza_storage, orders_storage)
-    app = ShopApplication(mega_pizzeria)
+    mega_pizzeria = AdminShop(pizza_storage, orders_storage)
+    app = AdminShopApplication(mega_pizzeria)
     app.run_app()
