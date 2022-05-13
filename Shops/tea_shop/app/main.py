@@ -1,19 +1,28 @@
-CATALOG = {
-"White tea": 2,
-"Green tea": 3,
-"Red tea": 1,
-"Black tea": 4
-}
+import json
 
-
-ADD_CATALOG = []
 
 
 def get_all_catalog():
-    return CATALOG
+    data = read_file("app\catalog.json", "catalog")
+    return data
+    
+
+
+def read_file(path, name):
+    with open(path) as file:
+        data = json.load(file)
+    return data.get(name)
+
+
+def write_file(path, data):
+    with open(path, "w") as file:
+        data = json.dump(data, file)
+
 
 def get_new_catalog():
-    return ADD_CATALOG
+    data = read_file("app\catalog.json", "add_catalog")
+    return data
+ 
  
 def format():
     ...
@@ -29,10 +38,10 @@ def add_product(add):
     
 def summa(sum_list):
     coast_list= [] 
-    for x in ADD_CATALOG: 
-        for item in CATALOG.keys(): 
+    for x in get_new_catalog: 
+        for item in get_all_catalog.keys(): 
             if x == item: 
-                y = CATALOG[item] 
+                y = get_all_catalog[item] 
                 coast_list.append(y) 
 
 
@@ -58,10 +67,10 @@ def make_choice(choice: int):
         result = products
     elif choice == 2:
         product =  get_new_catalog
-        result = add_product(ADD_CATALOG)
+        result = add_product(get_new_catalog())
         # print(ADD_CATALOG)
     elif choice == 3:
-        products = summa(ADD_CATALOG)
+        products = summa(get_new_catalog())
         result = products
     return result
 
