@@ -26,6 +26,7 @@ def clean_file(filename):
     name.write("[]")
     name.close()
 
+
 def format_catalog_dict(filename):
     data = read_file(filename)
     for key, value in data.items():
@@ -49,7 +50,8 @@ def get_menu():
         '1. Product catalog \n'
         '2. Order page \n'
         '3. S-Bag \n'
-        '4. Exit \n'
+        '4. Clean S-Bag \n'
+        '5. Exit \n'
         )
 
 
@@ -60,7 +62,9 @@ def make_choice(shopping: int) -> None:
         make_order()
     elif shopping == 3:
         show_sbag()   
-    elif shopping == 4:
+    elif shopping == 4: 
+        clean_file("app/sbag.json")
+    elif shopping == 5:
         exit() 
 
 
@@ -94,7 +98,7 @@ def exit():
 def run():
     print_hello_username()
     shopping = None
-    while shopping != 4:
+    while shopping != 5:
         print(get_menu())
         shopping = int(input('Choose an item: '))
         make_choice(shopping)
