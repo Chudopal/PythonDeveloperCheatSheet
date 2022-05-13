@@ -1,12 +1,6 @@
 import json
 
 
-# ---------------- #
-# STORAGES #
-# ---------------- #
-
-# at external files now
-
 # ----------------- #
 # DATA ACCESS LAYER #
 # ----------------- #
@@ -55,41 +49,32 @@ class Storage:
 
 class Product:
 
-    def __init__(self, category: str, name: str, price: float):
+    def __init__(self, category: str, name: str, price: float, description: str):
         self.category = category
         self.name = name
         self.price = price
+        self.description = description
 
-    def get_name(self) -> str:
-        return self.name
-
-    def get_price(self) -> float:
-        return self.price
-
-    def product_info(self) -> list[str, dict]:
-        return [self.category, {
-            self.name: {
-                'price': self.price
-            }
-        }
-                ]
+    def get_info(self) -> dict[str: any]:
+        return {'name': self.name,
+                'category': self.category,
+                'price': self.price,
+                'description': self.description
+                }
 
 
 class Pizza(Product):
     def __init__(self, category: str, name: str, price: float, calories: int, description: str = ''):
         self.calories = calories
-        self.description = description
-        super().__init__(category, name, price)
+        super().__init__(category, name, price, description)
 
-    def product_info(self) -> list[str, dict]:
-        return [self.category, {
-            self.name: {
+    def get_info(self) -> dict[str: any]:
+        return {'name': self.name,
+                'category': self.category,
                 'price': self.price,
-                'calories': self.calories,
-                'description': self.description
-            }
-        }
-                ]
+                'description': self.description,
+                'calories': self.calories
+                }
 
 
 class OrdersHandler:
@@ -126,14 +111,19 @@ class ProductsHandler:
         return self.products
 
     def add_product(self, product: Product):
-        product_category = product.product_info()[0]
-        product_data = product.product_info()[1]
-        self.products.get(product_category).update(product_data)
+        product_category = product.category
+        new_product = {
+            product.name: {
+                'price': product.price,
+                'description': product.description
+            }
+        }
+        self.products.get(product_category).update(new_product)
         self.data_at_storage.add_item(self.products)
 
     def remove_product(self, product: Product):
-        self.products.get(product.product_info()[0]).pop(product.get_name())
-        self.data_at_storage.remove_item(product.get_name())
+        self.products.get(product.category).pop(product.name)
+        self.data_at_storage.remove_item(product.name)
 
     def remove_category(self, category: str):
         pass
@@ -143,7 +133,7 @@ class ProductsHandler:
 
     def get_product(self, name: str) -> dict:
         product = None
-        # filter(lambda x: x.get(name), self.products.values())
+        # filter(lambda x: x.get(name), self.products.values())  # TODO: check or delete
         for category in self.products.values():
             product = category.get(name)
             if product:
@@ -162,13 +152,13 @@ class ProductsHandler:
         return result
 
 
-class PizzasStorageHandler(ProductsHandler):
+class PizzaProductsHandler(ProductsHandler):
 
-    def get_calories(self, product: str) -> int:
-        return self.get_product(product).get('calories')
+    def get_calories(self, pizza: str) -> int:
+        return self.get_product(pizza).get('calories')
 
-    def get_description(self, product: str) -> str:
-        return self.get_product(product).get('description')
+    def get_description(self, pizza: str) -> str:
+        return self.get_product(pizza).get('description')
 
 
 class Shop:
