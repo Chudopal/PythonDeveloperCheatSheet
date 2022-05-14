@@ -9,17 +9,18 @@
 Выбор товара - это ввод пользователем строки названия товара
 """
 
-from typing import List
+import json
+from typing import Dict, List
 
 
-PRODUCTS = [
-        ["Мяч", 100],
-        ["Бутсы", 200],
-        ["Гетры", 15],
-        ["Шорты", 60],
-        ["Майка", 70], 
-        ["Щетки", 25]
-]
+# PRODUCTS = [
+#         ["Мяч", 100],
+#         ["Бутсы", 200],
+#         ["Гетры", 15],
+#         ["Шорты", 60],
+#         ["Майка", 70], 
+#         ["Щетки", 25]
+# ]
 BASKET = []
 
 def format_product(product_list: any) -> List:
@@ -32,8 +33,17 @@ def menu() -> str:
     "3. Посмотреть сумму покупки.")
 
 def get_products() -> str:
-    return PRODUCTS
-    
+    with open("app\storage.json") as json_file:
+        data = json.load(json_file)
+        return data.get("products")
+
+def adaptor(data: Dict) -> List:
+    result = []
+    for product in data:
+        result = list(product.items())
+    return result
+
+print(adaptor(get_products()))
 
 def make_choice(product_list) -> List:
     input_massage = input("Выберите товар: ")
@@ -50,7 +60,6 @@ def perchoice():
         total += i[1]
     result = result + f'{total} рублей - Общая сумма покупок' + "\n"
     print(result)
-    return result
 
 def run() -> None:    
     choice = None
