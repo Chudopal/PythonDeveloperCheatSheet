@@ -1,33 +1,47 @@
 import json
-
-path_json = '../shop_invent.json'
-
-buy_products = []
-
 from typing import List, Dict
 
-SHOP = []
+PATH_JSON = '../shop_invent.json'
+WRITE_JSON = '../shopping_card.json'
 
-def get_all_product() -> List:
+BUY_PRODUCTS = []
+
+SHOP = {}
+
+
+def get_all_product() -> Dict:
+    if not SHOP:
+        SHOP.update(read_file())
     return SHOP
 
+
 def read_file() -> List:
-    with open(path_json, 'r', encoding='utf8') as file:
-        return  json.load(file)
+    with open(PATH_JSON, 'r', encoding='utf8') as file:
+        return json.load(file)
+
+
+def write_file(path, data) -> None:
+    with open(path, 'w') as file:
+        json.dump(data, file)
+
 
 def add_product(product_name: str) -> None:
-    buy_products.append(SHOP.get(product_name))
+    BUY_PRODUCTS.append(get_all_product().get(product_name))
+    write_file(WRITE_JSON, BUY_PRODUCTS)
+
 
 def get_buy_product() -> List:
-    total_price = sum(buy_products)
+    total_price = sum(BUY_PRODUCTS)
     result = (f'Your purchase amount is {total_price} dollars')
     return result
+
 
 def format_product(product_list: Dict) -> str:
     return '\n'.join([
         f'{product_name} - {cost} dollars'
         for product_name, cost in product_list.items()
     ])
+
 
 def menu() -> str:
     return (
@@ -37,6 +51,7 @@ def menu() -> str:
     '3 - view purchase amount\n' +
     '4 - complete your purchases.'
     )
+
 
 def make_choice(choice: int):
     result = ""
@@ -52,10 +67,9 @@ def make_choice(choice: int):
         result = get_buy_product()
     elif choice == 4:
         result = get_buy_product()
-        buy_products.clear()
+        BUY_PRODUCTS.clear()
     return result
 
-SHOP = read_file()
 
 def run() -> None:
     choice = None
