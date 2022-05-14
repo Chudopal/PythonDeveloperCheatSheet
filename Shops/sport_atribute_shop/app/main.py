@@ -33,14 +33,15 @@ def menu() -> str:
     "3. Посмотреть сумму покупки.")
 
 def get_products() -> str:
-    with open("app\storage.json") as json_file:
+    with open("app\storage.json", encoding='utf-8') as json_file:
         data = json.load(json_file)
-        return data.get("products")
+        return data.get("products") 
 
 def adaptor(data: Dict) -> List:
     result = []
     for product in data:
-        result = list(product.items())
+        product = list(product.values())
+        result.append(product)
     return result
 
 print(adaptor(get_products()))
@@ -67,11 +68,11 @@ def run() -> None:
         print(menu())
         choice = int(input("Выберите пункт меню: "))
         if choice == 1:
-            product = get_products()
+            product = adaptor(get_products())
             massage = format_product(product)
             print(massage)
         elif choice == 2:
-            make_choice(PRODUCTS)
+            make_choice(adaptor(get_products()))
             print("Товар добавлен в корзину")
             
         elif choice == 3:
