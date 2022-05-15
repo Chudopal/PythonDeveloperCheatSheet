@@ -15,7 +15,7 @@ def list_of_services():
     with open("app\list_services.json", encoding='utf-8') as file:
         data  = json.load(file)
     return data["list_of_services"]
-# print(list_of_services())
+
 
 # функция которая приводит и показывает список услуг в красивом виде
 
@@ -23,9 +23,8 @@ def edited_list_of_services(data):
     result = ''
     for i in data:
         result += (f"{i['service_number']}. {i['name_of_services']} - {i['price_of_service']}р.\n")
-    return result
-# print(edited_list_of_services(list_of_services()))
-
+    return result    
+    
 
 # функция которая показывает выбранные услуги и их стоимость по ключу
 
@@ -33,7 +32,7 @@ def basket_of_services():
     with open("app\services_basket.json", encoding='utf-8') as file:
         data  = json.load(file)
     return data["list_of_services"]
-# print(basket_of_services())
+
 
 # функция которая считает сумму json файла
 
@@ -41,31 +40,50 @@ def summa(data):
     counter = 0
     for i in data:
        counter += i['price_of_service']
-    return f'Итого: {counter}'   
-# print(summa(list_of_services()))
+    return f'Сумма всех услуг = {counter}р.'   
+
 
 # функция  вызывает функцию красивого виде + ф-цию суммы
 
 def format_basket(data):
     return edited_list_of_services(data) + summa(data)
-# print(format_basket(basket_of_services()))
 
 
 # функция выбора услуг(непонятная)
  
 def adding_service():
-  ...
-  
+    print(edited_list_of_services(list_of_services()))
+    choice = int(input("Выберите услугу:"))
+    a = list_of_services()
+    b = basket_of_services()
+    b.append(a[choice -1 ])
+    b = {"list_of_services":b}
+    with open("app\services_basket.json", "w") as file:
+        json.dump(b, file)
+    return ("Услуга успешно добавлена")
+
+
+# функция открытия файла для записи
+
+def save_bag(list_of_services):
+    with open("app\services_basket.json", "w") as file:
+        json.dump(list_of_services, file)
+
+
 # функция навигатор по меню
 
 def make_main_choice(choice):
     result = ""
     if choice == 1:
-        result = edited_list_of_services()
+        articles = list_of_services()
+        message = edited_list_of_services(articles)
+        result = message
     elif choice == 2:
         result = adding_service()
     elif choice == 3:
-        result = format_basket()
+        articles = basket_of_services()
+        message = format_basket((articles))
+        result = message
     elif choice != 4:
         result = 'Неверный выбор'
     return result
@@ -79,6 +97,16 @@ def menu():
         2 - Выбор услуг
         3 - Посмотреть список и стоимость выбранных услуг
         4 - Выход
-    """ + "\n" + "Выберите действие: "
-    return int(input(message))
+    """ + "\n"
+    return message
+    
 
+def run() -> None:
+    choice = None
+    while choice != 4:
+        print(menu())
+        choice = int(input("Введите пункт меню: "))
+        message = make_main_choice(choice)
+        print(message)
+
+run()
