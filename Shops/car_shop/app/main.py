@@ -15,10 +15,12 @@ def get_cars_bag():
 def choice_cars():
     choice = None
     while choice != 0:
+        message = ""
         for i in enumerate(get_cars_from_file()['cars'], 1):
             tamplate = f'{i[0]}. model: {i[1]["model"]}, price: ${i[1]["price"]}'
-            print(tamplate)
-        print('0 - Назад')
+            message += tamplate + '\n'
+        message += "0 - Назад"
+        print(message)
         choice = add_to_bag()
 
 
@@ -73,13 +75,14 @@ def main_menu():
         2 - Посмотреть корзину
         """)
         choice = int(input('Выберите действие: '))
+        
         if choice == 1:
             choice_cars()
         elif choice == 2:
             show_bag()
-        elif choice == 0:
-            print('Пока')
-        else:
+        elif choice not in [0,1,2]:
             print('Неверный выбор')
+
+    print('Пока')
 
 main_menu()
