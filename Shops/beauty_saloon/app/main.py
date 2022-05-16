@@ -40,12 +40,12 @@ def format_basket(data):
 def adding_service():
     print(edited_list_of_services(list_of_services()))
     choice = int(input("Выберите услугу:"))
-    a = list_of_services()
-    b = basket_of_services()
-    b.append(a[choice -1 ])
-    b = {"list_of_services":b}
+    services = list_of_services()
+    basket = basket_of_services()
+    basket.append(services[choice -1 ])
+    basket = {"list_of_services":basket}
     with open("app\services_basket.json", "w") as file:
-        json.dump(b, file)
+        json.dump(basket, file)
     return ("Услуга успешно добавлена")
 
 
