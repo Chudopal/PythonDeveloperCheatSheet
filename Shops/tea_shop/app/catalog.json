@@ -1,0 +1,21 @@
+{
+    "catalog": [
+        {
+            "product_name": "White tea",
+            "price": 2
+        },
+        {
+            "product_name": "Green tea",
+            "price": 3
+        },
+        {
+            "product_name": "Red tea",
+            "price": 1
+        },
+        {
+            "product_name": "Black tea",
+            "price": 4
+        }
+    ],
+    "add_catalog": []  
+}

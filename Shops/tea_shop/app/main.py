@@ -1,11 +1,7 @@
 import json
 
 
-
-def get_all_catalog():
-    data = read_file("app\catalog.json", "catalog")
-    return data
-    
+add_catalog = []
 
 
 def read_file(path, name):
@@ -19,59 +15,71 @@ def write_file(path, data):
         data = json.dump(data, file)
 
 
-def get_new_catalog():
-    data = read_file("app\catalog.json", "add_catalog")
+def format_file(data):  
+    result = {}
+    for products in data:
+        result[products.get("product_name")] = products.get("price")
+    return result
+
+
+def get_all_catalog():
+    data = read_file("app\catalog.json", "catalog")
     return data
+
+
+def get_new_catalog(add_catalog):
+    data = write_file("app\Add_catalog.json", add_catalog)
+    
  
- 
-def format():
-    ...
+def format(product_list):
+    return "\n".join([
+        f"{product_name} costs {price} BYN" for product_name, price in product_list.items()
+    ])
 
 
-def add_product(add):
-    product_name = input("What do you want to buy? ") 
-    for i in product_name: 
-        add.append(product_name)
-        return "Product added in bag"
-
+def add_product(product_name):
+    catalog = get_all_catalog()
+    for product in catalog:
+        item_price = product["price"]
+        item_product = product["product_name"]
+        if product_name == item_product:
+            result = {item_product: item_price}
+            add_catalog.append(result)
+            return "Product added in bag"
         
     
-def summa(sum_list):
+def summa():
     coast_list= [] 
-    for x in get_new_catalog: 
-        for item in get_all_catalog.keys(): 
-            if x == item: 
-                y = get_all_catalog[item] 
-                coast_list.append(y) 
-
-
-                sum_list = sum(coast_list) 
-
-    return sum_list 
-
+    for product in add_catalog:
+        result = list(product.values())
+        for product in result:
+            coast_list.append(product)
+    total_sum = sum(coast_list)
+    return total_sum
+   
 
 def menu():
     return(
         "*"*50 + "\n" +
         "1. Viewing catalog\n" +
         "2. Add product\n" + 
-        "3. Calculate the amount"
+        "3. Calculate the amount\n" +
+        "4. Exit"
     )
 
 
 def make_choice(choice: int): 
     result = ""
-    products= ""
     if choice == 1:
-        products = get_all_catalog() 
-        result = products
+        product = format_file(get_all_catalog())
+        message = format(product)
+        result = message
     elif choice == 2:
-        product =  get_new_catalog
-        result = add_product(get_new_catalog())
-        # print(ADD_CATALOG)
+        product_name = input("What do you want to buy? ") 
+        result = add_product(product_name)
+        # print(add_catalog)
     elif choice == 3:
-        products = summa(get_new_catalog())
-        result = products
+        result = summa()
     return result
 
 
@@ -79,7 +87,7 @@ def run():
     choice = None 
     while choice != 4:
         print(menu())
-        choice = int(input("Input number: ")) 
+        choice = int(input("*"*50 + "\n" +"Input number: ")) 
         message = make_choice(choice) 
         print(message)
 
