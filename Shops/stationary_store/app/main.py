@@ -14,15 +14,13 @@ def read_file(filename):
 
 
 def add_info_file(filename, product):
-    with open(filename) as file: 
-        data = json.load(file)
+    data = read_file(filename)
     data.append(product) 
-    with open(filename, "w") as file:
-        json.dump(data, file)
+    write_file(data, filename)
 
 
 def clean_file(filename):
-    write_file([],"app/sbag.json")
+    write_file([], "app/sbag.json")
 
 
 def format_catalog_dict(filename):
