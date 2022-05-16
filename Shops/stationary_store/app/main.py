@@ -64,15 +64,10 @@ def make_choice(shopping: int) -> None:
         exit() 
 
 
-def add_item():
+def make_order():
     product = input('Please add a product name to sbag(one by one): ')
     add_info_file("app/sbag.json", product)
-    print('Product added to SBAG. To add more back to order page')
-
-
-def make_order():
-    read_file("app/products.json")
-    add_item()  
+    print('Product added to SBAG. To add more back to order page') 
 
 
 def count_sbag_sum():
