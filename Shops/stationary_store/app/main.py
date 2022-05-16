@@ -22,9 +22,7 @@ def add_info_file(filename, product):
 
 
 def clean_file(filename):
-    name = open(filename, "w")
-    name.write("[]")
-    name.close()
+    write_file([],"app/sbag.json")
 
 
 def format_catalog_dict(filename):
