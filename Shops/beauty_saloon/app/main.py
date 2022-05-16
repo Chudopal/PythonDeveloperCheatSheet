@@ -7,17 +7,11 @@
 
 import json
 
-# знаю что комменты нельзя. но мы же учимся:)
-
-# функция которая показывает список услуг по ключу
-
 def list_of_services():
     with open("app\list_services.json", encoding='utf-8') as file:
         data  = json.load(file)
     return data["list_of_services"]
 
-
-# функция которая приводит и показывает список услуг в красивом виде
 
 def edited_list_of_services(data):
     result = ''
@@ -26,15 +20,11 @@ def edited_list_of_services(data):
     return result    
     
 
-# функция которая показывает выбранные услуги и их стоимость по ключу
-
 def basket_of_services():
     with open("app\services_basket.json", encoding='utf-8') as file:
         data  = json.load(file)
     return data["list_of_services"]
 
-
-# функция которая считает сумму json файла
 
 def summa(data):
     counter = 0
@@ -43,14 +33,10 @@ def summa(data):
     return f'Сумма всех услуг = {counter}р.'   
 
 
-# функция  вызывает функцию красивого виде + ф-цию суммы
-
 def format_basket(data):
     return edited_list_of_services(data) + summa(data)
 
 
-# функция выбора услуг(непонятная)
- 
 def adding_service():
     print(edited_list_of_services(list_of_services()))
     choice = int(input("Выберите услугу:"))
@@ -62,15 +48,6 @@ def adding_service():
         json.dump(b, file)
     return ("Услуга успешно добавлена")
 
-
-# функция открытия файла для записи
-
-def save_bag(list_of_services):
-    with open("app\services_basket.json", "w") as file:
-        json.dump(list_of_services, file)
-
-
-# функция навигатор по меню
 
 def make_main_choice(choice):
     result = ""
@@ -88,8 +65,6 @@ def make_main_choice(choice):
         result = 'Неверный выбор'
     return result
 
-
-# функция первого собщения меню
 
 def menu():
     message = """
