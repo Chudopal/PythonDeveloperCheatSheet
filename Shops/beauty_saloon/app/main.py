@@ -1,4 +1,4 @@
-"""Программа для салона красоты (Лэшмейкера и бровиста).
+"""Программа для салона красоты - Armovir.
 Возможности:
 - просмотреть все услуги
 - добавить услугу в корзину
@@ -15,8 +15,8 @@ def list_of_services():
 
 def edited_list_of_services(data):
     result = ''
-    for i in data:
-        result += (f"{i['service_number']}. {i['name_of_services']} - {i['price_of_service']}р.\n")
+    for service_info in data:
+        result += (f"{service_info['service_number']}. {service_info['name_of_services']} - {service_info['price_of_service']}р.\n")
     return result    
     
 
@@ -28,8 +28,8 @@ def basket_of_services():
 
 def summa(data):
     counter = 0
-    for i in data:
-       counter += i['price_of_service']
+    for service_info in data:
+       counter += service_info['price_of_service']
     return f'Сумма всех услуг = {counter}р.'   
 
 
