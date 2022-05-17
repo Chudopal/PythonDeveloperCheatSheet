@@ -18,6 +18,11 @@ class Stock:
             bag = json.load(f)
         return bag
 
+
+    def save_bag(cars):
+        with open('bag.json', 'w') as f:
+            json.dump(cars, f)
+
 class Shop:
     def __init__(self, cars, total, bag):
         self.cars = cars
@@ -45,11 +50,6 @@ class Shop:
             cars['cars'].append(Stock.get_cars_from_file()['cars'][choice - 1])
             Shop.save_bag(cars)
         return choice
-
-
-    def save_bag(cars):
-        with open('bag.json', 'w') as f:
-            json.dump(cars, f)
 
 
     def show_bag():
