@@ -1,63 +1,53 @@
 import json
 
 class Stock:
-    def __init__(self, my_cars, bag, cars):
-        self.my_cars = my_cars
-        self.bag = bag
-        self.cars = cars
+    def __init__(self, filepath):
+        self.filepath = filepath
 
-
-    def get_cars_from_file():
-        with open('my_cars.json', 'r') as f:
+    def get_cars(self):
+        with open(self.filepath, 'r') as f:
             my_cars = json.load(f)
         return my_cars
-            
-            
-    def get_cars_bag():
-        with open('bag.json', 'r') as f:
-            bag = json.load(f)
-        return bag
 
-
-    def save_bag(cars):
-        with open('bag.json', 'w') as f:
+    def save_bag(self, cars):
+        with open(self.filepath, 'w') as f:
             json.dump(cars, f)
 
 class Shop:
-    def __init__(self, cars, total, bag):
-        self.cars = cars
-        self.total = total
-        self.bad = bag
 
+    def __init__(self, cars_stock, bag_stock):
+        self.cars_stock = cars_stock
+        self.bag_stock = bag_stock
 
-    def choice_cars():
+    def choice_cars(self):
         choice = None
         while choice != 0:
             message = ""
-            for i in enumerate(Stock.get_cars_from_file()['cars'], 1):
+            for i in enumerate(self.cars_stock.get_cars()['cars'], 1):
                 tamplate = f'{i[0]}. model: {i[1]["model"]}, price: ${i[1]["price"]}'
                 message += tamplate + '\n'
             message += "0 - Назад"
             print(message)
-            choice = Shop.add_to_bag()
+            choice = self.add_to_bag()
 
 
 
-    def add_to_bag():
+    def add_to_bag(self):
         choice = int(input('Выберите номер авто:'))
         if choice != 0:
-            cars = Stock.get_cars_bag()
-            cars['cars'].append(Stock.get_cars_from_file()['cars'][choice - 1])
-            Shop.save_bag(cars)
+            cars = self.bag_stock.get_cars()
+            cars['cars'].append(self.cars_stock.get_cars()['cars'][choice - 1])
+            self.bag_stock.save_bag(cars)
         return choice
 
 
-    def show_bag():
+    def show_bag(self):
         choice = None
         while choice != 0:
             total = 0
             count = 0
-            for i in Stock.get_cars_bag()['cars']:
+            cars = self.bag_stock.get_cars()
+            for i in cars['cars']:
                 count += 1
                 total += i["price"]
                 tamplate = f'{count}. model: {i["model"]}, price: ${i["price"]}'
@@ -66,21 +56,24 @@ class Shop:
             print('''
             0 - Вернуться в меню
             ''')
-            choice = Shop.del_bag()
+            choice = self.del_bag()
 
 
-    def del_bag():
+    def del_bag(self):
         choice = int(input('Выберите авто для удаления: '))
         if choice != 0:
-            bag = Stock.get_cars_bag()
+            bag = self.bag_stock.get_cars()
             bag.get("cars").pop(choice - 1)
             print('Авто успешно удалено!')
-            Shop.save_bag(bag)
+            self.bag_stock.save_bag(bag)
         return choice
 
 
 def main_menu():
     choice = None
+    cars_stock = Stock("my_cars.json")
+    bag_stock = Stock("bag.json")
+    shop = Shop(cars_stock=cars_stock, bag_stock=bag_stock)
     while choice != 0:
         print("""
         0 - Выход
@@ -90,9 +83,9 @@ def main_menu():
         choice = int(input('Выберите действие: '))
         
         if choice == 1:
-            Shop.choice_cars()
+            shop.choice_cars()
         elif choice == 2:
-            Shop.show_bag()
+            shop.show_bag()
         elif choice not in [0,1,2]:
             print('Неверный выбор')
 
