@@ -35,22 +35,6 @@ finally:
 print(data)
 
 
-class WrongInput(Exception):
-    pass
-
-product_list = [1,2,3,4]
-order_list = []
-
-
-index  = int(input("Enter index: ")) # неправильный ввод
-
-
-def add_product(index):
-    order_list.append(product_list[index]) # нет индекса
-    
-add_product("egg")
-print(order_list)
-
 def foo():
     1/0
 
@@ -67,6 +51,69 @@ try:
     fun()
 except ZeroDivisionError as e:
     print("На ноль делить нельзя!")
+
+
+# ДОБАВЛЕНИЕ ИСКЛЮЧЕНИЙ В ПРИМЕР С ПРОШЛОГО ЗАНЯТИЯ
+
+
+class AgeTooSmallException(Exception):
+    pass
+
+
+class TooLongNameException(Exception):
+    pass
+
+
+class Person:
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    @property # getter
+    def name(self):
+        return self._name
+    
+    @name.setter # setter
+    def name(self, name):
+        if len(name) > 10:
+            raise TooLongNameException(
+                "Имя должно быть меньше 10 символов"
+            )
+        self._name = name
+    
+
+    @property
+    def age(self):
+        return self._age
+
+    @age.setter
+    def age(self, age):
+        if age < 18:
+            raise AgeTooSmallException(
+                "Пользователь должен быть старше 18"
+            )
+        self._age = age
+
+    def __str__(self):
+        return f"name - {self._name}, age - {self._age}"
+
+    def __add__(self, persone):
+        return self._age + persone._age
+
+
+try:
+    p = Person("BOBsdfghjkjhgfdsdfghjkjhgfd", 18)
+except AgeTooSmallException as e:
+    print(e)
+except TooLongNameException as e:
+    print(e)
+
+p.name = "BOBBOBBOBBOBBOBBOBBOB"
+print(p.name)
+p1 = Person("Alice", 10)
+
+print(p+p1)
 
 
 
