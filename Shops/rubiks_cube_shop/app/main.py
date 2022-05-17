@@ -1,13 +1,4 @@
-from itertools import product
 import json
-
-# PRODUCT_RANGE = {
-#     "3x3": 1500,
-#     "4x4": 1200,
-#     "5x5": 1000,
-#     "2x2": 700
-# }
-
 
 
 class FileProcessing():
@@ -64,7 +55,7 @@ def add_purchase(purchase : dict, list_product: dict) -> dict:
     if price == None:
         print("Такого товара не существует!") 
     else:   
-        count = purchase.get(name_product) # вложенность слишком большая
+        count = purchase.get(name_product) 
     if count == None:
         purchase[name_product]= {"counter":1, "price":price}
     else:
@@ -74,12 +65,12 @@ def add_purchase(purchase : dict, list_product: dict) -> dict:
 
 def sum_purchase(list_purchase: dict) -> int:
     result = 0
-    for product_info in list_purchase.values(): # можно сделать мапом
+    for product_info in list_purchase.values():
         result += product_info["counter"] * product_info["price"]
     return result
 
 
-def main(): # слишком много логики, можно упростить
+def main(): 
     product_rang = FileProcessing("app/rubiks_cube_product_range.json")
     purchase_product_range = FileProcessing("app/purchase_range.json")
     list_product = product_rang.read()
@@ -105,7 +96,5 @@ def main(): # слишком много логики, можно упрости�
 
 main()
 
-# shop = Shop()
-# shop.main()
 
 
