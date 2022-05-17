@@ -88,14 +88,14 @@ class Repository(ABC):
 
     @abstractmethod
     def save(dog: Dog):
-        """This methis should save a dog."""
+        """This method should save a dog."""
 
 
 class Interface(ABC):
 
     @abstractmethod
     def send(message: str):
-        """This method represents data"""
+        """This method represents data."""
 
 
 class DogRepository:

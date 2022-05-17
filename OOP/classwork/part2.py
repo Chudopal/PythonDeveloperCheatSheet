@@ -122,7 +122,7 @@ try:
     p = Person("BOBsdfghjkjhgfdsdfghjkjhgfd", 18)
 except AgeTooSmallException as e:
     print(e)
-except TooLongNameExcaption as e:
+except TooLongNameException as e:
     print(e)
 
 p.name = "BOBBOBBOBBOBBOBBOBBOB"
