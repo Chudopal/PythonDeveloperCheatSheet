@@ -1,0 +1,20 @@
+{
+    "catalog": [
+        {
+            "id": "Sula Interactive History Park",
+            "price": 120
+        },
+        {
+            "id": "Tour of western Belarus",
+            "price": 75
+        },
+        {
+            "id": "Walks in Minsk",
+            "price": 55
+        },
+        {
+            "id": "Monuments of Mir and Nesvizh",
+            "price": 99
+        }
+    ]
+}
