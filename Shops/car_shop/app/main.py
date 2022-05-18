@@ -14,7 +14,6 @@ class Stock:
             json.dump(cars, f)
 
 class Shop:
-
     def __init__(self, cars_stock, bag_stock):
         self.cars_stock = cars_stock
         self.bag_stock = bag_stock
@@ -33,10 +32,15 @@ class Shop:
 
 
     def add_to_bag(self):
-        choice = int(input('Выберите номер авто:'))
+        choice = int(input('Выберите номер авто: '))
         if choice != 0:
             cars = self.bag_stock.get_cars()
-            cars['cars'].append(self.cars_stock.get_cars()['cars'][choice - 1])
+            try:
+                cars['cars'].append(self.cars_stock.get_cars()['cars'][choice - 1])
+            except IndexError as e:
+                print('Выберите авто из указанного списка!')
+            except ValueError as e:
+                print('Введите конкретное числовое значение!')
             self.bag_stock.save_bag(cars)
         return choice
 
@@ -87,8 +91,13 @@ def main_menu():
         elif choice == 2:
             shop.show_bag()
         elif choice not in [0,1,2]:
-            print('Неверный выбор')
+            print('Неверный выбор! Попробуйте еще раз.')
 
     print('Пока')
 
-main_menu()
+
+try:
+    main_menu()
+except ValueError as e:
+    print('Введите конкретный пункт из меню!')
+    main_menu()
