@@ -50,6 +50,7 @@ class ActionStore:
 
     def clear_buy_products(self):
         self.BUY_PRODUCTS.clear()
+        self.shopping_card.write_file(self.BUY_PRODUCTS)
 
     def check_product(self, product_name):
         return self.get_all_product().get(product_name)
