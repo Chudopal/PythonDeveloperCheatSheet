@@ -42,7 +42,7 @@ def file_adaptor(data):
 
 
 def get_whole_data() -> Dict[str, List]:
-    return read_file("1.json")
+    return read_file("app\storage.json")
 
 
 def get_products() -> List:
@@ -102,7 +102,7 @@ def choose_product():
     data["basket"] = adaptor(data["basket"])
     data["basket"].append(purchase)
     data["basket"] = file_adaptor(data["basket"])
-    write_file("1.json", data)
+    write_file("app\storage.json", data)
     return "Товар добавлен в корзину"
 
 
@@ -149,4 +149,4 @@ def run() -> None:
         print(safe_make_choice(choice=choice))
 
 
-run()
+run() 
