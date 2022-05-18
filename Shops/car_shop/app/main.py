@@ -96,8 +96,12 @@ def main_menu():
     print('Пока')
 
 
-try:
-    main_menu()
-except ValueError as e:
-    print('Введите конкретный пункт из меню!')
-    main_menu()
+def add_exception():
+    try:
+        main_menu()
+    except ValueError as e:
+        print('Введите конкретный пункт из меню!')
+        main_menu()
+
+
+add_exception()
