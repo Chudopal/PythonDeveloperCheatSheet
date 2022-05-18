@@ -13,21 +13,25 @@ import json
 from typing import List, Dict
 
 
-def read_file(path, name) -> List:  # чтение json файла
-    with open(path) as file:
-        data = json.load(file)
-    return data.get(name)
+class JsonHandler:
+    def __init__(self, path, name, data):
+        self.path = path
+        self.name = name
+        self.data = data
 
+    def read_file(path, name) -> List:  # чтение json файла
+        with open(path) as file:
+            data = json.load(file)
+        return data.get(name)
 
-def read_buy_file(path) -> List:  # чтение json файла
-    with open(path) as file:
-        data = json.load(file)
-    return data
+    def read_buy_file(path) -> List:  # чтение json файла
+        with open(path) as file:
+            data = json.load(file)
+        return data
 
-
-def write_file(path, data) -> None:  # запись json файла
-    with open(path, 'w') as file:
-        json.dump(data, file)
+    def write_file(path, data) -> None:  # запись json файла
+        with open(path, 'w') as file:
+            json.dump(data, file)
 
 
 def adaptor(data: List) -> Dict:  # конвертация листа в словарь
@@ -38,36 +42,43 @@ def adaptor(data: List) -> Dict:  # конвертация листа в сло�
 
 
 def get_all_product() -> List:  # показывает все материалы магазина
-    data = read_file('storage_building.json', 'materials')
+    data = JsonHandler.read_file('storage_building.json', 'materials')
     return data
 
 
 buy_product = []
 
 
-def save_buy_product(buy_product):
-    data = write_file('buy_materials.json', buy_product)
+def save_buy_product(buy_product):  # сохраняет добавленный товар в корзине
+    data = JsonHandler.write_file('buy_materials.json', buy_product)
+    return "Товар успешно сохранён в корзину!"
 
 
-def add_product(product_name: str) -> None:  # добавляет товар в корзину
-    catalog = get_all_product()
-    for material in catalog:
-        item_cost = material['cost']
-        item_material = material['material_name']
-        if product_name == item_material:
-            result = {item_material: item_cost}
-            buy_product.append(result)
+class ServiceFun:
+    def __init__(self, product_name):
+        self.product_name = product_name
 
 
-def get_buy_product() -> List:  # показывает сумму покупки
-    result_list = []
-    for material in buy_product:
-        result = list(material.values())
-        for material in result:
-            result_list.append(material)
-    total_price = sum(result_list)
-    result = (f'Ваша сумма покупки составляет {total_price} руб')
-    return result
+    def add_product(product_name: str) -> None:  # добавляет товар в корзину
+        catalog = get_all_product()
+        for material in catalog:
+            item_cost = material['cost']
+            item_material = material['material_name']
+            if product_name == item_material:
+                result = {item_material: item_cost}
+                buy_product.append(result)
+        return "Спасибо! Товар добавлен в корзину."
+
+
+    def get_buy_product() -> List:  # показывает сумму покупки
+        result_list = []
+        for material in buy_product:
+            result = list(material.values())
+            for material in result:
+                result_list.append(material)
+        total_price = sum(result_list)
+        result = (f'Ваша сумма покупки составляет {total_price} руб')
+        return result
 
 
 def format_product(product_list: Dict) -> str:
@@ -90,16 +101,17 @@ def menu() -> str:
 
 def make_choice(choice: int):
     if choice == 1:
+        print('СПИСОК ДОСТУПНЫХ ТОВАРОВ:')
         product = adaptor(get_all_product())
         message = format_product(product)
         result = message
     elif choice == 2:
         product_name = input('Введите желаемый товар: ')
-        result = add_product(product_name)
+        result = ServiceFun.add_product(product_name)
     elif choice == 3:
         result = save_buy_product(buy_product)
     elif choice == 4:
-        result = get_buy_product()
+        result = ServiceFun.get_buy_product()
     return result
 
 
