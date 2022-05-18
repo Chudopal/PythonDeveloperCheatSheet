@@ -1,0 +1,50 @@
+{
+    "products": [
+        {
+            "product": "\u041c\u044f\u0447",
+            "cost": 100
+        },
+        {
+            "product": "\u0411\u0443\u0442\u0441\u044b",
+            "cost": 200
+        },
+        {
+            "product": "\u0413\u0435\u0442\u0440\u044b",
+            "cost": 15
+        },
+        {
+            "product": "\u0428\u043e\u0440\u0442\u044b",
+            "cost": 60
+        },
+        {
+            "product": "\u041c\u0430\u0439\u043a\u0430",
+            "cost": 70
+        },
+        {
+            "product": "\u0429\u0435\u0442\u043a\u0438",
+            "cost": 25
+        }
+    ],
+    "basket": [
+        {
+            "product": "\u041c\u044f\u0447",
+            "cost": 100
+        },
+        {
+            "product": "\u041c\u044f\u0447",
+            "cost": 100
+        },
+        {
+            "product": "\u0413\u0435\u0442\u0440\u044b",
+            "cost": 15
+        },
+        {
+            "product": "\u041c\u044f\u0447",
+            "cost": 100
+        },
+        {
+            "product": "\u041c\u044f\u0447",
+            "cost": 100
+        }
+    ]
+}
