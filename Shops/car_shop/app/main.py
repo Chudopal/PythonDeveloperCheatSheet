@@ -51,7 +51,7 @@ class Shop:
             total = 0
             count = 0
             cars = self.bag_stock.get_cars()
-            for i in cars['cars']:
+            for i in cars.get("cars", []):
                 count += 1
                 total += i["price"]
                 tamplate = f'{count}. model: {i["model"]}, price: ${i["price"]}'
@@ -67,7 +67,12 @@ class Shop:
         choice = int(input('Выберите авто для удаления: '))
         if choice != 0:
             bag = self.bag_stock.get_cars()
-            bag.get("cars").pop(choice - 1)
+            try:
+                bag.get("cars").pop(choice - 1)
+            except IndexError as e:
+                print('Данного авто нет в вашей корзине!')
+            except ValueError:
+                print('Введите номер авто для удаления, если таковой имеется!')
             print('Авто успешно удалено!')
             self.bag_stock.save_bag(bag)
         return choice
