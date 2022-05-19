@@ -311,7 +311,7 @@ class ConsoleIOController(IOController):
             'name': raw_input.get('remove_pizza').strip().title()
         }
 
-    def validate_order_input(self, raw_input: dict[str]) -> dict:
+    def validate_order_input(self, raw_input: dict[str: str]) -> dict:
         return {
             'product': raw_input.get('name').strip().title(),
             'amount': int(raw_input.get('amount'))
@@ -319,9 +319,9 @@ class ConsoleIOController(IOController):
 
     def validate_product_input(self, raw_input: dict[str]) -> dict:
         return {
-            'name': raw_input.get('name', 'Default name').rstrip().title(),
-            'category': raw_input.get('category', 'Default category').rstrip().capitalize(),
-            'description': raw_input.get('description', "").rstrip().lower(),
+            'name': raw_input.get('name', 'Default name').strip().title(),
+            'category': raw_input.get('category', 'Default category').strip().capitalize(),
+            'description': raw_input.get('description', "").strip().lower(),
             'price': float(raw_input.get('price', 0)),
             'calories': int(raw_input.get('calories', 0))
         }
@@ -341,12 +341,15 @@ class ShopApplication:
 
     def order_pizza_controller(self):
         raw_input = self.io.execute_input(**self.view.get_order_form())
-        processed_input = self.io.validate_order_input(raw_input)
-        result = self.pizzeria.make_order(**processed_input)
-        if result:
-            output = self.view.get_success_message('order_success', processed_input.get("product"))
-        else:
-            output = self.view.get_error_message('no_pizza_error')
+        try:
+            processed_input = self.io.validate_order_input(raw_input)
+            result = self.pizzeria.make_order(**processed_input)
+            if result:
+                output = self.view.get_success_message('order_success', processed_input.get("product"))
+            else:
+                output = self.view.get_error_message('no_pizza_error')
+        except ValueError:
+            output = self.view.get_error_message('value_error')
         self.io.execute_output(output)
 
     def show_orders_controller(self):
