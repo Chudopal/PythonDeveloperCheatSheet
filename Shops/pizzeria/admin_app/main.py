@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 from dataclasses import dataclass, asdict
 from abc import ABC, abstractmethod
 
@@ -10,7 +11,8 @@ from abc import ABC, abstractmethod
 class FilesHandler:
 
     def __init__(self, file_name: str):
-        self.file_name = file_name
+        self.__base_dir = Path(__file__).resolve().parent.parent
+        self.file_name = str(self.__base_dir.joinpath('app', file_name))
 
     def read(self) -> list:
         try:
@@ -217,7 +219,7 @@ class IOController(ABC):
     @abstractmethod
     def execute_output(self, *output_items: str):
         """
-        executes print() function
+        executes print() function with output_items as args
         """
 
     @abstractmethod
