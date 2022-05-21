@@ -7,8 +7,18 @@ from abc import ABC, abstractmethod
 # ----------------- #
 # DATA ACCESS LAYER #
 # ----------------- #
+class StorageHandler(ABC):
 
-class FilesHandler:
+    @abstractmethod
+    def read(self):
+        """reads data from storage"""
+
+    @abstractmethod
+    def save(self, data):
+        """save data to storage"""
+
+
+class JsonStorageHandler(StorageHandler):
 
     def __init__(self, file_name: str):
         self.__base_dir = Path(__file__).resolve().parent.parent
@@ -27,9 +37,9 @@ class FilesHandler:
             json.dump(data, file)
 
 
-class Storage:
+class StorageAdaptor:
 
-    def __init__(self, stored_data: FilesHandler):
+    def __init__(self, stored_data: StorageHandler):
         self.stored_data = stored_data
 
     def get_data(self) -> list:
@@ -72,7 +82,7 @@ class Order:
 
 class OrdersHandler:
 
-    def __init__(self, orders: Storage):
+    def __init__(self, orders: StorageAdaptor):
         self.orders = orders
 
     def get_orders(self) -> list:
@@ -88,7 +98,7 @@ class OrdersHandler:
 
 class ProductsHandler:
 
-    def __init__(self, products: Storage):
+    def __init__(self, products: StorageAdaptor):
         self.products = products
 
     def get_all_products(self) -> list[Product]:
@@ -112,7 +122,7 @@ class ProductsHandler:
 
 class Shop:
 
-    def __init__(self, goods: Storage, orders: Storage):
+    def __init__(self, goods: StorageAdaptor, orders: StorageAdaptor):
         self.products = ProductsHandler(goods)
         self.orders = OrdersHandler(orders)
 
@@ -480,8 +490,8 @@ class AdminShopApplication(ShopApplication):
 
 
 if __name__ == '__main__':
-    pizza_storage = Storage(FilesHandler("pizzas.json"))
-    orders_storage = Storage(FilesHandler("ordered_pizzas.json"))
+    pizza_storage = StorageAdaptor(JsonStorageHandler("pizzas.json"))
+    orders_storage = StorageAdaptor(JsonStorageHandler("ordered_pizzas.json"))
     mega_pizzeria = AdminShop(pizza_storage, orders_storage)
     app = AdminShopApplication(mega_pizzeria, ConsoleIOController(), ConsoleAdminView())
     app.run_app()
