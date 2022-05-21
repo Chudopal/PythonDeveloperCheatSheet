@@ -4,6 +4,14 @@ from abc import ABC, abstractmethod
 
 
 # ----------------- #
+# Exceptions #
+# ----------------- #
+
+class NoSuchProductException(Exception):
+    """raises when no required product at storage"""
+
+
+# ----------------- #
 # DATA ACCESS LAYER #
 # ----------------- #
 
@@ -125,18 +133,16 @@ class Shop:
         self.products = ProductsHandler(goods)
         self.orders = OrdersHandler(orders)
 
-    def make_order(self, product: str, amount: int) -> bool:
+    def make_order(self, product: str, amount: int):
         product_in_storage = self.products.get_product(product)
-        if product_in_storage:
+        try:
             order = Order(name=product_in_storage.name,
                           amount=amount,
                           price=product_in_storage.price * amount,
                           calories=product_in_storage.calories * amount)
             self.orders.add_order(order)
-            success = True
-        else:
-            success = False
-        return success
+        except AttributeError:
+            raise NoSuchProductException
 
     def cancel_order(self):
         self.orders.clear_order()
@@ -355,14 +361,13 @@ class ShopApplication:
         raw_input = self.io.execute_input(**self.view.get_order_form())
         try:
             processed_input = self.io.validate_order_input(raw_input)
-            result = self.pizzeria.make_order(**processed_input)
-            if result:
-                output = self.view.get_success_message('order_success', processed_input.get("product"))
-            else:
-                output = self.view.get_error_message('no_pizza_error')
+            self.pizzeria.make_order(**processed_input)
+            result = self.view.get_success_message('order_success', processed_input.get("product"))
+        except NoSuchProductException:
+            result = self.view.get_error_message('no_pizza_error')
         except ValueError:
-            output = self.view.get_error_message('value_error')
-        self.io.execute_output(output)
+            result = self.view.get_error_message('value_error')
+        self.io.execute_output(result)
 
     def show_orders_controller(self):
         orders = self.pizzeria.get_orders()
