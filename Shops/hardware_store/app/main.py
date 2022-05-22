@@ -2,6 +2,7 @@ import json
 from typing import List, Dict
 from abc import ABC, abstractmethod
 
+
 class StorageHandler(ABC):
 
     @abstractmethod
@@ -15,8 +16,9 @@ class StorageHandler(ABC):
 
 class Storage():
 
-    def __init__(self, strategy: StorageHandler) -> None:
+    def __init__(self, strategy: StorageHandler, path: str) -> None:
         self._strategy = strategy
+        self._path = path
 
     @property
     def strategy(self) -> StorageHandler:
@@ -26,11 +28,11 @@ class Storage():
     def strategy(self, strategy: StorageHandler) -> None:
         self._strategy = strategy
 
-    def write(self, path, data) -> None:
-        self._strategy.write(path, data)
+    def write(self, data) -> None:
+        self._strategy.write(self._path, data)
 
-    def read(self, path) -> List:
-        return self._strategy.read(path)
+    def read(self) -> List:
+        return self._strategy.read(self._path)
 
 
 class JsonFileHandler(StorageHandler):
@@ -45,23 +47,21 @@ class JsonFileHandler(StorageHandler):
 
 
 class ShopService:
-
     BUY_PRODUCTS = []
     SHOP = {}
 
-    SHOP_INVENT_PATH = '../shop_invent.json'
-    SHOPPING_CARD_PATH = '../shopping_card.json'
-
-    STORAGE = Storage(JsonFileHandler())
+    def __init__(self, shop_invent_path: str, shopping_card_path: str):
+        self._shop_invent_storage = Storage(JsonFileHandler(), shop_invent_path)
+        self._shopping_card_storage = Storage(JsonFileHandler(), shopping_card_path)
 
     def get_all_product(self) -> Dict:
         if not self.SHOP:
-            self.SHOP.update(self.STORAGE.read(self.SHOP_INVENT_PATH))
+            self.SHOP.update(self._shop_invent_storage.read())
         return self.SHOP
 
     def add_product(self, product_name: str) -> None:
         self.BUY_PRODUCTS.append(self.get_all_product().get(product_name))
-        self.STORAGE.write(self.SHOPPING_CARD_PATH, self.BUY_PRODUCTS)
+        self._shopping_card_storage.write(self.BUY_PRODUCTS)
 
     def get_buy_product(self) -> List:
         total_price = sum(self.BUY_PRODUCTS)
@@ -76,7 +76,7 @@ class ShopService:
 
     def clear_buy_products(self):
         self.BUY_PRODUCTS.clear()
-        self.STORAGE.write(self.SHOPPING_CARD_PATH, self.BUY_PRODUCTS)
+        self._shopping_card_storage.write(self.BUY_PRODUCTS)
 
     def check_product(self, product_name):
         return self.get_all_product().get(product_name)
@@ -89,12 +89,12 @@ class Shop:
 
     def show_menu(self) -> None:
         print(
-        '~'*100 + '\n'
-        '1 - View all products and their prices\n' +
-        '2 - select product\n' +
-        '3 - view purchase amount\n' +
-        '4 - complete your purchases.\n' +
-        '5 - Close shop'
+            '~' * 100 + '\n'
+                        '1 - View all products and their prices\n' +
+            '2 - select product\n' +
+            '3 - view purchase amount\n' +
+            '4 - complete your purchases.\n' +
+            '5 - Close shop'
         )
 
     def make_choice(self, choice: int):
@@ -122,7 +122,10 @@ class Shop:
         return result
 
 
-def run(shop: Shop) -> None:
+def run() -> None:
+    shop_invent_path = '../shop_invent.json'
+    shopping_card_path = '../shopping_card.json'
+    shop = Shop(ShopService(shop_invent_path, shopping_card_path))
     choice = None
     while choice != 5:
         shop.show_menu()
@@ -133,6 +136,5 @@ def run(shop: Shop) -> None:
         except ValueError:
             print("You have entered a string, enter a number!")
 
-shop = Shop(ShopService())
 
-run(shop)
+run()
