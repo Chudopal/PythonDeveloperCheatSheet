@@ -1,4 +1,5 @@
 import json
+from unittest import result
 
 class Stock:
     def __init__(self, filepath):
@@ -20,7 +21,7 @@ class Shop:
 
     def choice_cars(self):
         choice = None
-        while choice != 0:
+        while choice != '0':
             message = ""
             for i in enumerate(self.cars_stock.get_cars()['cars'], 1):
                 tamplate = f'{i[0]}. model: {i[1]["model"]}, price: ${i[1]["price"]}'
@@ -28,26 +29,29 @@ class Shop:
             message += "0 - Назад"
             print(message)
             choice = self.add_to_bag()
+            print(choice)
 
 
 
     def add_to_bag(self):
-        choice = int(input('Выберите номер авто: '))
-        if choice != 0:
+        choice = input('Выберите номер авто: ')
+        if choice != '0':
             cars = self.bag_stock.get_cars()
+            result = ''
             try:
-                cars['cars'].append(self.cars_stock.get_cars()['cars'][choice - 1])
+                cars['cars'].append(self.cars_stock.get_cars()['cars'][int(choice) - 1])
+                self.bag_stock.save_bag(cars)
             except IndexError as e:
-                print('Выберите авто из указанного списка!')
+                result = 'Выберите авто из указанного списка!'
             except ValueError as e:
-                print('Введите конкретное числовое значение!')
-            self.bag_stock.save_bag(cars)
+                result = 'Введите конкретное числовое значение!'
+            return result
         return choice
 
 
     def show_bag(self):
         choice = None
-        while choice != 0:
+        while choice != '0':
             total = 0
             count = 0
             cars = self.bag_stock.get_cars()
@@ -61,20 +65,23 @@ class Shop:
             0 - Вернуться в меню
             ''')
             choice = self.del_bag()
+            print(choice)
 
 
     def del_bag(self):
-        choice = int(input('Выберите авто для удаления: '))
-        if choice != 0:
+        choice = (input('Выберите авто для удаления: '))
+        if choice != '0':
             bag = self.bag_stock.get_cars()
+            result = ''
             try:
-                bag.get("cars").pop(choice - 1)
+                bag.get("cars").pop(int(choice) - 1)
             except IndexError as e:
-                print('Данного авто нет в вашей корзине!')
+                result = 'Данного авто нет в вашей корзине!'
             except ValueError:
-                print('Введите номер авто для удаления, если таковой имеется!')
-            print('Авто успешно удалено!')
+                result = 'Введите номер авто для удаления, если таковой имеется!'
             self.bag_stock.save_bag(bag)
+            print('Авто успешно удалено!')
+            return result
         return choice
 
 
