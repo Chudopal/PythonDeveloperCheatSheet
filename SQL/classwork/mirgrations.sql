@@ -93,8 +93,7 @@ WHERE name = 'Alex';
 SELECT name, users.uuid, number, cvv, exp_date
 FROM cards JOIN users
 ON cards.user_uuid = users.uuid
-WHERE name = 'Alex'
-AND exp_date = (
+WHERE exp_date = (
     SELECT MAX(exp_date) FROM cards JOIN users
     ON cards.user_uuid = users.uuid
     WHERE name = 'Alex'
