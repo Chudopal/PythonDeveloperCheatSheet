@@ -93,9 +93,22 @@ WHERE name = 'Alex';
 SELECT name, users.uuid, number, cvv, exp_date
 FROM cards JOIN users
 ON cards.user_uuid = users.uuid
-WHERE name = 'Alex'
-AND exp_date = (
+WHERE exp_date = (
     SELECT MAX(exp_date) FROM cards JOIN users
     ON cards.user_uuid = users.uuid
     WHERE name = 'Alex'
 );
+
+-- 9.получаем количество карт для каждого пользователя
+SELECT name, COUNT(number) as cards_number
+FROM users JOIN cards
+ON users.uuid = cards.user_uuid
+GROUP BY name;
+
+-- 10.Делаем представление (VIEW) для получения name, number, iban
+CREATE VIEW get_name_number_iban AS
+SELECT name, number, iban
+FROM users JOIN cards
+ON users.uuid = cards.user_uuid
+JOIN accounts
+ON cards.iban = accounts.iban;
