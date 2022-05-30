@@ -14,12 +14,11 @@ from typing import List, Dict
 
 
 class JsonHandler:
-    def __init__(self, path, name, data):
+    def __init__(self, path, name):
         self.path = path
         self.name = name
-        self.data = data
 
-    def read_file(self, name) -> List:  # чтение json файла
+    def read_file(self) -> List:  # чтение json файла
         with open(self.path) as file:
             data = json.load(file)
         return data.get(self.name)
@@ -41,16 +40,11 @@ class FileManager:
         return data
 
     def save_buy_product(self, buy_product):  # сохраняет добавленный товар в корзине
-        data = JsonHandler('buy_materials.json').write_file(buy_product)
+        data = JsonHandler('buy_materials.json', "materials").write_file(buy_product)
         return "Товар успешно сохранён в корзину!"
 
 
 class ServiceFun:
-    def __init__(self, product_name, data, product_list):
-        self.product_name = product_name
-        self.data = data
-        self.product_list = product_list
-
     buy_product = []
 
     def adaptor(self, data: List) -> Dict:  # конвертация листа в словарь
@@ -60,7 +54,7 @@ class ServiceFun:
         return result
 
     def add_product(self, product_name: str) -> None:  # добавляет товар в корзину
-        catalog = FileManager.get_all_product()
+        catalog = FileManager().get_all_product()
         for material in catalog:
             item_cost = material['cost']
             item_material = material['material_name']
