@@ -112,3 +112,6 @@ FROM users JOIN cards
 ON users.uuid = cards.user_uuid
 JOIN accounts
 ON cards.iban = accounts.iban;
+
+-- получаем данные из представления
+SELECT * FROM get_name_number_iban;
