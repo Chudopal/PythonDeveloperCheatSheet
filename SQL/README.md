@@ -142,7 +142,7 @@
         description TEXT
     );
     ```
-- Для внесения даннSERIALых в таблицу используется конструкция `INSERT`:
+- Для внесения данных в таблицу используется конструкция `INSERT`:
     ```sql
     INSERT INTO users(name, age)
     VALUES
@@ -184,6 +184,7 @@ WHERE age > (
     );
     ```
     Эта таблица-связка между таблицами projects и users. Связывается она с ними при помощи внешнего ключа. Внешнию ключи объявляются при помощи ключевого слова `REFERENCES` и указанием таблицы и поля, на которое идет ссылка. Почитать [тут](https://metanit.com/sql/postgresql/2.5.php), дока [тут](https://postgrespro.ru/docs/postgresql/9.5/ddl-constraints#ddl-constraints-fk)
+    
     2. Заполним таблицу на основе таблицы users:
     ```sql
     INSERT INTO participants
