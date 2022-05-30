@@ -15,7 +15,7 @@ CREATE TABLE accounts(
 
 -- создаем таблицу cards
 CREATE TABLE cards(
-    user_uuid uuid NOT NULL REFERENCES user(uuid),
+    user_uuid uuid NOT NULL REFERENCES users(uuid),
     iban CHARACTER VARYING(32) NOT NULL REFERENCES accounts(iban),
     number CHARACTER VARYING(16) NOT NULL UNIQUE,
     cvv INTEGER NOT NULL CHECK(cvv > 0 AND cvv < 1000), -- проверка чтобы cvv был больше 0 и меньше 1000
@@ -107,7 +107,7 @@ GROUP BY name;
 
 -- 10.Делаем представление (VIEW) для получения name, number, iban
 CREATE VIEW get_name_number_iban AS
-SELECT name, number, iban
+SELECT name, number, accounts.iban
 FROM users JOIN cards
 ON users.uuid = cards.user_uuid
 JOIN accounts
