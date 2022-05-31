@@ -1,82 +1,140 @@
 import json
 from typing import List, Dict
-
-PATH_JSON = '../shop_invent.json'
-WRITE_JSON = '../shopping_card.json'
-
-BUY_PRODUCTS = []
-
-SHOP = {}
+from abc import ABC, abstractmethod
 
 
-def get_all_product() -> Dict:
-    if not SHOP:
-        SHOP.update(read_file())
-    return SHOP
+class StorageHandler(ABC):
+
+    @abstractmethod
+    def write(self, path, data):
+        pass
+
+    @abstractmethod
+    def read(self, path) -> List:
+        pass
 
 
-def read_file() -> List:
-    with open(PATH_JSON, 'r', encoding='utf8') as file:
-        return json.load(file)
+class Storage():
+
+    def __init__(self, strategy: StorageHandler, path: str) -> None:
+        self._strategy = strategy
+        self._path = path
+
+    @property
+    def strategy(self) -> StorageHandler:
+        return self._strategy
+
+    @strategy.setter
+    def strategy(self, strategy: StorageHandler) -> None:
+        self._strategy = strategy
+
+    def write(self, data) -> None:
+        self._strategy.write(self._path, data)
+
+    def read(self) -> List:
+        return self._strategy.read(self._path)
 
 
-def write_file(path, data) -> None:
-    with open(path, 'w') as file:
-        json.dump(data, file)
+class JsonFileHandler(StorageHandler):
+
+    def write(self, path, data) -> None:
+        with open(path, 'w') as file:
+            json.dump(data, file)
+
+    def read(self, path) -> List:
+        with open(path, 'r', encoding='utf8') as file:
+            return json.load(file)
 
 
-def add_product(product_name: str) -> None:
-    BUY_PRODUCTS.append(get_all_product().get(product_name))
-    write_file(WRITE_JSON, BUY_PRODUCTS)
+class ShopService:
+    BUY_PRODUCTS = []
+    SHOP = {}
+
+    def __init__(self, shop_invent_path: str, shopping_card_path: str):
+        self._shop_invent_storage = Storage(JsonFileHandler(), shop_invent_path)
+        self._shopping_card_storage = Storage(JsonFileHandler(), shopping_card_path)
+
+    def get_all_product(self) -> Dict:
+        if not self.SHOP:
+            self.SHOP.update(self._shop_invent_storage.read())
+        return self.SHOP
+
+    def add_product(self, product_name: str) -> None:
+        self.BUY_PRODUCTS.append(self.get_all_product().get(product_name))
+        self._shopping_card_storage.write(self.BUY_PRODUCTS)
+
+    def get_buy_product(self) -> List:
+        total_price = sum(self.BUY_PRODUCTS)
+        result = (f'Your purchase amount is {total_price} dollars')
+        return result
+
+    def format_product(self, product_list: Dict) -> str:
+        return '\n'.join([
+            f'{product_name} - {cost} dollars'
+            for product_name, cost in product_list.items()
+        ])
+
+    def clear_buy_products(self):
+        self.BUY_PRODUCTS.clear()
+        self._shopping_card_storage.write(self.BUY_PRODUCTS)
+
+    def check_product(self, product_name):
+        return self.get_all_product().get(product_name)
 
 
-def get_buy_product() -> List:
-    total_price = sum(BUY_PRODUCTS)
-    result = (f'Your purchase amount is {total_price} dollars')
-    return result
+class Shop:
 
+    def __init__(self, shop_service) -> None:
+        self._shop_service = shop_service
 
-def format_product(product_list: Dict) -> str:
-    return '\n'.join([
-        f'{product_name} - {cost} dollars'
-        for product_name, cost in product_list.items()
-    ])
+    def show_menu(self) -> None:
+        print(
+            '~' * 100 + '\n'
+                        '1 - View all products and their prices\n' +
+            '2 - select product\n' +
+            '3 - view purchase amount\n' +
+            '4 - complete your purchases.\n' +
+            '5 - Close shop'
+        )
 
-
-def menu() -> str:
-    return (
-    '~'*100 + '\n'
-    '1 - View all products and their prices\n' +
-    '2 - select product\n' +
-    '3 - view purchase amount\n' +
-    '4 - complete your purchases.'
-    )
-
-
-def make_choice(choice: int):
-    result = ""
-    if choice == 1:
-        products = get_all_product()
-        message = format_product(products)
-        result = message
-    elif choice == 2:
-        products = input("select product: ")
-        add_product(products)
-        result = 'you have selected a product'
-    elif choice == 3:
-        result = get_buy_product()
-    elif choice == 4:
-        result = get_buy_product()
-        BUY_PRODUCTS.clear()
-    return result
+    def make_choice(self, choice: int):
+        result = ""
+        if choice == 1:
+            products = self._shop_service.get_all_product()
+            message = self._shop_service.format_product(products)
+            result = message
+        elif choice == 2:
+            products = input("select product: ")
+            if self._shop_service.check_product(products) == None:
+                result = 'You have entered a non-existent product, please repeat'
+            else:
+                self._shop_service.add_product(products)
+                result = f'you have selected a {products} product'
+        elif choice == 3:
+            result = self._shop_service.get_buy_product()
+        elif choice == 4:
+            result = self._shop_service.get_buy_product()
+            self._shop_service.clear_buy_products()
+        elif (choice < 1) or (choice > 5):
+            result = 'Enter a number from 1 to 5'
+        elif choice == 5:
+            result = 'Shop is closed, see you soon!'
+        return result
 
 
 def run() -> None:
+    shop_invent_path = '../shop_invent.json'
+    shopping_card_path = '../shopping_card.json'
+    shop = Shop(ShopService(shop_invent_path, shopping_card_path))
     choice = None
     while choice != 5:
-        print(menu())
-        choice = int(input('Enter menu item: '))
-        message = make_choice(choice)
-        print(message)
+        shop.show_menu()
+        try:
+            choice = int(input('Enter menu item: '))
+            message = shop.make_choice(choice)
+            print(message)
+        except ValueError:
+            print("You have entered a string, enter a number!")
+
 
 run()

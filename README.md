@@ -8,3 +8,4 @@ Content:
 3. [Управляющие структуры Python](./ControlStructuresPython/README.md)
 4. [Функции в Python](./PythonFunctions/README.md)
 5. [Работа с файлами](./Files/README.md)
+6. [SQL](./SQL/README.md)
