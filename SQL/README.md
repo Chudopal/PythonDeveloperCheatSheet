@@ -119,16 +119,16 @@
     2. Создадим таблицу пользователей с автоматической генерацией uuid:
     ```sql
     CREATE TABLE users(
-        uuid uuid DEFAULT uuid_generate_v4() PRIMARY KEY, -- uuid - является первичным ключем
+        uuid uuid DEFAULT uuid_generate_v4() PRIMARY KEY, -- uuid - является первичным ключом
         name CHARACTER VARYING(256), -- задали имя с макс длиной 256
         age SMALLINT CHECK(age > 18 AND age < 100) -- подобрали тип данных для возраста и сделали проверку на то, чтобы возраст был больше 18 и меньше 100
     );
     ```
     В столбцы с ограничениями попросту нельзя занести значения, которые не соответствуют ограничениям.
-    3. Кроме uuid, как в предыдущем примере, можно использовать просто уникальное числовое значение, например 1,2,3,4... В postgres для этого также есть инструменты, которые вместо нас будут искать доступные свободные индекси и генерировать их. Перепишем предыдущий пример:
+    3. Кроме uuid, как в предыдущем примере, можно использовать просто уникальное числовое значение, например 1,2,3,4... В postgres для этого также есть инструменты, которые вместо нас будут искать доступные свободные индексы и генерировать их. Перепишем предыдущий пример:
     ```sql
     CREATE TABLE users_test(
-        id SERIAL PRIMARY KEY, -- uuid - является первичным ключем
+        id SERIAL PRIMARY KEY, -- uuid - является первичным ключом
         name CHARACTER VARYING(256), -- задали имя с макс длиной 256
         age SMALLINT CHECK(age > 18 AND age < 100) -- подобрали тип данных для возраста и сделали проверку на то, чтобы возраст был больше 18 и меньше 100
     );
@@ -164,6 +164,19 @@
 -- получение всех пользователей старше 30
 SELECT name, age FROM users WHERE age > 30;
 ```
+Так же можно сортировать данные запроса при помощи конструкции `ORDER BY`:
+```sql
+-- сортировка по возрасту: от самого молодого до самого старого
+SELECT name, age FROM users ORDER BY age;
+
+-- сортировка по возрасту: от самого старого до самого молодого
+SELECT name, age FROM users ORDER BY age DESC;
+```
+Или получать определенное количество записей, при помощи конструкции LIMIT:
+```SQL
+-- получить 2 первые записи из выборки
+SELECT name, age FROM users ORDER BY age DESC LIMIT 2;
+```
 Кроме того иногда полезными являются [подзапросы](https://metanit.com/sql/postgresql/4.7.php):
 ```sql
 -- получение всех пользователей, которые старше среднего
@@ -183,7 +196,7 @@ WHERE age > (
         project_role CHARACTER VARYING(64) 
     );
     ```
-    Эта таблица-связка между таблицами projects и users. Связывается она с ними при помощи внешнего ключа. Внешнию ключи объявляются при помощи ключевого слова `REFERENCES` и указанием таблицы и поля, на которое идет ссылка. Почитать [тут](https://metanit.com/sql/postgresql/2.5.php), дока [тут](https://postgrespro.ru/docs/postgresql/9.5/ddl-constraints#ddl-constraints-fk)
+    Эта таблица-связка между таблицами projects и users. Связывается она с ними при помощи внешнего ключа. Внешние ключи объявляются при помощи ключевого слова `REFERENCES` и указанием таблицы и поля, на которое идет ссылка. Почитать [тут](https://metanit.com/sql/postgresql/2.5.php), дока [тут](https://postgrespro.ru/docs/postgresql/9.5/ddl-constraints#ddl-constraints-fk)
     
     2. Заполним таблицу на основе таблицы users:
     ```sql
@@ -231,4 +244,30 @@ WHERE age > (
     FROM project_age
     WHERE user_age < (SELECT AVG(age) FROM users);
     ```
-    О соединении таблиц почитать [тут](https://metanit.com/sql/postgresql/6.3.php).(extra) Последний запрос с `WITH` называется называется общим табличным выражением(CTE). Почитать можно очень интересно можно [тут](https://habr.com/ru/company/postgrespro/blog/451344/), дока [тут](https://postgrespro.ru/docs/postgresql/9.5/queries-with)
+    Таблицы соединяются по внешнему ключу при помощи конструкции JOIN ... ON ..., где JOIN связывает названия таблиц, а ON связывает конкретные ключи. О соединении таблиц почитать [тут](https://metanit.com/sql/postgresql/6.3.php).(extra) Последний запрос с `WITH` называется называется общим табличным выражением(CTE). Почитать можно очень интересно можно [тут](https://habr.com/ru/company/postgrespro/blog/451344/), дока [тут](https://postgrespro.ru/docs/postgresql/9.5/queries-with)
+
+- Для того чтобы не повторять один и тот же код запросов множество раз, есть такое понятие как представление. В postgres оно создается командой CREATE VIEW (дока [тут](https://postgrespro.ru/docs/postgresql/13/sql-createview)), по сути это просто удобное название вашего запроса, а не отдельная таблица, однако часто это помогает делать код чище и приятнее, пример:
+    ```sql
+    -- создаем представление
+    CREATE VIEW users_projects AS (
+        SELECT users.uuid as user_uuid,
+            users.name as user_name,
+            users.age as user_age,
+            projects.id as project_id,
+            projects.name as project_name,
+            description,
+            project_role
+        FROM users JOIN participants
+        ON users.uuid = participants.user_uuid
+        JOIN projects
+        ON projects.id = participants.project_id
+    );
+    ```
+    Однажды создав представление в БД, оно там будет, пока вы его не удалите. Потому обратиться к нему можно в любой момент:
+    ```sql
+    -- получить все данные из представления
+    SELECT * FROM users_projects;
+
+    -- получить user_name, project_name для пользователей которые старше 30
+    SELECT user_name, project_name FROM users_projects WHERE user_age > 30;
+    ```
