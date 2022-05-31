@@ -117,7 +117,7 @@ SELECT * FROM patients WHERE sex='F';
 SELECT * FROM patients ORDER BY birth_date;
 
 -- 5. name пациента и name лечащего доктора
-
+SELECT patients.name, doctors.name FROM patients CROSS JOIN doctors
 
 -- 6 name, диагноз пациентов с максимальным ростом (доп: сделать VIEW)
 CREATE VIEW higest_patients_diagnosis AS
@@ -151,6 +151,3 @@ CREATE VIEW patient_doctor AS (
 SELECT doctors.name , COUNT(anamnesis.doctor_uuid)
 FROM doctors JOIN anamnesis ON doctors.uuid = anamnesis.doctor_uuid
 GROUP BY doctors.name
-
-
-
