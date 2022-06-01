@@ -140,6 +140,7 @@ select count(anamnesis.patient_uuid) from anamnesis
 join doctors on anamnesis.doctor_uuid=doctors.uuid
 where doctors.name = 'Nik';
 
+
 select count(anamnesis.patient_uuid) from anamnesis
 join doctors on anamnesis.doctor_uuid=doctors.uuid
 where doctors.name = 'Mike';
