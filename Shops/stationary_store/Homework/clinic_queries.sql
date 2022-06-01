@@ -213,7 +213,7 @@ INNER JOIN doctors
 ORDER BY patients.name;
 
 -- количество пациентов, name для каждого доктора
-SELECT doctors.name, COUNT(anamnesis.doctor_uuid)
+SELECT doctors.name, COUNT(DISTINCT anamnesis.patient_uuid)
 FROM
 	doctors
 INNER JOIN anamnesis 
