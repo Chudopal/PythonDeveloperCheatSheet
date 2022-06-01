@@ -3,17 +3,14 @@ import json
 
 class FileProcessing():
 
-
     def __init__(self, path : str) -> None:
         self._path = path
-
 
     def read(self) -> list:
         with open(self._path) as file:
             result = json.load(file)
         return result
 
-    
     def write(self, data : list) -> None:
         with open(self._path, "w") as file:
             json.dump(data, file)
@@ -21,15 +18,23 @@ class FileProcessing():
 
 class Console:
     
-
     def select_choose(self, choose: int) -> int:
         if choose > 4 or choose < 1: 
-            choose = int(input("Данного действия не существует, попробуйте заново:"))
+            choose = self.check_input("Данного действия не существует, попробуйте заново:")
         else:
             self.menu()
-            choose = int(input("Выберите действие:"))
+            try:
+                choose = self.check_input("Выберите действие:")
+            except:
+                choose = self.select_choose(0)
         return choose
 
+    def check_input(self, massage: str)->int:
+        try:
+            choose = int(input(massage))
+        except:
+            choose = self.check_input("Попробуйте ещё раз:")
+        return choose
 
     def menu(self)->None: 
         massage = ("1. Товары и их цены\n" +
@@ -48,7 +53,6 @@ class Seller():
             result += tamplate.format(product_name, price)
         return result
 
-
     def massage_purchase(self, list_purchase: dict, sum_purchases: int)->str:
         tamplate = "{} x {}, "
         result = "Ваши покупки "
@@ -56,7 +60,6 @@ class Seller():
             result += tamplate.format(product_name, number["counter"])
         result += "на сумму " + str(sum_purchases)
         return result
-
 
     def sum_purchase(self, list_purchase: dict) -> int:
         result = 0
@@ -68,7 +71,6 @@ class Seller():
 
 class Buyer():
 
-    
     def update_purchase(self, purchase : dict, list_product: dict) -> dict and str:
         price, name_product = self.choose_product(list_product)
         if price == None:
@@ -78,7 +80,6 @@ class Buyer():
             massage = "Товар добавлен!\n"
         return purchase, massage
 
-
     def add_product (self, purchase : dict, list_product: dict, name_product : str, price : int) -> dict:
         count = purchase.get(name_product)
         if count == None:
@@ -87,50 +88,52 @@ class Buyer():
             purchase[name_product]["counter"] += 1
         return purchase
 
-
     def choose_product(self, product_range: dict)->int: 
         name_product  = input("Введите название подуката:") 
         price = product_range.get(name_product)
         return price, name_product
 
 
-class Shop(FileProcessing, Console, Seller, Buyer):
+class Shop():
     
-
-    def __init__(self, product_range: FileProcessing, purchase_product_range: FileProcessing) -> None:
+    def __init__(self, product_range: FileProcessing, purchase_product_range: FileProcessing,
+                    console: Console, seller: Seller, buyer: Buyer) -> None:
         self. _product_range = product_range
         self._purchase_product_range = purchase_product_range
+        self._console = console
+        self._seller = seller
+        self._buyer = buyer
         self._choose = 1
-
 
     def main(self): 
         while self._choose != 4: 
-            self._choose = self.select_choose(self._choose) 
+            self._choose = self._console.select_choose(self._choose) 
             print(self.select_action(self._choose))
         
-
     def add_purchase(self) -> str:
         list_purchase = self._purchase_product_range.read()
-        list_purchase, massage = self.update_purchase(self._purchase_product_range.read(), self._product_range.read())
+        list_purchase, massage = self._buyer.update_purchase(self._purchase_product_range.read(), self._product_range.read())
         purchase_product_range.write(list_purchase)
         return massage
-
 
     def select_action(self, choose: int) -> str:
         massage = ""
         if choose == 1:
-            massage = self.massage_product_range(self._product_range.read())
+            massage = self._seller.massage_product_range(self._product_range.read())
         elif choose == 2:
             massage = self.add_purchase()
         elif choose == 3:
-            massage = self.massage_purchase(self._purchase_product_range.read(), 
-                self.sum_purchase(self._purchase_product_range.read()))
+            massage = self._seller.massage_purchase(self._purchase_product_range.read(), 
+                self._seller.sum_purchase(self._purchase_product_range.read()))
         return massage
 
 
 product_range = FileProcessing("app/rubiks_cube_product_range.json")
 purchase_product_range = FileProcessing("app/purchase_range.json")
-shop = Shop(product_range, purchase_product_range)
+console = Console()
+seller = Seller()
+buyer = Buyer()
+shop = Shop(product_range, purchase_product_range, console, seller, buyer)
 shop.main()
 
 
