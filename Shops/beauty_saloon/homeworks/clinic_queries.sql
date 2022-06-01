@@ -5,7 +5,7 @@ CREATE EXTENSION "uuid-ossp";
 -- создаем таблицу doctors(uuid, name, category, position)
 CREATE TABLE doctors(
     uuid uuid UNIQUE DEFAULT uuid_generate_v4(),
-    name CHARACTER VARYING(256), category VARCHAR(256), position INT);
+    name CHARACTER VARYING(256), category VARCHAR(256), position TEXT);
 
 -- cоздаем таблицу patients(uuid, name, birth_date, weight, height, sex)
 CREATE TABLE patients(
@@ -132,3 +132,8 @@ JOIN doctors
 ON anamnesis.doctor_uuid = doctors.uuid 
 
 SELECT * FROM honey_card
+
+-- 9. количество пациентов, name для каждого доктора
+SELECT name, COUNT(DISTINCT patient_uuid) FROM doctors 
+JOIN anamnesis ON anamnesis.doctor_uuid = doctors.uuid
+GROUP BY name
