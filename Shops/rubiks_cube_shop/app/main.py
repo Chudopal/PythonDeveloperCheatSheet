@@ -23,10 +23,7 @@ class Console:
             choose = self.check_input("Данного действия не существует, попробуйте заново:")
         else:
             self.menu()
-            try:
-                choose = self.check_input("Выберите действие:")
-            except:
-                choose = self.select_choose(0)
+            choose = self.check_input("Выберите действие:")
         return choose
 
     def check_input(self, massage: str)->int:
