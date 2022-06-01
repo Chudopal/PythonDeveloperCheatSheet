@@ -139,7 +139,7 @@ WITH patients_bmi AS (
 	FROM patients JOIN anamnesis ON patients.uuid = anamnesis.patient_uuid
 )
 
-SELECT name, bmi, treatment
+SELECT treatment, bmi, ROUND((SELECT AVG(bmi) FROM patients_bmi), 2) AS patients_avg_bmi
 FROM patients_bmi
 WHERE bmi > (SELECT AVG(bmi) FROM patients_bmi)
 
@@ -151,6 +151,6 @@ CREATE VIEW patient_doctor AS (
 );
 
 -- 9 количество пациентов, name для каждого доктора
-SELECT doctors.name , COUNT(anamnesis.doctor_uuid)
+SELECT doctors.name, COUNT(DISTINCT anamnesis.patient_uuid)	
 FROM doctors JOIN anamnesis ON doctors.uuid = anamnesis.doctor_uuid
 GROUP BY doctors.name
