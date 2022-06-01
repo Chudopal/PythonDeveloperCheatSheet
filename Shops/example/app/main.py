@@ -18,134 +18,111 @@ import json
 from typing import List, Dict
 
 
-
-class Article:
-    
-    def __init__(self, content, article_id: int):
-        self.content = content
-        self.article_id = article_id
+def read_file(path, name) -> List:
+    with open(path) as file:
+        data = json.load(file)
+    return data.get(name)
 
 
-class FileStorage:
-
-    def __init__(self, path: str, name:str, model: type):
-        self.path = path
-        self.name = name
-        self.model = model
-    
-    def get(self, number: int=None) -> List:
-        data = self._read_file().get(self.name)
-        if number == None:
-            number = len(data)
-        return self._adaptate_to_model(data)[0:number]
-
-    def _adaptate_to_model(self, data: List) -> List:
-        return [
-            self.model(**article) for article in data
-        ]
-
-    def _adaptate_to_file(self, model_list: List) -> List:
-        return [
-            {
-                "content": model.content,
-                "article_id": model.artice_id
-            } for model in model_list
-        ]
-
-    def _read_file(self) -> Dict:
-        with open(self.path) as file:
-            data = json.load(file)
-        return data
-
-    def save(self, articles: List[Article]):
-        article_list = self._adaptate_to_file(articles) # получаем в виде json
-        data = self._read_file()
-        data[self.name] = article_list
-        with open(self.path, "w") as file:
-            json.dump(data, file)
+def write_file(path, data) -> None:
+    with open(path, "w") as file:
+        json.dump(data, file)
 
 
-class PublicationsService:
+def adaptor(data: List) -> Dict:
+    result = {}
+    for article in data:
+        result[article.get("id")] = article.get("content")
+    return result
 
-    def __init__(self, articles_storage, liked_articles_storage):
-        self._articles_storage = articles_storage
-        self._liked_articles_storage = liked_articles_storage
 
-    def add_article(self, content: str):
-        articles = self._articles_storage.get()
+def file_adaptor(data: Dict, name: str) -> Dict:
+    result = {
+        "arctiles": get_all_articles(),
+        "liked_articles": get_all_like_articles()
+    }
+    articles = []
+    for article_id, article_content in data.items():
         articles.append(
-            Article(
-                content=content,
-                article_id=self._create_article_id(articles)
-            )
+            {"id": article_id,
+            "content": article_content}
         )
-        self._articles_storage.save(articles)
-        
-    def _create_article_id(self, articles: List) -> int:
-        return len(articles) + 1
-
-    def get_articles(self, number: str):
-        self._articles_storage.get(number)
-
-    def like_article(self, article_id: int):
-        article = self._find_article(article_id)
-        articles = self._liked_articles_storage.get()
-        articles.append(
-            article
-        )
-        self._liked_articles_storage.save(articles)
+    result[name] = articles
+    return result
 
 
-    def _find_article(self, article_id: int):
-        articles = self._articles_storage.get()
-        result = None
-        for article in articles:
-            if article.article_id == article_id:
-                result = article
-                break
-        return result
-
-    def get_liked_articles(self, number: int):
-        self._liked_articles_storage.get(number)
-    
-
-class ConsoleView:
-
-    def __init__(self, service):
-        self.service = service
-
-    def run(self):
-        choice = None
-        message = self.get_menu()
-        while choice != 5:
-            choice = self.get_choice()
-            self.make_choice(choice)
-    
-    def make_choice(self, choice):
-        if ...:
-            content = input()
-            self.service.add_article()
-        elif ...:
-            self.service.get_articles()
-
-    def print_articles(self, articles) -> None:
-        print("\n".join([f"{article.article_id}. {article.content}"  for article in articles]))
+def get_all_articles() -> List:
+    data = read_file("app/storage.json", "articles")
+    return adaptor(data)
 
 
-    def get_choice(self, message) -> int:
-        return int(input(message))
+def get_all_like_articles() -> List:
+    data = read_file("app/storage.json", "liked_articles")
+    return adaptor(data)
 
 
-    def get_menu(self) -> None:
-        return ""
+def calculate_id(article: str, articles):
+    article_id = len(articles) + 1
+    articles[article_id] = article
 
 
+def add_article(article: str, articles) -> None:
+    calculate_id(article, articles)
+    data = file_adaptor(articles, "articles")
+    write_file("app/storage.json", data)
 
-def run():
-    PublicationsService(
-        FileStorage("app/storage.json", "articles", Article),
-        FileStorage("app/storage.json", "liked_articles", Article),
+
+def like_article(article_id) -> None:
+    article_content = get_all_articles().get(article_id)
+    liked_articles = get_all_like_articles()
+    calculate_id(article_content, liked_articles)
+    data = file_adaptor(liked_articles, "liked_articles")
+    write_file("app/storage.json", data)
+
+
+def format_article(article_list: Dict) -> str:
+    return "\n".join([
+        f"{article_id}. {article}"
+        for article_id, article in article_list.items()
+    ])
+
+
+def menu() -> str:
+    return (
+        "*"*80 + "\n" +
+        "1. Посмотреть все публикации\n" +
+        "2. Добавить публикацию\n" + 
+        "3. Лайкнуть публикацию\n" +
+        "4. Посмотреть понравившиеся."
     )
-    ConsoleView(PublicationsService).run()
+
+
+def make_choice(choice: int):
+    result = ""
+    if choice == 1:
+        articles = get_all_articles()
+        message = format_article(articles)
+        result = message
+    elif choice == 2:
+        article = input("Напишите публикацию: ")
+        add_article(article, get_all_articles())
+    elif choice == 3:
+        article_id = int(input("Введите номер понравившейся публикации: "))
+        like_article(article_id)
+    elif choice == 4:
+        articles = get_all_like_articles()
+        message = format_article(articles)
+        result = message
+    return result
+
+
+def run() -> None:
+    choice = None
+    while choice != 5:
+        print(menu())
+        choice = int(input("Введите пункт меню: "))
+        message = make_choice(choice)
+        print(message)
+
 
 run()
