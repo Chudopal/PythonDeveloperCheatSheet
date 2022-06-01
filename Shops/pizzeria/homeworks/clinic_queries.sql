@@ -22,8 +22,7 @@ CREATE TABLE anamnesis(
 	patient_uuid UUID NOT NULL REFERENCES patients(uuid) ON DELETE RESTRICT,
 	doctor_uuid UUID NOT NULL REFERENCES doctors(uuid) ON DELETE RESTRICT,
 	diagnosis TEXT,
-	treatment TEXT,
-	PRIMARY KEY (patient_uuid, doctor_uuid)
+	treatment TEXT
 );
 
 -- Заполнение данными
