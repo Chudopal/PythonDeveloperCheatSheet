@@ -121,3 +121,14 @@ Select ROUND (weight / (height * 0.01 * height * 0.01),2) AS IMT, treatment,
  (SELECT SUM(weight / (height * 0.01 * height * 0.01))FROM patients_diagnosis) / 
 (SELECT COUNT(treatment)
  FROM patients_diagnosis)
+
+ -- 8. сделайте представление, которое возвращает name пациента, name доктора, diagnosis, treatment
+CREATE VIEW honey_card AS
+SELECT patients.name AS name_patient, doctors.name AS name_doctors, diagnosis, treatment
+FROM anamnesis 
+JOIN patients 
+ON anamnesis.patient_uuid = patients.uuid 
+JOIN doctors 
+ON anamnesis.doctor_uuid = doctors.uuid 
+
+SELECT * FROM honey_card
