@@ -6,11 +6,13 @@ class With_File_Working():
     def __init__(self, path : str, name: str) -> None:
         self._path = path
         self.name = name
+        
 
-    def read_file(adress, name) -> List:    
-        with open(adress) as file:
-            data = json.load(file)
-        return data.get(name)
+    def read_file(self) -> List:    
+        with open(self.adress) as file:
+            data = json.load(file).get(self.name)
+        return data
+
 
     def write_file(adress, data) -> None:    
         with open(adress, "w") as file:
@@ -41,7 +43,7 @@ def provide_file(data):
             ]     
 
 def get_whole_data() -> Dict[str, List]:
-    data = With_File_Working.read_file("Shops/travel_guide_store/app\guide_offer.json", "catalog")
+    data = With_File_Working.read_file("app\guide_offer.json", "catalog")
     return data                                    
 
 def get_menu()-> List:                                                         
@@ -84,7 +86,7 @@ def choose_guide():
     data["shopping_cart"] = provide_data(data["shopping_cart"])
     data["shopping_cart"].append(cart)
     data["shopping_cart"] = provide_file(data["shopping_cart"])
-    With_File_Working.write_file("Shops/travel_guide_store/app\guide_offer.json", data)
+    With_File_Working.write_file(data, "app\guide_offer.json")
     return "Товар добавлен в корзину"
 
 def check_cart():                                                  
