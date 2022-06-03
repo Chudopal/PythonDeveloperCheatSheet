@@ -1,5 +1,3 @@
-CREATE EXTENSION "uuid-ossp";
-
 -- создаем таблицу doctors
 
 CREATE TABLE doctors(
@@ -15,14 +13,13 @@ CREATE TABLE patients(
     birth_date DATE, 
     weight SMALLINT CHECK(weight>10 AND weight <300), 
     height SMALLINT CHECK (height >50 AND height<220), 
-    sex CHARACTER VARYING(3));
+    sex CHARACTER VARYING(3) CHECK (sex = 'жен' OR sex ='муж'));
 
 -- создаем таблицу anamnesis
 CREATE TABLE anamnesis(
     patient_uuid uuid NOT NULL REFERENCES patients (uuid),
     doctor_uuid uuid NOT NULL REFERENCES doctors (uuid),
-    diagnosis TEXT,
-    treatment TEXT);
+    diagnosis TEXT, treatment TEXT);
 
 -- заполняем таблицы данными
 -- заполнем таблицу докторов
@@ -34,7 +31,7 @@ INSERT INTO patients (name, birth_date, weight, height, sex)
 VALUES ('Катя', '1986-12-01', 65, 177, 'жен' ), 
 ('Артем', '1988-10-15', 76, 180, 'муж' ), 
 ('Таня', '1999-12-06', 51, 174, 'жен'),
-('Оля', '2001-06-18', 50, 178, 'жен');
+('Олег', '2001-06-18', 50, 178, 'муж');
 
 --заполняем таблицу анамнезов
 INSERT INTO anamnesis (patient_uuid, doctor_uuid, diagnosis, treatment)
@@ -48,7 +45,7 @@ VALUES
 INSERT INTO anamnesis (patient_uuid, doctor_uuid, diagnosis, treatment)
 VALUES
 (
-  (SELECT uuid FROM patients WHERE name='Оля'),
+  (SELECT uuid FROM patients WHERE name='Олег'),
   (SELECT uuid FROM doctors WHERE name='Владимир'),
   'Боль при сгибании руки',
   'Сделать снимок и применять мазь'
@@ -104,7 +101,7 @@ VALUES
 INSERT INTO anamnesis (patient_uuid, doctor_uuid, diagnosis, treatment)
 VALUES
 (
-  (SELECT uuid FROM patients WHERE name='Оля'),
+  (SELECT uuid FROM patients WHERE name='Олег'),
   (SELECT uuid FROM doctors WHERE name='Елена'),
   'Мед.комиссия',
   'Стандартный осмотр и анализы'
@@ -144,7 +141,11 @@ ORDER BY patients.name;
 CREATE VIEW list_diagnosis AS SELECT 	patients.name, 	anamnesis.diagnosis, 	patients.height FROM 	patients 
 INNER JOIN anamnesis ON patients.uuid = anamnesis.patient_uuid
 SELECT name, diagnosis, height FROM list_diagnosis WHERE height=(SELECT MAX(height) FROM list_diagnosis);
+
 --7. вывести treatment, имт пользователя, среднее имт по больнице для всех пользователей, у которых имт выше среднего в больнице
+SELECT name, (weight / ((height * 0.01) * (height * 0.01))), (SELECT AVG((weight / ((height * 0.01) * (height * 0.01)))) FROM patients) 
+FROM patients	WHERE (weight / ((height * 0.01) * (height * 0.01))) >= 
+(	SELECT AVG((weight / ((height * 0.01) * (height * 0.01)))) FROM patients);
 
 -- 8. сделайте представление, которое возвращает name пациента, name доктора, diagnosis, treatment
 --9. количество пациентов, name для каждого доктора
