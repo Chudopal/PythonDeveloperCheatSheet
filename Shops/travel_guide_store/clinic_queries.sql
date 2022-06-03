@@ -15,7 +15,7 @@ CREATE TABLE patients(
     birth_date DATE, 
     weight SMALLINT CHECK(weight>10 AND weight <300), 
     height SMALLINT CHECK (height >50 AND height<220), 
-    sex CHARACTER VARYING(1));
+    sex CHARACTER VARYING(3));
 
 -- создаем таблицу anamnesis
 CREATE TABLE anamnesis(
@@ -31,10 +31,10 @@ VALUES ('Владимир', 'первая', 'хирург'), ('Елена', 'п�
 
 -- заполняем таблицу patients
 INSERT INTO patients (name, birth_date, weight, height, sex) 
-VALUES ('Катя', '1986-12-01', 65, 177, 'женский' ), 
-('Артем', '1988-10-15', 76, 180, 'мужской' ), 
-('Таня', '1999-12-06', 51, 174, 'женский'),
-('Оля', '2001-06-18', 50, 178, 'женский');
+VALUES ('Катя', '1986-12-01', 65, 177, 'жен' ), 
+('Артем', '1988-10-15', 76, 180, 'муж' ), 
+('Таня', '1999-12-06', 51, 174, 'жен'),
+('Оля', '2001-06-18', 50, 178, 'жен');
 
 --заполняем таблицу анамнезов
 INSERT INTO anamnesis (patient_uuid, doctor_uuid, diagnosis, treatment)
@@ -129,8 +129,19 @@ SELECT * FROM patients;
 
 -- 3. получение пациентов женского пола
 SELECT * FROM patients
-WHERE sex='ж';
+WHERE sex='жен';
 
 --4. отсортировать всех пользователей по birth_date
 SELECT * FROM patients ORDER BY birth_date;
 
+--5. получение name пациента и name лечащего доктора
+SELECT 	patients.name, 	doctors.name FROM patients
+INNER JOIN anamnesis ON patients.uuid = anamnesis.patient_uuid
+INNER JOIN doctors ON anamnesis.doctor_uuid = doctors.uuid
+ORDER BY patients.name;
+
+--6. получение name, диагноз пациентов с максимальным ростом (доп: сделать VIEW)
+
+--7. вывести treatment, имт пользователя, среднее имт по больнице для всех пользователей, у которых имт выше среднего в больнице
+-- 8. сделайте представление, которое возвращает name пациента, name доктора, diagnosis, treatment
+--9. количество пациентов, name для каждого доктора
