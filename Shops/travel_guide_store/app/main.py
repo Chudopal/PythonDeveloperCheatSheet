@@ -1,117 +1,125 @@
 import json
-
 from typing import List, Dict
 
-SHOPPING_RESULT = []
-COAST_LIST= []
-DICT = {}
+class With_File_Working():
 
-def user_menu() -> str:              
+    def __init__(self, path : str, name: str) -> None:
+        self._path = path
+        self.name = name
+
+    def read_file(adress, name) -> List:    
+        with open(adress) as file:
+            data = json.load(file)
+        return data.get(name)
+
+    def write_file(adress, data) -> None:    
+        with open(adress, "w") as file:
+            json.dump(data, file, indent=4) 
+
+
+def user_menu() -> str:                                        
     return ("Выберете действие: \n" + 
         "1.  Посмотреть список туров \n" + 
         "2.  Положить выбранный тур в корзину\n" + 
         "3.  Проверить сумму товаров в корзине\n" +  
-        "4.  Проверить корзину\n" +
-        "5.  Закончить работу\n"  ) 
+        "4.  Закончить работу\n"  ) 
 
-def read_file(adress, name) -> List:    
-    with open(adress) as file:
-        data = json.load(file)
-    return data.get(name)
-
-def read_cart(adress) -> List:   
-    with open(adress) as file:
-        data = json.load(file)
-    return data
-
-def write_file(adress, data) -> None:    
-    with open(adress, "w") as file:
-        json.dump(data, file)    
-
-def provide_data(data: List)-> Dict:      
-    result = {}
-    for guide in data:
-        result[guide.get("id")] = guide.get("price")
+def provide_data(data: List[Dict])-> Dict:                                  
+    result = []
+    for id in data:
+        id = list(id.values())
+        result.append(id)
     return result 
 
-def provide_file(data: Dict, item: str):     
-    result = {"catalog":get_menu()}
-    items=[]   
-    for guide_id, guide_price in data.items():
-       items.append({"id": guide_id, "price":guide_price})
-    result[item]=items
-    return result     
+def provide_file(data):                                                 
+    return [
+        {
+            "id": id, 
+            "price": price
+            } 
+            for id, price in data
+            ]     
 
-def get_menu()-> List:              
-    data = read_file("app\guide_offer.json", "catalog")
+def get_whole_data() -> Dict[str, List]:
+    data = With_File_Working.read_file("Shops/travel_guide_store/app\guide_offer.json", "catalog")
+    return data                                    
+
+def get_menu()-> List:                                                         
+    data = get_whole_data()
     return provide_data(data)
 
-def take_guide()-> List:             
-    data = read_file("app\shopping_cart.json", "cart")
-    return data 
+def show_cart():                                                        
+    data = get_whole_data()
+    return data.get("shopping_cart")    
 
-def format_catalog(guide_list: Dict)-> str:  
-    return "\n".join([f"{guide_id} cost {guide} BYN" for guide_id, guide in guide_list.items()]) 
+def format_catalog(catalog: any)-> str:                              
+    return "\n".join([f" Тур - {guide_id} - стоит {price} BYN" for guide_id, price in catalog]) 
 
-def format_cart(cart_list: Dict): 
-    return "\n".join([f"Your choice guide: {guide_id} cost {guide} BYN and added in shopping_cart" for guide_id, guide in cart_list.items()])
-
-def add_cart(choice_id: str):
-    cart = get_menu()
-    part = format_catalog(cart)
+def add_cart(catalog):                                                     
+    result = None
     guide = input("Напишите выбранный тур: ") 
-    for item in guide: 
-        choice_id.append(str(guide)) 
-        return "\n".join([f" Тур - {guide} - добавлен в Вашу корзину" for guide in choice_id]) 
+    for item in catalog: 
+        if item[0] == guide:
+            result = item
+            break
+    return result    
     
-  
-def summ_guide(sum_list):
-    catalog = get_menu() 
-    # coast_list= [] 
-    for part in SHOPPING_RESULT: 
-        for item in catalog.keys(): 
-            if part == item: 
-                price = catalog[item] 
-                COAST_LIST.append(price)             
-    sum_list = sum(COAST_LIST) 
-    return "\n". join([f"Сумма покупок в корзине составляет: {sum_list} BYN"])    
+def summ_guide(sum_list: List):                                         
+    total_sum = 0
+    result = "" 
+    for item in sum_list:
+        result += item[0] + "\n"
+        total_sum += item[1]
+        result += f"Сумма покупок в корзине составляет: {total_sum} BYN" + "\n"
+    return result       
 
-def show_cart():
-    list1 = SHOPPING_RESULT
-    list2 = COAST_LIST
-    for item in range(0, len(list1)):
-        DICT[list1[item]] = list2[item]
-        write_file("app\shopping_cart.json", DICT)
+def show_menu():                                                   
+    data = get_menu()
+    message = format_catalog(data)
+    return message
     
+def choose_guide():                                                
+    cart = add_cart(get_menu())
+    data = get_whole_data()
+    data["shopping_cart"] = provide_data(data["shopping_cart"])
+    data["shopping_cart"].append(cart)
+    data["shopping_cart"] = provide_file(data["shopping_cart"])
+    With_File_Working.write_file("Shops/travel_guide_store/app\guide_offer.json", data)
+    return "Товар добавлен в корзину"
 
-def make_choice (choice: int): 
+def check_cart():                                                  
+    return summ_guide(provide_data(show_cart()))
+
+def make_choice (choice) -> str: 
     result = "" 
     if choice == 1: 
-        guides = get_menu()
-        message = format_catalog(guides)
-        result = message  
+        result = show_menu()  
     elif choice == 2: 
-        result =add_cart(SHOPPING_RESULT) 
+        result =choose_guide() 
     elif choice == 3:
-        guides= summ_guide(SHOPPING_RESULT) 
-        result = guides 
-        
-    elif choice == 4:
-        guides = show_cart()
-        message = read_cart("app\shopping_cart.json")
-        result = message
-    elif choice ==5: 
+        result= check_cart()
+    elif choice ==4: 
         pass
-       
-    return result     
-         
+    else: 
+        return user_menu()   
+    return result  
+
+def save_make_choice(choice):
+    result = ""
+
+    try:
+        result = make_choice(choice = int(choice))
+    except ValueError:
+        result = "Вводите только цифры!" 
+    except FileNotFoundError:
+        result = "В магазине нет товаров"+ '\n'    
+    return result   
 
 def run() -> None: 
     choice = None
-    while choice  !=5:     
+    while choice  !="4":     
         print(user_menu()) 
-        choice = int(input("Введите пункт меню: ")) 
-        message = make_choice(choice) 
-        print(message) 
+        choice = input("Введите пункт меню: ")
+        print(save_make_choice(choice = choice)) 
      
 run()
