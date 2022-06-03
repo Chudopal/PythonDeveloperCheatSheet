@@ -141,7 +141,10 @@ INNER JOIN doctors ON anamnesis.doctor_uuid = doctors.uuid
 ORDER BY patients.name;
 
 --6. получение name, диагноз пациентов с максимальным ростом (доп: сделать VIEW)
-
+CREATE VIEW list_diagnosis AS SELECT 	patients.name, 	anamnesis.diagnosis, 	patients.height FROM 	patients 
+INNER JOIN anamnesis ON patients.uuid = anamnesis.patient_uuid
+SELECT name, diagnosis, height FROM list_diagnosis WHERE height=(SELECT MAX(height) FROM list_diagnosis);
 --7. вывести treatment, имт пользователя, среднее имт по больнице для всех пользователей, у которых имт выше среднего в больнице
+
 -- 8. сделайте представление, которое возвращает name пациента, name доктора, diagnosis, treatment
 --9. количество пациентов, name для каждого доктора
