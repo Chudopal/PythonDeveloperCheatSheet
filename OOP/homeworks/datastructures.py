@@ -138,7 +138,7 @@ A--
 --(C/A)
 ---
 и воводится сообщение
-Choden is dead. Number of iterations - 4.
+Chosen is dead. Number of iterations - 4.
 Так же можно сделать и с сеткой 5 на 5 или 10 на 10
 
 - Каждая итерация выводится на экран.
