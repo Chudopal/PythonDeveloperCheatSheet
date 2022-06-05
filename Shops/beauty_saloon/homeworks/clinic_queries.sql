@@ -137,3 +137,5 @@ SELECT * FROM honey_card
 SELECT name, COUNT(DISTINCT patient_uuid) FROM doctors 
 JOIN anamnesis ON anamnesis.doctor_uuid = doctors.uuid
 GROUP BY name
+
+
