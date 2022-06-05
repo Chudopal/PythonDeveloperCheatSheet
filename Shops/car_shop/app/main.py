@@ -91,29 +91,24 @@ def main_menu():
     bag_stock = Stock("bag.json")
     shop = Shop(cars_stock=cars_stock, bag_stock=bag_stock)
     while choice != 0:
-        print("""
-        0 - Выход
-        1 - Посмотреть товары/Добавить в корзину
-        2 - Посмотреть корзину
-        """)
-        choice = int(input('Выберите действие: '))
-        
-        if choice == 1:
-            shop.choice_cars()
-        elif choice == 2:
-            shop.show_bag()
-        elif choice not in [0,1,2]:
-            print('Неверный выбор! Попробуйте еще раз.')
+        try:
+            print("""
+            0 - Выход
+            1 - Посмотреть товары/Добавить в корзину
+            2 - Посмотреть корзину
+            """)
+            choice = int(input('Выберите действие: '))
+            
+            if choice == 1:
+                shop.choice_cars()
+            elif choice == 2:
+                shop.show_bag()
+            elif choice not in [0,1,2]:
+                print('Неверный выбор! Попробуйте еще раз.')
+        except ValueError as e:
+            print('Введите конкретный пункт из меню!')
 
     print('Пока')
 
 
-def add_exception():
-    try:
-        main_menu()
-    except ValueError as e:
-        print('Введите конкретный пункт из меню!')
-        main_menu()
-
-
-add_exception()
+main_menu()
