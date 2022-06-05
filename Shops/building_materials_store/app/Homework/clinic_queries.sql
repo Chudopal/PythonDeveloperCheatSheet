@@ -133,7 +133,7 @@ ON doctors.uuid=anamnesis.doctor_uuid
 
 
 -- 9.количество пациентов, name для каждого доктора
-SELECT count(anamnesis.patient_uuid), doctors.name
+SELECT count(DISTINCT anamnesis.patient_uuid), doctors.name
 FROM doctors
 JOIN anamnesis ON anamnesis.doctor_uuid=doctors.uuid
 GROUP BY doctors.name;
