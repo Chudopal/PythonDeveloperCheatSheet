@@ -52,3 +52,94 @@
 import time
 time.sleep(0.5) #остановит работу на 0.5 сек
 """
+
+from dataclasses import dataclass
+from uuid import uuid4
+import time
+
+
+@dataclass
+class Engine:
+    serial_number = uuid4()
+    power: float
+
+
+@dataclass
+class Wheel:
+    material: str
+    season: str
+
+
+@dataclass
+class Body:
+    color: str
+    material: str
+
+
+class WheelsSetCreator:
+    def __init__(self, *wheels: Wheel):
+        self.wheels = wheels
+        self.wheels_set = dict()
+        self._format_wheels()
+
+    def __repr__(self):
+        return " ".join(f"{value} {key}" for key, value in self.wheels_set.items())
+
+    def _format_wheels(self):
+        for wheel in self.wheels:
+            if not self.wheels_set.get(wheel.season):
+                self.wheels_set[wheel.season] = 1
+            else:
+                self.wheels_set[wheel.season] += 1
+
+
+class Vehicle:
+    def __init__(self, model: str, engine: Engine, body: Body, wheels: WheelsSetCreator):
+        self.model = model
+        self.engine = engine
+        self.body = body
+        self.wheels = wheels
+
+    def __repr__(self):
+        return f"Model - {self.model}, wheels - {self.wheels}, corpus color - {self.body.color}."
+
+    def move(self, distance: float):
+        traveled_distance = 0
+        print("I'm starting.")
+        while traveled_distance < distance:
+            time.sleep(self.engine.power)
+            traveled_distance += 1
+            print(traveled_distance)
+        print(f"Total time - {self.engine.power * distance}")
+
+
+slow_engine = Engine(2)
+fast_engine = Engine(1)
+hyper_engine = Engine(0.3)
+
+regular_body = Body("Green", "Aluminium")
+sport_body = Body("Red", "Carbon")
+off_road_body = Body("Blue", "Aluminium")
+
+winter_wheel = Wheel("Steel", "Winter")
+summer_wheel = Wheel("Steel", "Summer")
+sport_wheel = Wheel("Carbon", "Summer")
+off_road_wheel = Wheel("Titanium", "Off-road")
+
+race_set = WheelsSetCreator(sport_wheel, sport_wheel, sport_wheel, sport_wheel)
+winter_set = WheelsSetCreator(winter_wheel, winter_wheel, winter_wheel, winter_wheel)
+summer_set = WheelsSetCreator(summer_wheel, summer_wheel, summer_wheel, summer_wheel)
+off_road_set = WheelsSetCreator(off_road_wheel, off_road_wheel, off_road_wheel, off_road_wheel)
+mix_set = WheelsSetCreator(winter_wheel, summer_wheel, winter_wheel, summer_wheel)
+
+garage = [
+    Vehicle('Jeep', slow_engine, off_road_body, off_road_set),
+    Vehicle('Skoda', hyper_engine, sport_body, race_set),
+    Vehicle('BMW', fast_engine, regular_body, mix_set),
+    Vehicle('Audi', fast_engine, sport_body, summer_set),
+    Vehicle('Mercedes', fast_engine, sport_body, winter_set)
+]
+
+for car in garage:
+    print(car)
+    car.move(5)

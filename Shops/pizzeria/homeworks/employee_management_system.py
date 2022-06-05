@@ -48,7 +48,7 @@ class Worker(Human):
         super().__init__(uuid, name, age)
 
     def check_task(self, task: Task):
-        if (task.experience == self.experience) and (task.field == self.field_of_activity):
+        if (task.experience <= self.experience) and (task.field == self.field_of_activity):
             print(f"Task {task.description} is done!")
         else:
             print(f"Task {task.description} is not for me.")
