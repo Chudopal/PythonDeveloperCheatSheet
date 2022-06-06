@@ -121,12 +121,11 @@ SELECT name, category FROM doctors;
 
 
 -- 2. получение количества всех пациентов
-SELECT * FROM patients;
+SELECT COUNT(*) as uuid FROM patients;;
 
 
 -- 3. получение пациентов женского пола
-SELECT * FROM patients
-WHERE sex='жен';
+SELECT * FROM patients WHERE sex='жен';
 
 --4. отсортировать всех пользователей по birth_date
 SELECT * FROM patients ORDER BY birth_date;
@@ -148,4 +147,11 @@ FROM patients	WHERE (weight / ((height * 0.01) * (height * 0.01))) >=
 (	SELECT AVG((weight / ((height * 0.01) * (height * 0.01)))) FROM patients);
 
 -- 8. сделайте представление, которое возвращает name пациента, name доктора, diagnosis, treatment
+CREATE VIEW klinika_list AS SELECT patients.name AS patient, doctors.name AS doctor, anamnesis.diagnosis, anamnesis.treatment
+FROM anamnesis JOIN patients ON patients.uuid=anamnesis.patient_uuid JOIN doctors ON doctors.uuid=anamnesis.doctor_uuid;
+
+SELECT * FROM klinika_list;
+
 --9. количество пациентов, name для каждого доктора
+SELECT count(DISTINCT anamnesis.patient_uuid), doctors.name
+FROM doctors JOIN anamnesis ON anamnesis.doctor_uuid=doctors.uuid GROUP BY doctors.name;
