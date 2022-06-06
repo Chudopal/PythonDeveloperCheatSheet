@@ -83,3 +83,4 @@ class Worker(Human):
             print(f"Task {self.description} is done!")
         else:
             print(f"Task {self.description} is not for me.")
+
