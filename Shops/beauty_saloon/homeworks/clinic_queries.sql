@@ -5,7 +5,7 @@ CREATE EXTENSION "uuid-ossp";
 -- создаем таблицу doctors(uuid, name, category, position)
 CREATE TABLE doctors(
     uuid uuid UNIQUE DEFAULT uuid_generate_v4(),
-    name CHARACTER VARYING(256), category VARCHAR(256), position INT);
+    name CHARACTER VARYING(256), category VARCHAR(256), position TEXT);
 
 -- cоздаем таблицу patients(uuid, name, birth_date, weight, height, sex)
 CREATE TABLE patients(
@@ -121,3 +121,19 @@ Select ROUND (weight / (height * 0.01 * height * 0.01),2) AS IMT, treatment,
  (SELECT SUM(weight / (height * 0.01 * height * 0.01))FROM patients_diagnosis) / 
 (SELECT COUNT(treatment)
  FROM patients_diagnosis)
+
+ -- 8. сделайте представление, которое возвращает name пациента, name доктора, diagnosis, treatment
+CREATE VIEW honey_card AS
+SELECT patients.name AS name_patient, doctors.name AS name_doctors, diagnosis, treatment
+FROM anamnesis 
+JOIN patients 
+ON anamnesis.patient_uuid = patients.uuid 
+JOIN doctors 
+ON anamnesis.doctor_uuid = doctors.uuid 
+
+SELECT * FROM honey_card
+
+-- 9. количество пациентов, name для каждого доктора
+SELECT name, COUNT(DISTINCT patient_uuid) FROM doctors 
+JOIN anamnesis ON anamnesis.doctor_uuid = doctors.uuid
+GROUP BY name
