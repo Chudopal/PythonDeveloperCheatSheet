@@ -5,7 +5,7 @@ class Person:
     
     def __init__(self, name: str, age: int) -> None:
         self.name = name
-        self.uuid = str(uuid.uuid4())
+        self.uuid = uuid.uuid4()
         self.age = age
 
 
