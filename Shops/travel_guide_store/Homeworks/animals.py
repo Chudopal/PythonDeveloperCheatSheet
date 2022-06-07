@@ -17,7 +17,7 @@ class Animals ():
         self.age = age
 
     def presentate(self):
-        print(f'My name is {self.name}, my age is {self.age}')
+        return f'My name is {self.name}, my age is {self.age}'
 
 
 class Cat(Animals):
@@ -26,7 +26,7 @@ class Cat(Animals):
         super().__init__(name=name, age=age)
 
     def introduce(self):
-        print(f"Hello, I'm {self.name}, and I'm meowing! My favorite place is {self.fav_place}!")
+        return f"Hello, I'm {self.name}, and I'm meowing! My favorite place is {self.fav_place}!"
 
 
 class Dog(Animals):
@@ -35,7 +35,7 @@ class Dog(Animals):
         super().__init__(name=name, age=age)
 
     def introduce(self):
-        print(f"Hello, I'm {self.name}, and I'm woofing! My favorite command is {self.command}!")
+        return f"Hello, I'm {self.name}, and I'm woofing! My favorite command is {self.command}!"
 
 # проверка
 cat1 = Cat("Tom", 3, "window")
