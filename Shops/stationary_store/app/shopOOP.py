@@ -45,11 +45,6 @@ class DataHandler:
 class Order:
     """управление заказом"""
 
-    def __init__(self, products_storage_path, sbag_storage_path):
-        self._products_storage_path  = products_storage_path
-        self._sbag_storage_path = sbag_storage_path
-
-
     def add_item_sbag(self) -> str:
         catalog = jsh_products.read_file()
         data = jsh_sbag.read_file()
@@ -109,9 +104,7 @@ def run()-> None:
     """запуск"""
 
     print_hello_username()
-    products_storage_path = "products.json"
-    sbag_storage_path = "sbag.json"
-    console = Console(Order(products_storage_path, sbag_storage_path))
+    console = Console(Order())
     choice = None
     while choice != 5:
         console.get_menu()
