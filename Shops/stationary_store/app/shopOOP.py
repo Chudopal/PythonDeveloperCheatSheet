@@ -24,17 +24,6 @@ class JsonStorageHandler:
             result = json.load(file)
         return result
 
-
-    def add_info_file(self, product: str):
-        catalog = JsonStorageHandler("products.json").read_file()
-        data = JsonStorageHandler(self.path).read_file()
-        if product in catalog:
-            data.append(product) 
-        else:
-            print("Please, choose a product from catalog!")
-        JsonStorageHandler(self.path).write_file(data)
-
-
 class DataHandler:
     """адаптация вывода информации"""
 
