@@ -68,7 +68,7 @@ class MatrixCitizen(ABC):
     def __repr__(self):
         """String representation of object"""
 
-    def set_position(self, position: list[int, int]):  # TODO: make it throught setter
+    def set_position(self, position: list[int, int]):
         self.position = position
         self.row = position[0]
         self.col = position[1]
@@ -76,19 +76,20 @@ class MatrixCitizen(ABC):
     def turn(self, city_borders: list[int, int]):
         direction = self.direction_movements.get(random.randint(1, 4))
         new_position = [sum(i) for i in zip(self.position, direction)]
-        self._check_city_borders(new_position, city_borders)
+        self.position = self._check_city_borders(new_position, city_borders)
 
     def _check_city_borders(self, position: list[int, int], borders: list[int, int]):
-        return [
-            self._check_lower_border(position[0], borders[0]),
-            self._check_upper_border(position[1], borders[1])
-        ]
+        return [self._check_position(i[0], i[1]) for i in zip(position, borders)]
 
-    def _check_lower_border(self, position, border):
-        pass
-
-    def _check_upper_border(self, position, border):
-        pass
+    def _check_position(self, position, border):
+        new_position = None
+        if position >= border:
+            new_position = position - 2
+        elif position < 0:
+            new_position = position + 2
+        else:
+            new_position = position
+        return new_position
 
 
 class Agent(MatrixCitizen):
@@ -136,19 +137,26 @@ class Matrix:
             self.city.grid[citizen.row][citizen.col] = citizen
         else:
             self.city.grid[citizen.row][citizen.col] = "M"
+            self.chosen_dead = True
+
+    def _set_empty(self, cell_coords: list[int, int]):
+        self.city.grid[cell_coords[0]][cell_coords[1]] = '-'
 
     def _make_turn(self):
         for citizen in self.citizens:
-            citizen.turn(self.city.rows, self.city.cols)
+            self._set_empty(citizen.position)
+            citizen.turn([self.city.rows, self.city.cols])
             self._set_citizen(citizen)
 
     def run_matrix(self):
+        turn_counter = 0
         while not self.chosen_dead:
             self._make_turn()
+            print(self.city)
+            turn_counter += 1
             time.sleep(0.5)
-        print("Chosen is dead.")
+        print(f"Chosen is dead. Number of iterations - {turn_counter}.")
 
 
-mega_matrix = Matrix(4, 4, 6)
-print(mega_matrix.citizens)
-print(mega_matrix.city)
+mega_matrix = Matrix(6, 6, 2)
+mega_matrix.run_matrix()
