@@ -10,7 +10,71 @@
 """
 
 import json
+
 from typing import Dict, List
+
+
+class Storage:
+    
+    def __init__(self, path: str, name: str, model: type) -> None:
+        self.path = path
+        self.name = name
+        self.model = model
+
+    def get(self, product: List):
+        with open(self.path) as file:
+            data = json.load(file).get(self.name)
+        return self._adaptor(data)
+
+    def _adaptor_to_model(self, data) -> List:
+        return[
+            self.model(**product) for product in data
+        ]
+
+    def _adaptor_to_file(self, model_list: List) -> List:
+        return[
+            {
+                "product": model.product,
+                "cost": model.cost
+            } for model in model_list
+        ]
+
+
+    def save(self, product: List):
+        data = self._adaptor_to_file(product)
+        
+
+
+class Product:
+    
+    def __init__(self, product: str, cost: int) -> None:
+        self.product = product
+        self.cost = cost
+
+
+class ShoppingService:
+    
+    def get_products(self, products: List):
+        pass
+
+    def choose_product(self, product_list: List):
+        pass
+
+    def purchase(self, product: List):
+        pass
+
+    def get_bill(self, product: List):
+        pass
+
+
+
+
+
+
+
+
+
+
 
 
 def read_file(path):
@@ -52,7 +116,7 @@ def get_products() -> List:
 
 def buy_goods() -> List:
     data = get_whole_data()
-    return data.get("basket")
+    return data.get("shopping_cart")
 
 
 def format_product(product_list: any) -> str:
@@ -99,9 +163,9 @@ def show_products():
 def choose_product():
     purchase = add_purchase(get_products())
     data = get_whole_data()
-    data["basket"] = adaptor(data["basket"])
-    data["basket"].append(purchase)
-    data["basket"] = file_adaptor(data["basket"])
+    data["shopping_cart"] = adaptor(data["shopping_cart"])
+    data["shopping_cart"].append(purchase)
+    data["shopping_cart"] = file_adaptor(data["shopping_cart"])
     write_file("app\storage.json", data)
     return "Товар добавлен в корзину"
 
