@@ -12,11 +12,11 @@
     а также уровень исполнителя, например 5 значит, что только работник
     с опытом 5 лет может ее исполнить"""
 
-from uuid import UUID
+from uuid import uuid4
 
 class Person:
-    def __init__ (self, uuid: UUID, name: str, age: int):
-        self.uuid = uuid
+    def __init__ (self, uuid:uuid4(), name: str, age: int):
+        self.uuid = uuid4()
         self.name = name
         self.age = age
         
@@ -28,7 +28,7 @@ class Task:
 
 class Employee(Person):
     def __init__ (self, name:str, age: int, role: str, experience: int, sector: str):
-        super().__init__(self,name, age)
+        super().__init__(self, name, age)
         self.role = role
         self.experience = experience
         self.sector = sector
@@ -44,6 +44,7 @@ class Employee(Person):
 
 
 # проверка
-chel1 = Employee("Petr", 39, "Master", 18, "STO")
+chel1 = Employee( "Petr", 39, "Master", 18, "STO")
 print(chel1.operation(Task("Починить авто", "STO", 15)))
 print(chel1.operation(Task("Починить авто", "IT", 3)))
+print(chel1.uuid)
