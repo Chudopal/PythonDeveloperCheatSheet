@@ -24,19 +24,20 @@ class JsonStorageHandler:
             result = json.load(file)
         return result
 
+
 class DataHandler:
     """адаптация вывода информации"""
 
     def __init__(self, path):
-        self.path = path
+        self.path = JsonStorageHandler(path)
 
     def format_catalog_dict(self) -> Dict:
-        data = JsonStorageHandler(self.path).read_file()
+        data = self.path.read_file()
         for key, value in data.items():
             print(key, ':', value, sep='')
 
     def format_catalog_list(self) -> List:
-        data = JsonStorageHandler(self.path).read_file()
+        data = self.path.read_file()
         for i in data:
             print(i, sep='')
 
@@ -45,17 +46,17 @@ class Order:
     """управление заказом"""
 
     def __init__(self, products_storage_path, sbag_storage_path):
-        self._products_storage_path  = JsonStorageHandler(products_storage_path)
-        self._sbag_storage_path = JsonStorageHandler(sbag_storage_path)
+        self._products_storage_path  = products_storage_path
+        self._sbag_storage_path = sbag_storage_path
 
 
     def add_item_sbag(self) -> str:
-        catalog = self._products_storage_path.read_file()
-        data = self._sbag_storage_path.read_file()
+        catalog = jsh_products.read_file()
+        data = jsh_sbag.read_file()
         product = input('Please add a product name to sbag(one by one): ')
         if product in catalog:
             data.append(product)
-            self._sbag_storage_path.write_file(data)
+            jsh_sbag.write_file(data)
             print('Product added to SBAG. To add more back to order page')  
         else:
             print("Please, choose a product from catalog!")
@@ -63,8 +64,8 @@ class Order:
 
     def count_sbag_sum(self) -> str:
         final_sum=0
-        for i in self._sbag_storage_path.read_file():
-            final_sum += self._products_storage_path.read_file().get(i)
+        for i in jsh_sbag.read_file():
+            final_sum += jsh_products.read_file().get(i)
         print('Final purchase cost is {}.Thank you!'.format(final_sum))
 
     def show_sbag(self)-> List:
@@ -72,7 +73,7 @@ class Order:
         self.count_sbag_sum()
 
     def clear_sbag(self)-> None:
-        self._sbag_storage_path.write_file([])
+        jsh_sbag.write_file([])
 
 
 class Console:
@@ -119,3 +120,6 @@ def run()-> None:
             console.make_choice(choice) 
         except ValueError:
             print("Enter a number from 1 to 5!")
+
+jsh_products = JsonStorageHandler("products.json")
+jsh_sbag = JsonStorageHandler("sbag.json")
