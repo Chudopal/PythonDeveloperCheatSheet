@@ -49,7 +49,8 @@ import random
 random.randint(1, 4) # случайное число от 1 до 4 (включая 1 и 4)
 """
 
-import time, random, os
+import random
+import time
 from abc import ABC, abstractmethod
 
 
@@ -57,26 +58,29 @@ class City:
     def __init__(self, rows: int, cols: int):
         self.rows = rows
         self.cols = cols
-        self.grid = [['-' for i in range(self.cols)] for j in range(self.rows)]  # TODO: make getter
-
-    def set_item(self, item: any):  # TODO: make setter
-        pass
+        self.borders = [self.rows, self.cols]
+        self.__grid = [['-' for _ in range(self.cols)] for _ in range(self.rows)]
 
     def __repr__(self):
-        return '\n'.join([" ".join([str(cell) for cell in row]) for row in self.grid]) + "\n"
+        return '\n'.join([" ".join([str(cell) for cell in row]) for row in self.__grid]) + "\n"
+
+    @property
+    def get_grid(self):
+        return self.__grid
+
+    def set_item(self, item: any, position: list[int, int]):
+        self.__grid[position[0]][position[1]] = item
+
+    def get_item(self, position: list[int, int]):
+        return self.__grid[position[0]][position[1]]
+
+    def set_empty(self, position: list[int, int]):
+        self.set_item('-', position)
 
 
 class MatrixCitizen(ABC):
     def __init__(self):
         self.position = [0, 0]
-        self.row = self.position[0]
-        self.col = self.position[1]
-        self.direction_movements = {
-            1: (0, 1),
-            2: (1, 0),
-            3: (0, -1),
-            4: (-1, 0)
-        }
 
     @abstractmethod
     def __repr__(self):
@@ -84,34 +88,6 @@ class MatrixCitizen(ABC):
 
     def set_position(self, position: list[int, int]):
         self.position = position
-        self.row = position[0]
-        self.col = position[1]
-
-    def turn(self, city: City):
-        turn_possible = False
-        new_position = None
-        while not turn_possible:
-            direction = self.direction_movements.get(random.randint(1, 4))
-            raw_position = [sum(i) for i in zip(self.position, direction)]
-            new_position = self._check_city_borders(raw_position, [city.rows, city.cols])
-            turn_possible = self._check_position(new_position, city.grid)
-        self.set_position(new_position)
-
-    def _check_city_borders(self, position: list[int, int], borders: list[int, int]):
-        return [self._check_border(i[0], i[1]) for i in zip(position, borders)]
-
-    def _check_border(self, position, border):
-        new_position = None
-        if position >= border:
-            new_position = position - 2
-        elif position < 0:
-            new_position = position + 2
-        else:
-            new_position = position
-        return new_position
-
-    def _check_position(self, position: list[int, int], city: list[list]) -> bool:
-        return type(city[position[0]][position[1]]) != Agent
 
 
 class Agent(MatrixCitizen):
@@ -127,10 +103,14 @@ class Chosen(MatrixCitizen):
 class Matrix:
     def __init__(self, city_rows: int, city_cols: int, agents_num: int):
         self.city = City(city_rows, city_cols)
-        self.chosen = Chosen()
         self.chosen_dead = False
-        self.agents = [Agent() for _ in range(agents_num)]
-        self.citizens = [self.chosen] + self.agents
+        self.citizens = [Chosen()] + [Agent() for _ in range(agents_num)]
+        self._direction_movements = {
+            1: (0, 1),
+            2: (1, 0),
+            3: (0, -1),
+            4: (-1, 0)
+        }
         self._init_citizens()
 
     def _init_citizens(self):
@@ -144,20 +124,42 @@ class Matrix:
             self._set_citizen(citizen)
 
     def _set_citizen(self, citizen: MatrixCitizen):
-        cell_value = str(self.city.grid[citizen.row][citizen.col])
+        cell_value = str(self.city.get_item(citizen.position))
         if (cell_value != 'C') and (cell_value != 'M'):
-            self.city.grid[citizen.row][citizen.col] = citizen
+            self.city.set_item(citizen, citizen.position)
         else:
-            self.city.grid[citizen.row][citizen.col] = "M"
+            self.city.set_item('M', citizen.position)
             self.chosen_dead = True
 
-    def _set_empty(self, cell_coords: list[int, int]):
-        self.city.grid[cell_coords[0]][cell_coords[1]] = '-'
+    def _generate_new_position(self, citizen: MatrixCitizen):
+        turn_possible = False
+        new_position = None
+        while not turn_possible:
+            direction = self._direction_movements.get(random.randint(1, 4))
+            raw_position = [sum(i) for i in zip(citizen.position, direction)]
+            new_position = self._check_city_borders(raw_position)
+            turn_possible = self._check_position(new_position)
+        citizen.set_position(new_position)
+
+    def _check_city_borders(self, position: list[int, int]):
+        return [self._check_border(i[0], i[1]) for i in zip(position, self.city.borders)]
+
+    def _check_border(self, position, border):
+        if position >= border:
+            new_position = position - 2
+        elif position < 0:
+            new_position = position + 2
+        else:
+            new_position = position
+        return new_position
+
+    def _check_position(self, position: list[int, int]) -> bool:
+        return type(self.city.get_item(position)) != Agent
 
     def make_turn(self):
         for citizen in self.citizens:
-            self._set_empty(citizen.position)
-            citizen.turn(self.city)
+            self.city.set_empty(citizen.position)
+            self._generate_new_position(citizen)
             self._set_citizen(citizen)
 
     def run_matrix(self):
@@ -171,5 +173,5 @@ class Matrix:
         print(f"Chosen is dead. Number of iterations - {turn_counter}.")
 
 
-mega_matrix = Matrix(4, 4, 4)
+mega_matrix = Matrix(4, 8, 3)
 mega_matrix.run_matrix()
