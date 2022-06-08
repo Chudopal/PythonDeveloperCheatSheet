@@ -72,15 +72,15 @@ class Human:
 
 
 class Worker(Human):
-    def __init__(self, name: str, age: int, uuid: str, role: str, work_exp: int):
+    def __init__(self, name: str, age: int, uuid: str, work_exp: int, work_sphere: str, role: str):
         super().__init__(name, age, uuid)
         self.role = role
         self.work_exp = work_exp
+        self.work_sphere = work_sphere
 
-    def make_task(self):
-        if (self.role = self.sphere) and (
-                self.work_exp >= self.work_exp_level):  ## возможно правильно будет self.role = Task().sphere
-            print(f"Task {self.description} is done!")
+    def make_task(self, task: Task):
+        if (self.work_sphere == task.sphere) and (
+                self.work_exp >= task.work_exp_level):
+            print(f"Task {task.description} is done!")
         else:
-            print(f"Task {self.description} is not for me.")
-
+            print(f"Task {task.description} is not for me.")
