@@ -43,7 +43,7 @@ class Employee(Human):
         self.employee_exp = employee_exp
 
 
-    def make_object(self, task: Task):
+    def do_task(self, task: Task):
         if self.employee_exp >= task.exp and self.area == task.area:
             result = f'Task {task.description} is done!'
         else:
@@ -52,6 +52,6 @@ class Employee(Human):
         return result
 
 
-employee = Employee('Nikita Gorohin ', 14, 'Businessman', 5)
-print(employee.make_object(Task('treat people', 'Doc', 1)))
-print(employee.make_object(Task('business analyst', 'Businessman', 4)))
+employee = Employee('Nikita Gorohin ', 35, 'Businessman', 5)
+print(employee.do_task(Task('treat people', 'Doc', 1)))
+print(employee.do_task(Task('business analyst', 'Businessman', 4)))
