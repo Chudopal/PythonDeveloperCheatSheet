@@ -37,13 +37,14 @@ class Task:
 
 class Employee(Human):
 
-    def __init__(self, name: str, age: int, role: str, employee_exp: str) -> None:
+    def __init__(self, name: str, age: int, area: str, employee_exp: str) -> None:
         super().__init__(name, age)
-        self.role = role
+        self.area = area
         self.employee_exp = employee_exp
 
+
     def make_object(self, task: Task):
-        if self.employee_exp >= task.exp and self.role == task.area:
+        if self.employee_exp >= task.exp and self.area == task.area:
             result = f'Task {task.description} is done!'
         else:
             result = f'Task {task.description} is not for me.'
@@ -51,6 +52,6 @@ class Employee(Human):
         return result
 
 
-employee = Employee('Nikita Gorohin ', 56, 'Businessman', 5)
+employee = Employee('Nikita Gorohin ', 14, 'Businessman', 5)
 print(employee.make_object(Task('treat people', 'Doc', 1)))
 print(employee.make_object(Task('business analyst', 'Businessman', 4)))
