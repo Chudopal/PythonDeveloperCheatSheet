@@ -54,6 +54,10 @@ import time
 from abc import ABC, abstractmethod
 
 
+class ChosenGotCaughtException(Exception):
+    """Raises when chosen got cornered"""
+
+
 class City:
     def __init__(self, rows: int, cols: int):
         self.rows = rows
@@ -103,7 +107,7 @@ class Chosen(MatrixCitizen):
 class Matrix:
     def __init__(self, city_rows: int, city_cols: int, agents_num: int):
         self.city = City(city_rows, city_cols)
-        self.chosen_dead = False
+        self.chosen_is_dead = False
         self.citizens = [Chosen()] + [Agent() for _ in range(agents_num)]
         self._direction_movements = {
             1: (0, 1),
@@ -129,16 +133,20 @@ class Matrix:
             self.city.set_item(citizen, citizen.position)
         else:
             self.city.set_item('M', citizen.position)
-            self.chosen_dead = True
+            self.chosen_is_dead = True
 
     def _generate_new_position(self, citizen: MatrixCitizen):
         turn_possible = False
         new_position = None
+        iter_counter = 0
         while not turn_possible:
+            iter_counter += 1
+            if iter_counter > 16:
+                raise ChosenGotCaughtException
             direction = self._direction_movements.get(random.randint(1, 4))
             raw_position = [sum(i) for i in zip(citizen.position, direction)]
             new_position = self._check_city_borders(raw_position)
-            turn_possible = self._check_position(new_position)
+            turn_possible = self._check_position(citizen, new_position)
         citizen.set_position(new_position)
 
     def _check_city_borders(self, position: list[int, int]):
@@ -153,8 +161,12 @@ class Matrix:
             new_position = position
         return new_position
 
-    def _check_position(self, position: list[int, int]) -> bool:
-        return type(self.city.get_item(position)) != Agent
+    def _check_position(self, citizen: MatrixCitizen, position: list[int, int]) -> bool:
+        if type(citizen) == Chosen:
+            result = type(self.city.get_item(position)) != Agent
+        else:
+            result = True
+        return result
 
     def make_turn(self):
         for citizen in self.citizens:
@@ -162,16 +174,19 @@ class Matrix:
             self._generate_new_position(citizen)
             self._set_citizen(citizen)
 
-    def run_matrix(self):
+    def enter_the_matrix(self):
         turn_counter = 0
         print(self.city)
-        while not self.chosen_dead:
-            self.make_turn()
-            print(self.city)
-            turn_counter += 1
-            time.sleep(0.5)
-        print(f"Chosen is dead. Number of iterations - {turn_counter}.")
+        try:
+            while not self.chosen_is_dead:
+                self.make_turn()
+                print(self.city)
+                turn_counter += 1
+                time.sleep(0.5)
+            print(f"Chosen is dead. Number of iterations - {turn_counter}.")
+        except ChosenGotCaughtException:
+            print(f"Chosen got caught by agents. Number of iterations - {turn_counter}.")
 
 
-mega_matrix = Matrix(4, 8, 3)
-mega_matrix.run_matrix()
+mega_matrix = Matrix(4, 8, 4)
+mega_matrix.enter_the_matrix()
