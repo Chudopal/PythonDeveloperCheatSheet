@@ -33,23 +33,29 @@ class Worker(People):
     def __init__(
         self,
         name: str,
-        uuid: str,
+        uuid: UUID,
         age: int,
-        job: str,
+        sphere: str,
         work_experience: str
 ) -> None:
         super().__init__(name, uuid, age)
-        self.job = job
+        self.sphere = sphere
         self.work_experience = work_experience
 
 
 class Task:
 
-    def __init__(self, description: str, sphere: str, experience: int, task_description: str) -> None:
+    def __init__(self, description: str,
+    sphere: str,
+    experience: int,
+    task_description: str,
+    worker: Worker
+    ) -> None:
         self.description = description
         self.sphere = sphere
         self.experience = experience
         self.task_description = task_description
+        self.worker = worker
 
     def get_positive_task(self):
         return f"Task {self.task_description} is done!"
@@ -58,7 +64,8 @@ class Task:
         return f"Task {self.task_description} is not for me."
 
     def get_task(self):
-        pass
+        if (self.worker.work_experience >= self.experience) and (self.worker.sphere == self.sphere):
+            self.get_positive_task()
+        else: 
+            self.get_negative_task()
 
-class Management:
-    pass 
