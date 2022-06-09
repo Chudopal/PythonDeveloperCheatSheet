@@ -53,30 +53,103 @@ import time
 time.sleep(0.5) #остановит работу на 0.5 сек
 """
 
-from dataclasses import dataclass
+from abc import ABC
 from uuid import uuid4
 import time
 
 
-@dataclass
-class Engine:
-    serial_number = uuid4()
-    power: float
+class Engine(ABC):
+    def __init__(self, power: float):
+        self.serial_number = uuid4()
+        self.power = power
 
 
-@dataclass
-class Wheel:
-    material: str
-    season: str
+class DieselEngine(Engine):
+    def __init__(self, power):
+        super().__init__(power)
+        self.type = "Diesel"
 
 
-@dataclass
-class Body:
-    color: str
-    material: str
+class GasolineEngine(Engine):
+    def __init__(self, power):
+        super().__init__(power)
+        self.type = "Gasoline"
 
 
-class WheelsSetCreator:
+class ElectricityEngine(Engine):
+    def __init__(self, power):
+        super().__init__(power)
+        self.type = "Electricity"
+
+
+class Wheel(ABC):
+    def __init__(self):
+        self.material = None
+        self.description = None
+
+
+class WinterWheel(Wheel):
+    def __init__(self):
+        super().__init__()
+        self.material = "Steel"
+        self.description = "Winter"
+
+
+class SummerWheel(Wheel):
+    def __init__(self):
+        super().__init__()
+        self.material = "Steel"
+        self.description = "Summer"
+
+
+class SportWheel(Wheel):
+    def __init__(self):
+        super().__init__()
+        self.material = "Carbon"
+        self.description = "Sport"
+
+
+class OffRoadWheel(Wheel):
+    def __init__(self):
+        super().__init__()
+        self.material = "Titan"
+        self.description = "OffRoad"
+
+
+class Body(ABC):
+    def __init__(self, color: str):
+        self.color = color
+
+
+class HatchbackBody(Body):
+    def __init__(self, color: str):
+        super().__init__(color)
+        self.material = "Aluminium"
+        self.type = "Hatchback"
+
+
+class SportBody(Body):
+    def __init__(self, color: str):
+        super().__init__(color)
+        self.material = "Carbon"
+        self.type = "Sport"
+
+
+class OffRoadBody(Body):
+    def __init__(self, color: str):
+        super().__init__(color)
+        self.material = "Titan"
+        self.type = "OffRoad"
+
+
+class CoupeBody(Body):
+    def __init__(self, color: str):
+        super().__init__(color)
+        self.material = "Aluminium"
+        self.type = "Coupe"
+
+
+class WheelsSet:
     def __init__(self, *wheels: Wheel):
         self.wheels = wheels
         self.wheels_set = dict()
@@ -87,17 +160,17 @@ class WheelsSetCreator:
 
     def _format_wheels(self):
         for wheel in self.wheels:
-            if not self.wheels_set.get(wheel.season):
-                self.wheels_set[wheel.season] = 1
+            if not self.wheels_set.get(wheel.description):
+                self.wheels_set[wheel.description] = 1
             else:
-                self.wheels_set[wheel.season] += 1
+                self.wheels_set[wheel.description] += 1
 
 
 class Vehicle:
-    def __init__(self, model: str, engine: Engine, body: Body, wheels: WheelsSetCreator):
+    def __init__(self, model: str, body: Body, engine: Engine, wheels: WheelsSet):
         self.model = model
-        self.engine = engine
         self.body = body
+        self.engine = engine
         self.wheels = wheels
 
     def __repr__(self):
@@ -113,31 +186,44 @@ class Vehicle:
         print(f"Total time - {self.engine.power * distance}")
 
 
-slow_engine = Engine(2)
-fast_engine = Engine(1)
-hyper_engine = Engine(0.3)
+class VehicleCreator:
+    def __init__(self):
+        self.all_engines = {
+            "Gasoline": GasolineEngine,
+            "Diesel": DieselEngine,
+            "Electric": ElectricityEngine
+        }
+        self.all_bodies = {
+            "Hatch": HatchbackBody,
+            "Sport": SportBody,
+            "OffRoad": OffRoadBody,
+            "Coupe": CoupeBody
+        }
+        self.all_wheels = {
+            "Winter": WinterWheel,
+            "Summer": SummerWheel,
+            "Sport": SportWheel,
+            "OffRoad": OffRoadWheel
+        }
 
-regular_body = Body("Green", "Aluminium")
-sport_body = Body("Red", "Carbon")
-off_road_body = Body("Blue", "Aluminium")
+    def create_wheel_set(self, wheels: tuple[str]) -> WheelsSet:
+        return WheelsSet(*[self.all_wheels.get(wheel)() for wheel in wheels])
+    
+    def create(self, model: str, body: str, color: str, engine: str, power: float, *wheels: str) -> Vehicle:
+        return Vehicle(
+            model,
+            self.all_bodies.get(body)(color),
+            self.all_engines.get(engine)(power),
+            self.create_wheel_set(wheels)
+        )
 
-winter_wheel = Wheel("Steel", "Winter")
-summer_wheel = Wheel("Steel", "Summer")
-sport_wheel = Wheel("Carbon", "Summer")
-off_road_wheel = Wheel("Titanium", "Off-road")
-
-race_set = WheelsSetCreator(sport_wheel, sport_wheel, sport_wheel, sport_wheel)
-winter_set = WheelsSetCreator(winter_wheel, winter_wheel, winter_wheel, winter_wheel)
-summer_set = WheelsSetCreator(summer_wheel, summer_wheel, summer_wheel, summer_wheel)
-off_road_set = WheelsSetCreator(off_road_wheel, off_road_wheel, off_road_wheel, off_road_wheel)
-mix_set = WheelsSetCreator(winter_wheel, summer_wheel, winter_wheel, summer_wheel)
 
 garage = [
-    Vehicle('Jeep', slow_engine, off_road_body, off_road_set),
-    Vehicle('Skoda', hyper_engine, sport_body, race_set),
-    Vehicle('BMW', fast_engine, regular_body, mix_set),
-    Vehicle('Audi', fast_engine, sport_body, summer_set),
-    Vehicle('Mercedes', fast_engine, sport_body, winter_set)
+    VehicleCreator().create('Jeep', 'OffRoad', 'Green', 'Diesel', 2, "OffRoad", "OffRoad", "OffRoad", "OffRoad"),
+    VehicleCreator().create('Skoda', 'Sport', 'Green', 'Gasoline', 0.3, "Summer", "Summer", "Summer", "Summer"),
+    VehicleCreator().create('BMW', 'Coupe', 'Black', 'Diesel', 1, "Summer", "Summer", "Winter", "Winter"),
+    VehicleCreator().create('Audi', 'Hatch', 'Red', 'Gasoline', 1, "Sport", "Sport", "Sport", "Sport"),
+    VehicleCreator().create('Tesla', 'Hatch', 'White', 'Electric', 0.6, "Summer", "Summer", "Summer", "Summer")
 ]
 
 for car in garage:
