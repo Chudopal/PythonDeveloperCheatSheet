@@ -116,3 +116,5 @@ def run()-> None:
 
 jsh_products = JsonStorageHandler("products.json")
 jsh_sbag = JsonStorageHandler("sbag.json")
+
+run()
