@@ -53,100 +53,78 @@ import time
 time.sleep(0.5) #остановит работу на 0.5 сек
 """
 
-from abc import ABC
 from uuid import uuid4
 import time
 
 
-class Engine(ABC):
+class Engine:
+    type = None
+
     def __init__(self, power: float):
         self.serial_number = uuid4()
         self.power = power
 
 
 class DieselEngine(Engine):
-    def __init__(self, power):
-        super().__init__(power)
-        self.type = "Diesel"
+    type = "Diesel"
 
 
 class GasolineEngine(Engine):
-    def __init__(self, power):
-        super().__init__(power)
-        self.type = "Gasoline"
+    type = "Gasoline"
 
 
 class ElectricityEngine(Engine):
-    def __init__(self, power):
-        super().__init__(power)
-        self.type = "Electricity"
+    type = "Electricity"
 
 
-class Wheel(ABC):
-    def __init__(self):
-        self.material = None
-        self.description = None
+class Wheel:
+    material = None
+    description = None
 
 
 class WinterWheel(Wheel):
-    def __init__(self):
-        super().__init__()
-        self.material = "Steel"
-        self.description = "Winter"
+    material = "Steel"
+    description = "Winter"
 
 
 class SummerWheel(Wheel):
-    def __init__(self):
-        super().__init__()
-        self.material = "Steel"
-        self.description = "Summer"
+    material = "Steel"
+    description = "Summer"
 
 
 class SportWheel(Wheel):
-    def __init__(self):
-        super().__init__()
-        self.material = "Carbon"
-        self.description = "Sport"
+    material = "Carbon"
+    description = "Sport"
 
 
 class OffRoadWheel(Wheel):
-    def __init__(self):
-        super().__init__()
-        self.material = "Titan"
-        self.description = "OffRoad"
+    material = "Titan"
+    description = "OffRoad"
 
 
-class Body(ABC):
+class Body:
     def __init__(self, color: str):
         self.color = color
 
 
 class HatchbackBody(Body):
-    def __init__(self, color: str):
-        super().__init__(color)
-        self.material = "Aluminium"
-        self.type = "Hatchback"
+    material = "Aluminium"
+    type = "Hatchback"
 
 
 class SportBody(Body):
-    def __init__(self, color: str):
-        super().__init__(color)
-        self.material = "Carbon"
-        self.type = "Sport"
+    material = "Carbon"
+    type = "Sport"
 
 
 class OffRoadBody(Body):
-    def __init__(self, color: str):
-        super().__init__(color)
-        self.material = "Titan"
-        self.type = "OffRoad"
+    material = "Titan"
+    type = "OffRoad"
 
 
 class CoupeBody(Body):
-    def __init__(self, color: str):
-        super().__init__(color)
-        self.material = "Aluminium"
-        self.type = "Coupe"
+    material = "Aluminium"
+    type = "Coupe"
 
 
 class WheelsSet:
@@ -208,7 +186,7 @@ class VehicleCreator:
 
     def create_wheel_set(self, wheels: tuple[str]) -> WheelsSet:
         return WheelsSet(*[self.all_wheels.get(wheel)() for wheel in wheels])
-    
+
     def create(self, model: str, body: str, color: str, engine: str, power: float, *wheels: str) -> Vehicle:
         return Vehicle(
             model,

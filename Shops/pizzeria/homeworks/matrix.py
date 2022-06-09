@@ -51,7 +51,6 @@ random.randint(1, 4) # случайное число от 1 до 4 (включа
 
 import random
 import time
-from abc import ABC, abstractmethod
 
 
 class ChosenGotCaughtException(Exception):
@@ -69,7 +68,7 @@ class City:
         return '\n'.join([" ".join([str(cell) for cell in row]) for row in self.__grid]) + "\n"
 
     @property
-    def get_grid(self):
+    def grid(self):
         return self.__grid
 
     def set_item(self, item: any, position: list[int, int]):
@@ -82,13 +81,9 @@ class City:
         self.set_item('-', position)
 
 
-class MatrixCitizen(ABC):
+class MatrixCitizen:
     def __init__(self):
         self.position = [0, 0]
-
-    @abstractmethod
-    def __repr__(self):
-        """String representation of object"""
 
     def set_position(self, position: list[int, int]):
         self.position = position
@@ -100,6 +95,11 @@ class Agent(MatrixCitizen):
 
 
 class Chosen(MatrixCitizen):
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(Chosen, cls).__new__(cls)
+        return cls.instance
+
     def __repr__(self):
         return "C"
 
