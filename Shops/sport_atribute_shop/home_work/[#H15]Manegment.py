@@ -17,11 +17,14 @@
 """
 
 
+from uuid import UUID, uuid4
+
+
 class People:
 
-    def __init__(self, name: str, uuid: str, age: int) -> None:
+    def __init__(self, name: str, uuid: UUID, age: int) -> None:
         self.name = name
-        self.uuid = uuid
+        self.uuid = uuid4()
         self.age = age
 
 
@@ -33,12 +36,19 @@ class Worker(People):
         uuid: str,
         age: int,
         job: str,
-        work_experience: str,
-        task_description: str
+        work_experience: str
 ) -> None:
         super().__init__(name, uuid, age)
         self.job = job
         self.work_experience = work_experience
+
+
+class Task:
+
+    def __init__(self, description: str, sphere: str, experience: int, task_description: str) -> None:
+        self.description = description
+        self.sphere = sphere
+        self.experience = experience
         self.task_description = task_description
 
     def get_positive_task(self):
@@ -47,14 +57,8 @@ class Worker(People):
     def get_negative_task(self):
         return f"Task {self.task_description} is not for me."
 
+    def get_task(self):
+        pass
 
-class Task:
-
-    def __init__(self, description: str, sphere: str, experience: int) -> None:
-        self.description = description
-        self.sphere = sphere
-        self.experience = experience
-
-    
 class Management:
     pass 
