@@ -8,12 +8,25 @@ class FileProcessing():
 
     def read(self) -> list:
         with open(self._path) as file:
-            result = json.load(file)
+            try:
+                result = json.load(file)
+            except:
+                self.write([])
         return result
 
     def write(self, data : list) -> None:
         with open(self._path, "w") as file:
             json.dump(data, file)
+
+    def insert_purchase(self, name , price)->None:
+        purchase = self.read()
+        purchase[name]= {"counter":1, "price":price}
+        self.write(purchase)
+        
+    def update_purchase(self, name)->None:
+        purchase = self.read()
+        purchase[name]["counter"] += 1
+        self.write(purchase)
 
 
 class Console:
@@ -65,25 +78,27 @@ class Seller():
         return result
 
 
-
 class Buyer():
 
-    def update_purchase(self, purchase : dict, list_product: dict) -> dict and str:
+    def update_purchase(self, purchase_product_range, product_range) -> str:
+        purchase = purchase_product_range.read()
+        list_product = product_range.read()
         price, name_product = self.choose_product(list_product)
         if price == None:
             massage = "Такого товара не существует!\n"
         else:   
-            purchase = self.add_product(purchase, list_product, name_product, price)
+            self.add_product(purchase_product_range, name_product, price)
             massage = "Товар добавлен!\n"
-        return purchase, massage
+        return massage
 
-    def add_product (self, purchase : dict, list_product: dict, name_product : str, price : int) -> dict:
+    def add_product (self, purchase_product_range, name_product : str, price : int) -> dict:
+        purchase = purchase_product_range.read()
         count = purchase.get(name_product)
         if count == None:
-            purchase[name_product]= {"counter":1, "price":price}
+            purchase_product_range.insert_purchase(name_product, price)
         else:
-            purchase[name_product]["counter"] += 1
-        return purchase
+            purchase_product_range.update_purchase(name_product)
+        
 
     def choose_product(self, product_range: dict)->int: 
         name_product  = input("Введите название подуката:") 
@@ -106,19 +121,13 @@ class Shop():
         while self._choose != 4: 
             self._choose = self._console.select_choose(self._choose) 
             print(self.select_action(self._choose))
-        
-    def add_purchase(self) -> str:
-        list_purchase = self._purchase_product_range.read()
-        list_purchase, massage = self._buyer.update_purchase(self._purchase_product_range.read(), self._product_range.read())
-        purchase_product_range.write(list_purchase)
-        return massage
 
     def select_action(self, choose: int) -> str:
         massage = ""
         if choose == 1:
             massage = self._seller.massage_product_range(self._product_range.read())
         elif choose == 2:
-            massage = self.add_purchase()
+            massage = self._buyer.update_purchase(self._purchase_product_range, self._product_range)
         elif choose == 3:
             massage = self._seller.massage_purchase(self._purchase_product_range.read(), 
                 self._seller.sum_purchase(self._purchase_product_range.read()))
