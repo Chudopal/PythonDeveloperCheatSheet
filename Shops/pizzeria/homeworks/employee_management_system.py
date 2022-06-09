@@ -34,18 +34,18 @@ class Task:
 
 class Human:
 
-    def __init__(self, uuid: str, name: str, age: int):
-        self.uuid = uuid
+    def __init__(self, name: str, age: int):
+        self.uuid = uuid4()
         self.name = name
         self.age = age
 
 
 class Worker(Human):
 
-    def __init__(self, uuid: str, name: str, age: int, field_of_activity: str, experience: int):
+    def __init__(self, name: str, age: int, field_of_activity: str, experience: int):
         self.field_of_activity = field_of_activity
         self.experience = experience
-        super().__init__(uuid, name, age)
+        super().__init__(name, age)
 
     def check_task(self, task: Task):
         if (task.experience <= self.experience) and (task.field == self.field_of_activity):
