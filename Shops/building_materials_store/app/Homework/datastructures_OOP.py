@@ -68,7 +68,7 @@ class Human:
     def __init__(self, name: str, age: int, uuid: str):
         self.name = name
         self.age = age
-        self.uuid = uuid
+        self.uuid = uuid4()
 
 
 class Worker(Human):
