@@ -1,3 +1,4 @@
+# #Task 1
 class Animal:
 
 
@@ -43,5 +44,52 @@ cat.presentate()
 dog = Dog('Sharik', 5, 'Sit')
 dog.make_command()
 dog.presentate()
+
+
+
+#Task 2
+from uuid import uuid4
+
+class User:
+
+    def __init__(self, name: str, age: int):
+        self.name = name
+        self.uuid = uuid4()
+        self.age = age
+
+
+class Task:
+
+    def __init__(self, description: str, sphere: str, experience: int):
+        self.description = description
+        self.sphere = sphere
+        self.experience = experience
+
+
+class Employee(User):
+
+    def __init__(self, name: str, age:int, sphere: str, experience:int):
+        self.sphere = sphere
+        self.experience = experience
+        super().__init__(name, age)
+
+    
+    def task_execution(self, task: Task):
+        if (self.experience >= task.experience) and (self.sphere == task.sphere):
+            print(f"Task {task.description} is done!")
+        else:
+            print(f"Task {task.description} is not for me. ")
+
+
+employee = Employee('Bob', 20, 'developer', 5)
+task = Task('add OOP', 'developer', 5)
+
+employee.task_execution(task)
+
+
+
+
+
+
 
 
