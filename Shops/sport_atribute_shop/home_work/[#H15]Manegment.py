@@ -22,7 +22,7 @@ from uuid import UUID, uuid4
 
 class People:
 
-    def __init__(self, name: str, uuid: UUID, age: int) -> None:
+    def __init__(self, name: str, age: int) -> None:
         self.name = name
         self.uuid = uuid4()
         self.age = age
@@ -33,7 +33,6 @@ class Worker(People):
     def __init__(
         self,
         name: str,
-        uuid: UUID,
         age: int,
         sphere: str,
         work_experience: str
