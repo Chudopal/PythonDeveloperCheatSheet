@@ -25,10 +25,12 @@ class Employee:
 
 
     def complete_task (self, task:Task):
+        message = ""
         if self.experience >= task.employee_experience and self.department == task.department:
-            return f'Task {task.description} is done!'
+            message = f'Task {task.description} is done!'
         else:
-            return f'Task {task.description} is not for me.'
+            message =  f'Task {task.description} is not for me.'
+        return message
         
 
 
