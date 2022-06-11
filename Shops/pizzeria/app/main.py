@@ -1,4 +1,4 @@
-import json
+import json, sqlite3
 from dataclasses import dataclass, asdict
 from abc import ABC, abstractmethod
 
@@ -15,18 +15,42 @@ class NoSuchProductException(Exception):
 # DATA ACCESS LAYER #
 # ----------------- #
 
-class StorageHandler(ABC):
+class StorageAdaptor(ABC):
 
     @abstractmethod
-    def read(self):
-        """reads data from storage"""
+    def get_data(self) -> list[dict]:
+        """returns all data from storage as list[dict]"""
 
     @abstractmethod
-    def save(self, data):
-        """save data to storage"""
+    def add_item(self, new_item: dict):
+        """add data represented as dict object to storage"""
+
+    @abstractmethod
+    def remove_item(self, item: dict):
+        """remove item from storage"""
+
+    @abstractmethod
+    def clear_data(self):
+        """delete all the data from storage"""
 
 
-class JsonStorageHandler(StorageHandler):
+class DBStorageHandler:
+    def __init__(self, **kwargs):
+        self._host = kwargs.get('host', '127.0.0.1')
+        self._user = kwargs.get('user', '')
+        self._password = kwargs.get('password', '')
+        self._database = kwargs.get('database')
+
+    def execute(self, *sql_query: str) -> sqlite3.Cursor:
+        connector = sqlite3.connect(self._database)
+        cursor = connector.cursor()
+        for item in sql_query:
+            cursor.execute(item)
+        connector.commit()
+        return cursor
+
+
+class JsonStorageHandler:
 
     def __init__(self, file_name: str):
         self.file_name = file_name
@@ -44,9 +68,34 @@ class JsonStorageHandler(StorageHandler):
             json.dump(data, file)
 
 
-class StorageAdaptor:
+class DBStorageAdaptor(StorageAdaptor):
+    def __init__(self, db_connector: DBStorageHandler, table_name: str):
+        self.db_connector = db_connector
+        self.table_name = table_name
 
-    def __init__(self, stored_data: StorageHandler):
+    def get_data(self) -> list[dict]:
+        _SQL = """SELECT * FROM {table_name};""".format(table_name=self.table_name)
+        db_response = self.db_connector.execute(_SQL)
+        columns = [item[0] for item in db_response.description]
+        data = [dict(zip(columns, row)) for row in db_response.fetchall()]
+        return data
+
+    def add_item(self, new_item: dict):
+        _SQL = """INSERT INTO {table_name} VALUES ({values});"""
+        self.db_connector.execute(_SQL)
+
+    def remove_item(self, item: dict):
+        _SQL = """DELETE FORM {table_name} WHERE {key}={value};"""
+        self.db_connector.execute(_SQL)
+
+    def clear_data(self):
+        _SQL = """DELETE FROM {table_name};""".format(table_name=self.table_name)
+        self.db_connector.execute(_SQL)
+
+
+class JsonStorageAdaptor(StorageAdaptor):
+
+    def __init__(self, stored_data: JsonStorageHandler):
         self.stored_data = stored_data
 
     def get_data(self) -> list:
@@ -129,7 +178,7 @@ class ProductsHandler:
 
 class Shop:
 
-    def __init__(self, goods: StorageAdaptor, orders: StorageAdaptor):
+    def __init__(self, goods: JsonStorageAdaptor, orders: JsonStorageAdaptor):
         self.products = ProductsHandler(goods)
         self.orders = OrdersHandler(orders)
 
@@ -280,7 +329,7 @@ class ConsoleAppView(AppView):
         return messages.get(message)
 
     def format_products_list(self, products_list: list[Product]) -> str:
-        template = '- {pizza}: {description} ({calories} kcal) - {price} €\n'
+        template = '- {pizza}: {description} ({calories} kcal) - {price} в‚¬\n'
         result = '\nToday on sale:\n'
         categories = {product.category for product in products_list}
         for category in categories:
@@ -415,8 +464,8 @@ class ShopApplication:
 
 
 if __name__ == '__main__':
-    pizza_storage = StorageAdaptor(JsonStorageHandler("pizzas.json"))
-    orders_storage = StorageAdaptor(JsonStorageHandler("ordered_pizzas.json"))
+    pizza_storage = JsonStorageAdaptor(JsonStorageHandler("pizzas.json"))
+    orders_storage = JsonStorageAdaptor(JsonStorageHandler("ordered_pizzas.json"))
     mega_pizzeria = Shop(pizza_storage, orders_storage)
     app = ShopApplication(mega_pizzeria, ConsoleIOController(), ConsoleAppView())
     app.run_app()
