@@ -1,17 +1,17 @@
 """
 Перад вамі вэб-старонка беларускай бібліятэкі.
-Але ж у ей нешта не працуе.
-Калі хочаш поглядеть чыесьці кнігі, нівошта не атрымоўваецца.
-Зрузумейце, як працуе гэта праграмма, як захоўвае дадзеные, ды
-як отмалёўваюцца тэмплэйты.
-Спраўце памылкі ды зрабіце гэта, змяніўшы як мага меньш коду.
+Але ж у ёй нешта не працуе.
+Калі хочаш паглядеть чыесьці кнігі, нічога не атрымоўваецца.
+Зразумейце, як працуе гэтая праграмма, як захоўвае дадзеныя, ды
+як атмалёўваюцца тэмплэйты.
+Спраўце памылкі ды зрабіце гэта, змяніўшы як мага менш коду.
 
 Крыху карысных спасылак:
 аб тэмплэйтах - https://flask-russian-docs.readthedocs.io/ru/latest/tutorial/templates.html
 аб app.route ды <int:author_id> - https://flask-russian-docs.readthedocs.io/ru/latest/quickstart.html#id2
 аб render_tamplate - https://flask-russian-docs.readthedocs.io/ru/latest/quickstart.html#id7
 
-Зручней працаваць, калі уключаны рэжым дэбагу: https://flask-russian-docs.readthedocs.io/ru/latest/quickstart.html#debug-mode
+Зручней працаваць, калі ўключаны рэжым дэбагу: https://flask-russian-docs.readthedocs.io/ru/latest/quickstart.html#debug-mode
 
 =)
 """
