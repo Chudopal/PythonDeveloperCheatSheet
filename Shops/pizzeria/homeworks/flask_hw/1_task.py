@@ -19,7 +19,7 @@ app = Flask(__name__)
 
 @app.route("/hello/<string:name>/age/<int:age>")
 def index(name: str, age: int):
-    return f"Hello world"
+    return f"Hello {name.capitalize()}! Your age is {age}!"
 
 
 app.run(port=5000)
