@@ -1,0 +1,22 @@
+<!doctype html>
+<title>{{ name }}</title>
+<nav>
+    <h1>{{ name }}</h1>
+
+    <h3>Інфармацыя</h3>
+
+    <ul>
+        <li> Дзень нараджэння - {{ birth_date }} </li>
+        <li> Дзень смерці - {{ death_date }} </li>
+    </ul>
+
+    {% if books %}
+        <h3>Кнігі: </h3>
+
+        <ul>
+            {% for book_id, book in books.items() %}
+            <li><span><a href="{{ url_for('get_book_detail', book_id=book_id) }}">{{ book.get("title") }}</a></span>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</nav>
