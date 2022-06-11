@@ -1,0 +1,11 @@
+<!doctype html>
+<title>{{ title }}</title>
+<nav>
+    <h1>Кніга - {{ title }}</h1>
+
+    <ul>
+        <li> Выдана ў {{ year }} годзе.</li>
+        <li> <a href="{{ url_for('get_author_detail', author_id=author_id) }}"> Аўтар - {{ author_name }}</a> </li>
+    </ul>
+
+</nav>

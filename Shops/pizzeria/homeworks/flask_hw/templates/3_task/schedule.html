@@ -1,0 +1,13 @@
+<h1> This is schedule for {{ date }} </h1>
+
+{% if data %}
+    
+    <ul>
+        {% for item in data %}
+
+            <li> {{ item }} </li>
+
+        {% endfor %}
+    </ul> 
+
+{% endif %}
