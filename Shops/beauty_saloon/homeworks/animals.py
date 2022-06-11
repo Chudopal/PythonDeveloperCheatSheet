@@ -26,3 +26,10 @@ class Cat(Animal):
 
     def make_sound(self):
         print(f"Hello, I'm {self.name}, and I'm meowing! My favorite place is {self.fav_place}!")
+
+
+cat = Cat('barsik', 15, 'kjhyh')
+cat.make_sound()
+
+
+ROUND((SUM(price*amount)*(18/100))/1+(18/100),2)
