@@ -25,6 +25,7 @@ localhost:5000/cars
 (extra) Дабавьте фильтрацию через адресную строку по всем этим параметрам.
 """
 
+import json
 from flask import Flask
 from flask import jsonify
 from flask import request
@@ -84,12 +85,10 @@ class CarsStorage:
         return result
 
     def save(self):
-        import json
         with open(self.path, "w") as file:
             json.dump(file, self.data)
 
     def read(self):
-        import json
         with open(self.path) as file:
             data = json.load(file).get("2_task").get("cars")
         return data

@@ -1,13 +1,29 @@
+<style>
+table, th, td {
+  border:1px solid black;
+}
+</style>
 <h1> This is schedule for {{ date }} </h1>
 
 {% if data %}
-    
-    <ul>
-        {% for item in data %}
 
-            <li> {{ item }} </li>
-
-        {% endfor %}
-    </ul> 
+<table>
+    <tr>
+        <th>Begin time</th>
+        <th>End time</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Location</th>
+    </tr>
+    {% for item in data %}
+    <tr>
+        <td>{{ item.begin_time }}</td>
+        <td>{{ item.end_time }}</td>
+        <td>{{ item.title }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.location }}</td>
+    </tr>
+    {% endfor %}
+</table>
 
 {% endif %}
