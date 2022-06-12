@@ -19,6 +19,7 @@
 import json
 from typing import Dict
 from typing import List
+from typing import Tuple
 from flask import Flask
 from flask import request
 from flask import render_template
@@ -29,12 +30,12 @@ from flask import render_template
 class BaseJsonStorage:
 
     def __init__(
-        self, file_path: str, data_path: List
+            self, file_path: str, data_path: Tuple
     ) -> None:
         self.file_path = file_path
         self.data_path = data_path
         self.data = self._get_data()
-    
+
     def _get_data(self) -> Dict:
         base_data = self._read_file()
         return self._extract_data(
@@ -42,10 +43,10 @@ class BaseJsonStorage:
         )
 
     def _read_file(self) -> Dict:
-        with open(self.file_path) as file:
+        with open(self.file_path, encoding='utf-8') as file:
             data = json.load(file)
         return data
-    
+
     def _extract_data(self, data: Dict) -> Dict:
         result = data
         for step in self.data_path:
@@ -74,32 +75,14 @@ class JsonBooksStorage(BaseJsonStorage):
     def get_book_by_id(self, book_id: int) -> Dict:
         """Напэўна тут нешта кепскае..."""
 
-        return {
-            "title": "Some Title",
-            "author_id": 3,
-            "year": 0
-        }
-    
-    def get_books(self, **kwargs) -> Dict:
+        return self.data.get(str(book_id))
+
+    def get_books(self, author_id: int) -> Dict:
         """Дарэчы, і тут выглядае не як работа з дадзенымі..."""
 
-        return {
-            "1": {
-                "title": "Some Title",
-                "author_id": 1,
-                "year": 0
-            },
-            "2": {
-                "title": "Some Title",
-                "author_id": 2,
-                "year": 0
-            },
-            "3": {
-                "title": "Some Title",
-                "author_id": 3,
-                "year": 0
-            },
-        }
+        result = self.data
+        result = dict(filter(lambda book: book[1].get("author_id") == author_id, result.items()))
+        return result
 
 
 # CONFIGURATION BLOCK
@@ -107,13 +90,13 @@ class JsonBooksStorage(BaseJsonStorage):
 app = Flask(__name__)
 
 authors_storage = JsonAuthorsStorage(
-        file_path='storage.json',
-        data_path=("4_task", "authors")
+    file_path='storage.json',
+    data_path=("4_task", "authors")
 )
 
 books_storage = JsonBooksStorage(
-        file_path='storage.json',
-        data_path=("4_task", "books")
+    file_path='storage.json',
+    data_path=("4_task", "books")
 )
 
 
@@ -121,11 +104,9 @@ books_storage = JsonBooksStorage(
 
 @app.route("/authors")
 def get_authors():
-
     authors = authors_storage.get_authors(
         **request.args
     )
-    print(authors)
 
     return render_template(
         "4_task/authors.html",
@@ -135,14 +116,13 @@ def get_authors():
 
 @app.route("/authors/<int:author_id>")
 def get_author_detail(author_id: int):
-    
     author = authors_storage.get_author_by_id(
         author_id=author_id
     )
     books = books_storage.get_books(
         author_id=author_id
     )
-    
+
     return render_template(
         "4_task/author_datail.html",
         books=books,
@@ -152,7 +132,6 @@ def get_author_detail(author_id: int):
 
 @app.route("/books/<int:book_id>", )
 def get_book_detail(book_id: int):
-
     book = books_storage.get_book_by_id(
         book_id=book_id
     )

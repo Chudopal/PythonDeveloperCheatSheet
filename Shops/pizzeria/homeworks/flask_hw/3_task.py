@@ -51,7 +51,6 @@ class ScheduleStorage:
 
 
 schedule_storage = ScheduleStorage("storage.json", ("3_task", "schedule"))
-print(schedule_storage.data)
 
 
 @app.route("/schedule/<string:week_day>/<string:date>")
@@ -67,4 +66,4 @@ def get_concrete_day_schedule(week_day):
     return render_template("3_task/schedule.html", data=data, date=week_day)
 
 
-app.run(port=5000, debug=True)
+app.run(port=5000)
