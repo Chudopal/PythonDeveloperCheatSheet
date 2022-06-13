@@ -148,7 +148,6 @@ if __name__ == "__main__":
     @app.route("/")
     def index():
         employees = employee_service.get_employees(**request.args)
-        print(employees)
         return render_template("5_task/employee_service.html", employees=employees)
 
 
