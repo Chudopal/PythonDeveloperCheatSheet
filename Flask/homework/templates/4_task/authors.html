@@ -1,0 +1,10 @@
+<!doctype html>
+<title>Аўтары</title>
+<nav>
+    <h1>Аўтары на сайце:</h1>
+    <ul>
+        {% for author_id, author in authors.items() %}
+            <li><span><a href="{{ url_for('get_author_detail', author_id=author_id) }}">{{ author.get("name") }}</a></span>
+        {% endfor %}
+    </ul>
+</nav>
