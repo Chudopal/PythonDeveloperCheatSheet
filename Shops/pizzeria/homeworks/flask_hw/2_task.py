@@ -40,26 +40,22 @@ class CarsStorage:
         self.data = self.read()
 
     def find_cars(self, **kwargs) -> list:
+        filters = {
+            "id": lambda car: car.get("id") == kwargs.get('car_id'),
+            "price_usd": lambda car: car.get("price_usd") == kwargs.get("price_usd"),
+            "brand": lambda car: car.get("brand") == kwargs.get("brand").capitalize(),
+            "model": lambda car: car.get("model") == kwargs.get("model").capitalize(),
+            "year": lambda car: car.get("year") == kwargs.get("year"),
+            "rain_detector": lambda car: car.get("rain_detector") == kwargs.get("rain_detector"),
+            "generation": lambda car: car.get("generation") == kwargs.get("generation"),
+            "interior_material": lambda car: car.get("interior_material") == kwargs.get("interior_material"),
+            "created_advert": lambda car: car.get("created_advert") == kwargs.get("created_advert")
+        }
+
         response = self.get_all_cars().get("cars")
 
-        if kwargs.get('car_id'):
-            response = filter(lambda cars: cars.get("id") == kwargs.get('car_id'), response)
-        if kwargs.get("price_usd"):
-            response = filter(lambda cars: cars.get("price_usd") == kwargs.get("price_usd"), response)
-        if kwargs.get("brand"):
-            response = filter(lambda cars: cars.get("brand") == kwargs.get("brand").capitalize(), response)
-        if kwargs.get("model"):
-            response = filter(lambda cars: cars.get("model") == kwargs.get("model").capitalize(), response)
-        if kwargs.get("year"):
-            response = filter(lambda cars: cars.get("year") == kwargs.get("year"), response)
-        if kwargs.get("rain_detector"):
-            response = filter(lambda cars: cars.get("rain_detector") == kwargs.get("rain_detector"), response)
-        if kwargs.get("generation"):
-            response = filter(lambda cars: cars.get("generation") == kwargs.get("generation"), response)
-        if kwargs.get("interior_material"):
-            response = filter(lambda cars: cars.get("interior_material") == kwargs.get("interior_material"), response)
-        if kwargs.get("created_advert"):
-            response = filter(lambda cars: cars.get("created_advert") == kwargs.get("created_advert"), response)
+        for key in kwargs.keys():
+            response = filter(filters.get(key), response)
 
         return list(response)
 
