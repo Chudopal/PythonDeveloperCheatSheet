@@ -6,6 +6,7 @@ __pycache__/
 # C extensions
 *.so
 1.py
+1.sql
 # Distribution / packaging
 .Python
 build/
