@@ -19,4 +19,4 @@ def index(name: str, age: int):
     return f"Hello {name.capitalize()}! Your age is {age}!"
 
 
-app.run(port=5000)
+app.run(port=5000, debug=True)
