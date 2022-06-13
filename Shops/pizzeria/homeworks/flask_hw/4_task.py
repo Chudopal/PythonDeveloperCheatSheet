@@ -9,7 +9,7 @@
 Крыху карысных спасылак:
 аб тэмплэйтах - https://flask-russian-docs.readthedocs.io/ru/latest/tutorial/templates.html
 аб app.route ды <int:author_id> - https://flask-russian-docs.readthedocs.io/ru/latest/quickstart.html#id2
-аб render_tamplate - https://flask-russian-docs.readthedocs.io/ru/latest/quickstart.html#id7
+аб render_template - https://flask-russian-docs.readthedocs.io/ru/latest/quickstart.html#id7
 
 Зручней працаваць, калі ўключаны рэжым дэбагу: https://flask-russian-docs.readthedocs.io/ru/latest/quickstart.html#debug-mode
 
@@ -18,7 +18,6 @@
 
 import json
 from typing import Dict
-from typing import List
 from typing import Tuple
 from flask import Flask
 from flask import request
@@ -55,14 +54,15 @@ class BaseJsonStorage:
 
 
 class JsonAuthorsStorage(BaseJsonStorage):
+    """Дакладна не ведаю памылка тут ці не, але я выправіў фільтраванне аўтараў па гет параметрах ;) """
 
     def get_authors(self, **params) -> Dict:
         result = self.data
         for key, value in params.items():
             if value:
-                result = list(filter(
-                    lambda item: str(item.get(key)) == str(value),
-                    result.values()
+                result = dict(filter(
+                    lambda item: str(item[1].get(key)) == str(value),
+                    result.items()
                 ))
         return result
 
@@ -77,11 +77,13 @@ class JsonBooksStorage(BaseJsonStorage):
 
         return self.data.get(str(book_id))
 
-    def get_books(self, author_id: int) -> Dict:
+    def get_books(self, **kwargs) -> Dict:
         """Дарэчы, і тут выглядае не як работа з дадзенымі..."""
 
         result = self.data
-        result = dict(filter(lambda book: book[1].get("author_id") == author_id, result.items()))
+        for key, value in kwargs.items():
+            if value:
+                result = dict(filter(lambda book: book[1].get(key) == value, result.items()))
         return result
 
 
@@ -124,7 +126,7 @@ def get_author_detail(author_id: int):
     )
 
     return render_template(
-        "4_task/author_datail.html",
+        "4_task/author_detail.html",
         books=books,
         **author
     )
