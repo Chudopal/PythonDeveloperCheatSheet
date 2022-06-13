@@ -1,0 +1,1247 @@
+{
+    "4_task": {
+        "authors": {
+            "1": {
+                "name": "Уладзімер Караткевіч",
+                "birth_date": "26-11-1930",
+                "death_date": "25-07-1984"
+            },
+            "2": {
+                "name": "Іван Луцевіч",
+                "birth_date": "07-07-1882",
+                "death_date": "28-06-1942"
+            },
+            "3": {
+                "name": "Канстанцін Міцкевіч",
+                "birth_date": "03-11-1882",
+                "death_date": "13-08-1956"
+            }
+
+        },
+        "books": {
+            "1": {
+                "title": "Новая зямля",
+                "author_id": 3,
+                "year": 1923
+            },
+            "2": {
+                "title": "Сымон-музыка",
+                "author_id": 3,
+                "year": 1925
+            },
+            "3": {
+                "title": "На ростанях",
+                "author_id": 3,
+                "year": 1955
+            },
+            "4": {
+                "title": "Спадчына",
+                "author_id": 2,
+                "year": 1922
+            },
+            "5": {
+                "title": "Курган",
+                "author_id": 2,
+                "year": 1910
+            },
+            "6": {
+                "title": "Магіла льва",
+                "author_id": 2,
+                "year": 1913
+            },
+            "7": {
+                "title": "Хрыстос прызямліўся ў Гародні",
+                "author_id": 1,
+                "year": 1966
+            },
+            "8": {
+                "title": "Каласы пад сярпом тваім",
+                "author_id": 1,
+                "year": 1964
+            },
+            "9": {
+                "title": "Дзікае паляванне караля Стаха",
+                "author_id": 1,
+                "year": 1958
+            }
+        }
+    },
+    "5_task": {
+        "employees": [
+            {
+                "name": "Alex",
+                "id": 1,
+                "role": "developer",
+                "department": "SDK"
+            },
+            {
+                "name": "Alice",
+                "id": 2,
+                "role": "manager",
+                "department": "SDK"
+            },
+            {
+                "name": "Bob",
+                "id": 1,
+                "role": "developer",
+                "department": "product"
+            }
+        ]
+    },
+    "3_task": {
+        "schedule": {
+            "monday": [
+                {
+                    "begin_time": "06-06-2022, 12:20:00",
+                    "end_time": "06-06-2022, 14:00:00",
+                    "title": "Interview ItechArt",
+                    "description": "Собеседование кандидата",
+                    "location": "zoom.us"
+                },
+                {
+                    "begin_time": "13-06-2022, 14:10:00",
+                    "end_time": "13-06-2022, 15:00:00",
+                    "title": "Daily",
+                    "description": null,
+                    "location": "teams.com"
+                }
+
+            ],
+            "tuesday": [
+                {
+                    "begin_time": "07-06-2022, 12:20:00",
+                    "end_time": "07-06-2022, 14:00:00",
+                    "title": "Retro LeverX",
+                    "description": "Retro",
+                    "location": "zoom.us"
+                },
+                {
+                    "begin_time": "14-06-2022, 15:10:00",
+                    "end_time": "14-06-2022, 16:00:00",
+                    "title": "Daily",
+                    "description": null,
+                    "location": "teams.com"
+                }
+            ],
+            "wednesday":[
+                {
+                    "begin_time": "08-06-2022, 12:20:00",
+                    "end_time": "08-06-2022, 14:00:00",
+                    "title": "Demo CoronaPay",
+                    "description": "Demo",
+                    "location": "zoom.us"
+                },
+                {
+                    "begin_time": "15-06-2022, 15:10:00",
+                    "end_time": "15-06-2022, 16:00:00",
+                    "title": "Daily",
+                    "description": null,
+                    "location": "teams.com"
+                }
+            ],
+            "thursday": [
+                {
+                    "begin_time": "09-06-2022, 12:20:00",
+                    "end_time": "09-06-2022, 14:00:00",
+                    "title": "Interview IsSoft",
+                    "description": "Simple tech interview",
+                    "location": "zoom.us"
+                },
+                {
+                    "begin_time": "16-06-2022, 15:10:00",
+                    "end_time": "16-06-2022, 16:00:00",
+                    "title": "Daily",
+                    "description": null,
+                    "location": "teams.com"
+                }
+            ],
+            "friday": [
+                {
+                    "begin_time": "10-06-2022, 12:20:00",
+                    "end_time": "10-06-2022, 14:00:00",
+                    "title": "Demo CoronaPay",
+                    "description": "Demo",
+                    "location": "zoom.us"
+                },
+                {
+                    "begin_time": "17-06-2022, 15:10:00",
+                    "end_time": "17-06-2022, 16:00:00",
+                    "title": "Daily",
+                    "description": null,
+                    "location": "teams.com"
+                }
+            ],
+            "saturday": [
+
+            ],
+            "sunday": [
+
+            ]
+        }
+    },
+    "1_task": {},
+    "2_task": {
+        "cars":[
+            {
+                "id": 101068323,
+                "price": {
+                    "currency": "usd",
+                    "amount": 22300
+                },
+                "publishedAt": "2022-05-01T18:59:04+0000",
+                "properties": [
+                    {
+                        "value": "Nissan",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Leaf",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "II",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2017",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": true,
+                        "id": 30,
+                        "name": "rain_detector",
+                        "fallbackType": "boolean"
+                    },
+                    {
+                        "value": "\u0442\u043a\u0430\u043d\u044c",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101300695,
+                "price": {
+                    "currency": "usd",
+                    "amount": 2600
+                },
+                "publishedAt": "2022-06-11T10:31:20+0000",
+                "properties": [
+                    {
+                        "value": "BMW",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "3 \u0441\u0435\u0440\u0438\u044f",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "E36",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "1997",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u043d\u0430\u0442\u0443\u0440\u0430\u043b\u044c\u043d\u0430\u044f \u043a\u043e\u0436\u0430",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 100881417,
+                "price": {
+                    "currency": "usd",
+                    "amount": 19500
+                },
+                "publishedAt": "2022-03-01T18:07:58+0000",
+                "properties": [
+                    {
+                        "value": "BMW",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "7 \u0441\u0435\u0440\u0438\u044f",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "F01, F04",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2011",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": true,
+                        "id": 30,
+                        "name": "rain_detector",
+                        "fallbackType": "boolean"
+                    },
+                    {
+                        "value": "\u043d\u0430\u0442\u0443\u0440\u0430\u043b\u044c\u043d\u0430\u044f \u043a\u043e\u0436\u0430",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101241893,
+                "price": {
+                    "currency": "usd",
+                    "amount": 13650
+                },
+                "publishedAt": "2022-06-03T10:45:32+0000",
+                "properties": [
+                    {
+                        "value": "Chevrolet",
+                        "id": 110,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Malibu",
+                        "id": 111,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "IX",
+                        "id": 112,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2018",
+                        "id": 114,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u0442\u043a\u0430\u043d\u044c",
+                        "id": 129,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101300669,
+                "price": {
+                    "currency": "usd",
+                    "amount": 999
+                },
+                "publishedAt": "2022-06-11T10:25:46+0000",
+                "properties": [
+                    {
+                        "value": "Daewoo",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Nexia",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "I",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2006",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u0432\u0435\u043b\u044e\u0440",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101300660,
+                "price": {
+                    "currency": "usd",
+                    "amount": 2350
+                },
+                "publishedAt": "2022-06-11T10:17:31+0000",
+                "properties": [
+                    {
+                        "value": "Volvo",
+                        "id": 110,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "S40",
+                        "id": 111,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "I",
+                        "id": 112,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "1997",
+                        "id": 114,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u0442\u043a\u0430\u043d\u044c",
+                        "id": 129,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 100984203,
+                "price": {
+                    "currency": "usd",
+                    "amount": 12650
+                },
+                "publishedAt": "2022-04-07T06:55:17+0000",
+                "properties": [
+                    {
+                        "value": "Ford",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Focus",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "III \u00b7 \u0420\u0435\u0441\u0442\u0430\u0439\u043b\u0438\u043d\u0433",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2017",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": true,
+                        "id": 30,
+                        "name": "rain_detector",
+                        "fallbackType": "boolean"
+                    },
+                    {
+                        "value": "\u0442\u043a\u0430\u043d\u044c",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101285540,
+                "price": {
+                    "currency": "usd",
+                    "amount": 3650
+                },
+                "publishedAt": "2022-06-09T19:37:35+0000",
+                "properties": [
+                    {
+                        "value": "Toyota",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Avensis",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "I (T220) \u00b7 \u0420\u0435\u0441\u0442\u0430\u0439\u043b\u0438\u043d\u0433",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2001",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u0432\u0435\u043b\u044e\u0440",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101233095,
+                "price": {
+                    "currency": "usd",
+                    "amount": 7980
+                },
+                "publishedAt": "2022-06-05T13:21:45+0000",
+                "properties": [
+                    {
+                        "value": "Mercedes-Benz",
+                        "id": 218,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Viano",
+                        "id": 219,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "W639",
+                        "id": 220,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2004",
+                        "id": 222,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u043d\u0430\u0442\u0443\u0440\u0430\u043b\u044c\u043d\u0430\u044f \u043a\u043e\u0436\u0430",
+                        "id": 237,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101170719,
+                "price": {
+                    "currency": "usd",
+                    "amount": 15600
+                },
+                "publishedAt": "2022-05-19T15:55:18+0000",
+                "properties": [
+                    {
+                        "value": "Nissan",
+                        "id": 110,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Qashqai",
+                        "id": 111,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "II",
+                        "id": 112,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2014",
+                        "id": 114,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": true,
+                        "id": 138,
+                        "name": "rain_detector",
+                        "fallbackType": "boolean"
+                    },
+                    {
+                        "value": "\u0442\u043a\u0430\u043d\u044c",
+                        "id": 129,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 100888228,
+                "price": {
+                    "currency": "usd",
+                    "amount": 3350
+                },
+                "publishedAt": "2022-05-03T15:58:36+0000",
+                "properties": [
+                    {
+                        "value": "Skoda",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Fabia",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "6Y",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2000",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u0442\u043a\u0430\u043d\u044c",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101300591,
+                "price": {
+                    "currency": "usd",
+                    "amount": 5650
+                },
+                "publishedAt": "2022-06-11T09:59:53+0000",
+                "properties": [
+                    {
+                        "value": "Peugeot",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "207",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "I",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2008",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u0442\u043a\u0430\u043d\u044c",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101181314,
+                "price": {
+                    "currency": "usd",
+                    "amount": 5300
+                },
+                "publishedAt": "2022-05-24T19:52:35+0000",
+                "properties": [
+                    {
+                        "value": "Jaguar",
+                        "id": 218,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "X-Type",
+                        "id": 219,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2002",
+                        "id": 222,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": true,
+                        "id": 246,
+                        "name": "rain_detector",
+                        "fallbackType": "boolean"
+                    },
+                    {
+                        "value": "\u043d\u0430\u0442\u0443\u0440\u0430\u043b\u044c\u043d\u0430\u044f \u043a\u043e\u0436\u0430",
+                        "id": 237,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101176648,
+                "price": {
+                    "currency": "usd",
+                    "amount": 2750
+                },
+                "publishedAt": "2022-05-22T18:34:22+0000",
+                "properties": [
+                    {
+                        "value": "Plymouth",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Grand Voyager",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "III",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "1999",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u0432\u0435\u043b\u044e\u0440",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101082917,
+                "price": {
+                    "currency": "usd",
+                    "amount": 16800
+                },
+                "publishedAt": "2022-05-05T08:38:21+0000",
+                "properties": [
+                    {
+                        "value": "MINI",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Clubman",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "II",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2018",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": true,
+                        "id": 30,
+                        "name": "rain_detector",
+                        "fallbackType": "boolean"
+                    },
+                    {
+                        "value": "\u043a\u043e\u043c\u0431\u0438\u043d\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0435 \u043c\u0430\u0442\u0435\u0440\u0438\u0430\u043b\u044b",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 100951001,
+                "price": {
+                    "currency": "usd",
+                    "amount": 15000
+                },
+                "publishedAt": "2022-03-27T13:08:32+0000",
+                "properties": [
+                    {
+                        "value": "Kia",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Sorento",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "II",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2009",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u0442\u043a\u0430\u043d\u044c",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101300515,
+                "price": {
+                    "currency": "usd",
+                    "amount": 9350
+                },
+                "publishedAt": "2022-06-11T09:16:28+0000",
+                "properties": [
+                    {
+                        "value": "Peugeot",
+                        "id": 218,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "3008",
+                        "id": 219,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "I",
+                        "id": 220,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2012",
+                        "id": 222,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u0442\u043a\u0430\u043d\u044c",
+                        "id": 237,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101129287,
+                "price": {
+                    "currency": "usd",
+                    "amount": 4450
+                },
+                "publishedAt": "2022-05-16T09:56:47+0000",
+                "properties": [
+                    {
+                        "value": "Suzuki",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Swift",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "III",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2005",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u0442\u043a\u0430\u043d\u044c",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101226998,
+                "price": {
+                    "currency": "usd",
+                    "amount": 16900
+                },
+                "publishedAt": "2022-05-31T19:57:25+0000",
+                "properties": [
+                    {
+                        "value": "Mercedes-Benz",
+                        "id": 218,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "E-\u041a\u043b\u0430\u0441\u0441",
+                        "id": 219,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "W212, S212, C207, A207",
+                        "id": 220,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2011",
+                        "id": 222,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": true,
+                        "id": 246,
+                        "name": "rain_detector",
+                        "fallbackType": "boolean"
+                    },
+                    {
+                        "value": "\u043d\u0430\u0442\u0443\u0440\u0430\u043b\u044c\u043d\u0430\u044f \u043a\u043e\u0436\u0430",
+                        "id": 237,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101248767,
+                "price": {
+                    "currency": "usd",
+                    "amount": 1000
+                },
+                "publishedAt": "2022-06-06T11:29:53+0000",
+                "properties": [
+                    {
+                        "value": "Daewoo",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Nubira",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "J100",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "1998",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u0432\u0435\u043b\u044e\u0440",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101173406,
+                "price": {
+                    "currency": "usd",
+                    "amount": 11000
+                },
+                "publishedAt": "2022-05-20T23:18:49+0000",
+                "properties": [
+                    {
+                        "value": "Honda",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "CR-V",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "II \u00b7 \u0420\u0435\u0441\u0442\u0430\u0439\u043b\u0438\u043d\u0433",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2006",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": true,
+                        "id": 30,
+                        "name": "rain_detector",
+                        "fallbackType": "boolean"
+                    },
+                    {
+                        "value": "\u043d\u0430\u0442\u0443\u0440\u0430\u043b\u044c\u043d\u0430\u044f \u043a\u043e\u0436\u0430",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101149805,
+                "price": {
+                    "currency": "usd",
+                    "amount": 13450
+                },
+                "publishedAt": "2022-05-18T08:20:34+0000",
+                "properties": [
+                    {
+                        "value": "Kia",
+                        "id": 218,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "Carens",
+                        "id": 219,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "III",
+                        "id": 220,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2014",
+                        "id": 222,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": true,
+                        "id": 246,
+                        "name": "rain_detector",
+                        "fallbackType": "boolean"
+                    },
+                    {
+                        "value": "\u0442\u043a\u0430\u043d\u044c",
+                        "id": 237,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101216781,
+                "price": {
+                    "currency": "usd",
+                    "amount": 21950
+                },
+                "publishedAt": "2022-05-30T09:21:30+0000",
+                "properties": [
+                    {
+                        "value": "Peugeot",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "508",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "II",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2018",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": true,
+                        "id": 30,
+                        "name": "rain_detector",
+                        "fallbackType": "boolean"
+                    },
+                    {
+                        "value": "\u0442\u043a\u0430\u043d\u044c",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 101300381,
+                "price": {
+                    "currency": "usd",
+                    "amount": 2950
+                },
+                "publishedAt": "2022-06-11T08:12:30+0000",
+                "properties": [
+                    {
+                        "value": "Peugeot",
+                        "id": 2,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "607",
+                        "id": 3,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "I",
+                        "id": 4,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2003",
+                        "id": 6,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "\u043d\u0430\u0442\u0443\u0440\u0430\u043b\u044c\u043d\u0430\u044f \u043a\u043e\u0436\u0430",
+                        "id": 21,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            },
+            {
+                "id": 100865007,
+                "price": {
+                    "currency": "usd",
+                    "amount": 22900
+                },
+                "publishedAt": "2022-03-04T18:49:11+0000",
+                "properties": [
+                    {
+                        "value": "Mercedes-Benz",
+                        "id": 218,
+                        "name": "brand",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "M-\u041a\u043b\u0430\u0441\u0441 AMG",
+                        "id": 219,
+                        "name": "model",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "W164 \u00b7 \u0420\u0435\u0441\u0442\u0430\u0439\u043b\u0438\u043d\u0433",
+                        "id": 220,
+                        "name": "generation",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": "2008",
+                        "id": 222,
+                        "name": "year",
+                        "fallbackType": "string"
+                    },
+                    {
+                        "value": true,
+                        "id": 246,
+                        "name": "rain_detector",
+                        "fallbackType": "boolean"
+                    },
+                    {
+                        "value": "\u043a\u043e\u043c\u0431\u0438\u043d\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0435 \u043c\u0430\u0442\u0435\u0440\u0438\u0430\u043b\u044b",
+                        "id": 237,
+                        "name": "interior_material",
+                        "fallbackType": "string"
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "cars_number": 25,
+    "cars": [
+        {
+            "id": 101068323,
+            "price_usd": 22300,
+            "brand": "Nissan",
+            "model": "Leaf",
+            "generation": "II",
+            "year": "2017",
+            "rain_detector": true,
+            "interior_material": "ткань",
+            "created_advert": "2022-05-01T18:59:04+0000"
+        }
+
+    ]
+}
