@@ -35,7 +35,7 @@ class Storage():
         return self._strategy.read(self._path)
 
 
-class JsonFileHandler(StorageHandler):
+class DataBaseHandler(StorageHandler):
 
     def write(self, path, data) -> None:
         with open(path, 'w') as file:
@@ -51,8 +51,8 @@ class ShopService:
     SHOP = {}
 
     def __init__(self, shop_invent_path: str, shopping_card_path: str):
-        self._shop_invent_storage = Storage(JsonFileHandler(), shop_invent_path)
-        self._shopping_card_storage = Storage(JsonFileHandler(), shopping_card_path)
+        self._shop_invent_storage = Storage(DataBaseHandler(), shop_invent_path)
+        self._shopping_card_storage = Storage(DataBaseHandler(), shopping_card_path)
 
     def get_all_product(self) -> Dict:
         if not self.SHOP:
