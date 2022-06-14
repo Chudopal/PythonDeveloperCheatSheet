@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employees</title>
+</head>
+<body>
+<nav>
+    {% if not employees.error %}
+    <h1>Employees:</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Department</th>
+        </tr>
+        {% for employee in employees %}
+        <tr>
+            <td>{{ employee.id }}</td>
+            <td>{{ employee.name }}</td>
+            <td>{{ employee.role }}</td>
+            <td>{{ employee.department }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>{{ employees.error }}</p>
+    {% endif %}
+</nav>
+</body>
+</html>
