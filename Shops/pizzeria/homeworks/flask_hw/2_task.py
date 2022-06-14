@@ -40,24 +40,11 @@ class CarsStorage:
         self.data = self.read()
 
     def find_cars(self, **kwargs) -> list:
-        filters = {
-            "id": lambda car: car.get("id") == kwargs.get('car_id'),
-            "price_usd": lambda car: car.get("price_usd") == kwargs.get("price_usd"),
-            "brand": lambda car: car.get("brand") == kwargs.get("brand").capitalize(),
-            "model": lambda car: car.get("model") == kwargs.get("model").capitalize(),
-            "year": lambda car: car.get("year") == kwargs.get("year"),
-            "rain_detector": lambda car: car.get("rain_detector") == kwargs.get("rain_detector"),
-            "generation": lambda car: car.get("generation") == kwargs.get("generation"),
-            "interior_material": lambda car: car.get("interior_material") == kwargs.get("interior_material"),
-            "created_advert": lambda car: car.get("created_advert") == kwargs.get("created_advert")
-        }
-
         response = self.get_all_cars().get("cars")
-
-        for key in kwargs.keys():
-            response = filter(filters.get(key), response)
-
-        return list(response)
+        if kwargs:
+            for key, value in kwargs.items():
+                response = list(filter(lambda car: str(car.get(key)).lower() == str(value).lower(), response))
+        return response
 
     def get_car_by_id(self, car_id):
         return self.find_cars(car_id=str(car_id))
@@ -90,15 +77,12 @@ class CarsStorage:
         return data
 
 
+context = CarsStorage("storage.json")
+
+
 @app.route("/cars/", methods=["GET"])
 def get_cars_view():
-    get_args = request.args.to_dict()
-    cars = CarsStorage("storage.json")
-    if get_args:
-        result = cars.find_cars(**get_args)
-    else:
-        result = cars.get_all_cars()
-    return jsonify(result)
+    return jsonify(context.find_cars(**request.args))
 
 
 app.run(port=5000)
