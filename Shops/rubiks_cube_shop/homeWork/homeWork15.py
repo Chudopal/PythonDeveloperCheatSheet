@@ -70,12 +70,13 @@ cat.voice()
 Опишите эту бизнес-логику в коде, можете добавить свои фичи =)
 При желании можете сделать так, чтобы сотрудники брались из БД
 """
+import uuid
 
 class People():
     
-    def __init__(self, name: str, uuid: str, age: int) -> None:
+    def __init__(self, name: str, age: int) -> None:
         self._name  = name
-        self._uuid = uuid
+        self._uuid = uuid.uuid4()
         self._age = age 
 
 
@@ -102,7 +103,7 @@ class Task():
         self._experiens = experiens
 
 
-worker = Worker("Bob", "adsfasdf", 34, "developer", 3)
+worker = Worker("Bob", 34, "developer", 3)
 task = Task("Add OOP", "developer", 3)
 
 worker.check_task(task)
@@ -154,8 +155,6 @@ time.sleep(0.5) #остановит работу на 0.5 сек
 """
 
 import time
-from urllib.parse import ParseResultBytes
-import uuid
 
 
 class Engine:
@@ -193,7 +192,7 @@ class Action:
     def __init__(self) -> None:
         self._counter = 1
 
-    def move(self, distanse: int, car: Car) -> None:
+    def move_execute(self, distanse: int, car: Car) -> None:
         self.start_move(car)
         total_time = self.drive(distanse, car) 
         self.finish_move(total_time)
@@ -240,11 +239,11 @@ car5 = Car("Renault", engine_1, wheels_4w, corpus_green)
 
 action = Action()
 
-# action.move(3, car1)
-# action.move(2, car2)
-# action.move(5, car3)
-# action.move(3, car4)
-# action.move(4, car5)
+# action.move_execute(3, car1)
+# action.move_execute(2, car2)
+# action.move_execute(5, car3)
+# action.move_execute(3, car4)
+# action.move_execute(4, car5)
 
 
 
