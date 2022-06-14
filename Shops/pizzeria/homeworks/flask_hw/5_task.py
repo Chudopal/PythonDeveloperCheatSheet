@@ -11,7 +11,7 @@ from typing import List
 from typing import Dict
 from dataclasses import dataclass
 from typing import Protocol
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template
 
 
 class Storage(Protocol):
@@ -97,6 +97,18 @@ class Console:
         print(message)
 
 
+class WebIO(IO):
+    def make_response(self, employees: List):
+        return render_template("5_task/employee_service.html", employees=employees)
+
+    def get_data(self):
+        return request.args
+
+    def make_error(self, error_message: str):
+        result = [{"error": error_message}]
+        return self.make_response(result)
+
+
 class EmployeeService:
 
     def __init__(self, storage: Storage, io: IO, allowed_params: List[str], error_message=None) -> None:
@@ -122,33 +134,35 @@ class EmployeeService:
 
 
 class EmployeeWebService(EmployeeService):
-    def __init__(self, storage: Storage, allowed_params: List[str], io: IO = None, error_message=None) -> None:
-        EmployeeService.__init__(self, storage, io, allowed_params, error_message)
 
-    def get_employees(self, **params):
+    def get_employees(self):
+        params = self.io.get_data()
         valid = self._is_params_valid(params)
         if valid:
             data = self.storage.get_employees(**params)
+            response = self.io.make_response(data)
         else:
-            data = {"error": self.error_message}
-        return data
+            response = self.io.make_error(self.error_message)
+        return response
 
 
 if __name__ == "__main__":
     allowed_params = ["name", "department", "id", "role"]
     storage = EmployeeStorage(file_path="storage.json", data_path=["5_task", "employees"])
+    io = WebIO()
     employee_service = EmployeeWebService(
         allowed_params=allowed_params,
         storage=storage,
-        error_message='Вы ввели неправильный параметр')
+        io=io,
+        error_message='Вы ввели неправильный параметр'
+    )
 
     app = Flask(__name__)
 
 
     @app.route("/")
     def index():
-        employees = employee_service.get_employees(**request.args)
-        return render_template("5_task/employee_service.html", employees=employees)
+        return employee_service.get_employees()
 
 
     app.run()
