@@ -99,7 +99,7 @@ class Console:
 
 class WebIO(IO):
     def make_response(self, employees: List):
-        return render_template("5_task/employee_service.html", employees=employees)
+        self.response = render_template("5_task/employee_service.html", employees=employees)
 
     def get_data(self):
         return request.args
@@ -133,24 +133,11 @@ class EmployeeService:
         return result
 
 
-class EmployeeWebService(EmployeeService):
-
-    def get_employees(self):
-        params = self.io.get_data()
-        valid = self._is_params_valid(params)
-        if valid:
-            data = self.storage.get_employees(**params)
-            response = self.io.make_response(data)
-        else:
-            response = self.io.make_error(self.error_message)
-        return response
-
-
 if __name__ == "__main__":
     allowed_params = ["name", "department", "id", "role"]
     storage = EmployeeStorage(file_path="storage.json", data_path=["5_task", "employees"])
     io = WebIO()
-    employee_service = EmployeeWebService(
+    employee_service = EmployeeService(
         allowed_params=allowed_params,
         storage=storage,
         io=io,
@@ -162,7 +149,8 @@ if __name__ == "__main__":
 
     @app.route("/")
     def index():
-        return employee_service.get_employees()
+        employee_service.get_employees()
+        return employee_service.io.response
 
 
     app.run()
