@@ -2,6 +2,7 @@ import json
 import psycopg2
 from dataclasses import dataclass, asdict
 from abc import ABC, abstractmethod
+from uuid import uuid4
 
 
 # ----------------- #
@@ -10,6 +11,11 @@ from abc import ABC, abstractmethod
 
 class NoSuchProductException(Exception):
     """raises when no required product at storage"""
+
+
+class DBException(Exception):
+    def __str__(self):
+        return "Database error occurred"
 
 
 # ----------------- #
@@ -43,12 +49,15 @@ class DBStorage:
         self._dbname = kwargs.get('dbname')
 
     def execute(self, *sql_query: str) -> psycopg2:
-        connector = psycopg2.connect(host=self._host, user=self._user, password=self._password, dbname=self._dbname)
-        cursor = connector.cursor()
-        for item in sql_query:
-            cursor.execute(item)
-        connector.commit()
-        return cursor
+        try:
+            connector = psycopg2.connect(host=self._host, user=self._user, password=self._password, dbname=self._dbname)
+            cursor = connector.cursor()
+            for item in sql_query:
+                cursor.execute(item)
+            connector.commit()
+            return cursor
+        except Exception as error:
+            raise DBException(error)
 
 
 class JsonStorage:
@@ -102,7 +111,7 @@ class DBStorageAdaptor(StorageAdaptor):
         self.db_storage.execute(_SQL)
 
     def clear_data(self):
-        _SQL = """DELETE * FROM {table_name};""".format(table_name=self.table_name)
+        _SQL = """DELETE FROM {table_name};""".format(table_name=self.table_name)
         self.db_storage.execute(_SQL)
 
     def _format_values(self, values):
@@ -143,7 +152,7 @@ class JsonStorageAdaptor(StorageAdaptor):
 
 @dataclass
 class Product:
-    pizza_id: int
+    pizza_id: str
     name: str
     category: str
     description: str
@@ -153,6 +162,7 @@ class Product:
 
 @dataclass
 class Order:
+    order_id: str
     name: str
     amount: int
     price: float
@@ -211,7 +221,9 @@ class Shop:
             order = Order(name=product_in_storage.name,
                           amount=amount,
                           price=product_in_storage.price * amount,
-                          calories=product_in_storage.calories * amount)
+                          calories=product_in_storage.calories * amount,
+                          order_id=str(uuid4())
+                          )
             self.orders.add_order(order)
         except AttributeError:
             raise NoSuchProductException
@@ -290,7 +302,7 @@ class IOController(ABC):
         """
 
     @abstractmethod
-    def execute_output(self, *output_items: str):
+    def execute_output(self, *output_items: any):
         """
         executes print() function
         """
@@ -455,7 +467,10 @@ class ShopApplication:
         while True:
             self.io.execute_output(self.view.get_menu())
             action = self._menu_input_controller()
-            self._get_action().get(action, self._show_error_message)()
+            try:
+                self._get_action().get(action, self._show_error_message)()
+            except DBException as error:
+                self.io.execute_output(error)
 
     def _get_action(self) -> dict[int, callable]:
         return {
@@ -487,7 +502,7 @@ class ShopApplication:
 
 
 if __name__ == '__main__':
-    storage = DBStorage(dbname="pizzeria", host="localhost", user="postgres", password="toor")
+    storage = DBStorage(dbname="pizzeria", host="localhost", user="admin", password="admin")
     pizzas_storage = DBStorageAdaptor(
         db_storage=storage,
         table_name="pizzas"
