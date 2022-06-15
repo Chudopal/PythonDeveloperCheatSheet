@@ -42,9 +42,8 @@ class DBStorage:
         self._password = kwargs.get('password', '')
         self._dbname = kwargs.get('dbname')
 
-    def execute(self, *sql_query: str) -> psycopg2.cursor:
+    def execute(self, *sql_query: str) -> psycopg2:
         connector = psycopg2.connect(host=self._host, user=self._user, password=self._password, dbname=self._dbname)
-        # connector = sqlite3.connect(self._dbname)
         cursor = connector.cursor()
         for item in sql_query:
             cursor.execute(item)
@@ -83,16 +82,37 @@ class DBStorageAdaptor(StorageAdaptor):
         return data
 
     def add_item(self, new_item: dict):
-        _SQL = """INSERT INTO {table_name} VALUES ({values});"""
+        columns = ", ".join(new_item.keys())
+        values = self._format_values(new_item.values())
+        _SQL = """INSERT INTO {table_name} ({table_columns}) VALUES ({values});""".format(
+            table_name=self.table_name,
+            table_columns=columns,
+            values=values
+        )
         self.db_storage.execute(_SQL)
 
     def remove_item(self, item: dict):
-        _SQL = """DELETE FORM {table_name} WHERE {key}={value};"""
+        key = tuple(item.keys())[0]
+        value = item.get(key)
+        _SQL = """DELETE FORM {table_name} WHERE {key}={value};""".format(
+            table_name=self.table_name,
+            key=key,
+            value=value
+        )
         self.db_storage.execute(_SQL)
 
     def clear_data(self):
-        _SQL = """DELETE FROM {table_name};""".format(table_name=self.table_name)
+        _SQL = """DELETE * FROM {table_name};""".format(table_name=self.table_name)
         self.db_storage.execute(_SQL)
+
+    def _format_values(self, values):
+        result = list()
+        for value in values:
+            if type(value) == str:
+                result.append(f"'{value}'")
+            else:
+                result.append(str(value))
+        return ", ".join(result)
 
 
 class JsonStorageAdaptor(StorageAdaptor):
@@ -332,7 +352,7 @@ class ConsoleAppView(AppView):
         return messages.get(message)
 
     def format_products_list(self, products_list: list[Product]) -> str:
-        template = '- {pizza}: {description} ({calories} kcal) - {price} в‚¬\n'
+        template = '- {pizza}: {description} ({calories} kcal) - {price} $\n'
         result = '\nToday on sale:\n'
         categories = {product.category for product in products_list}
         for category in categories:
@@ -467,13 +487,13 @@ class ShopApplication:
 
 
 if __name__ == '__main__':
-    database = DBStorage(dbname="pizzeria.db")
+    storage = DBStorage(dbname="pizzeria", host="localhost", user="postgres", password="toor")
     pizzas_storage = DBStorageAdaptor(
-        db_storage=database,
+        db_storage=storage,
         table_name="pizzas"
     )
     orders_storage = DBStorageAdaptor(
-        db_storage=database,
+        db_storage=storage,
         table_name="orders"
     )
     mega_pizzeria = Shop(pizzas_storage, orders_storage)
