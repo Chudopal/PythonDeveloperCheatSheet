@@ -9,8 +9,39 @@
 Выбор товара - это ввод пользователем строки названия товара
 """
 
-import json
+import json, psycopg2
 from typing import List, Dict
+
+
+class SQL_Handler:
+
+    def SQL_reader(self):
+        connection = psycopg2.connect(dbname='building_shop', user='postgres')
+        cursor = connection.cursor()
+        cursor.execute(
+            """SELECT * FROM materials;"""
+        )
+        SQL_list = cursor.fetchall()
+        return SQL_list
+
+    def SQL_writer(self, buy_product):  # No Work
+        for material in buy_product:
+            product = buy_product.pop()
+            name = product.keys()
+            price = product.values()
+        connection = psycopg2.connect(dbname='building_shop', user='postgres')
+        cursor = connection.cursor()
+        cursor.execute(
+            """INSERT INTO buy_materials (name, price) VALUES
+            ([f'{name}, {price}'])"""
+        )
+        return "Товар успешно сохранён в БД корзины!"
+
+    def format_product_SQL(self, product) -> str:
+        return '\n'.join([
+            f'{product_name} - {cost} руб'
+            for id, product_name, cost in product
+        ])
 
 
 class JsonHandler:
@@ -35,8 +66,12 @@ class JsonHandler:
 
 class FileManager:
 
+    # def get_all_product(self) -> List:  # показывает все материалы магазина
+    #     data = JsonHandler("storage_building.json", "materials").read_file()
+    #     return data
+
     def get_all_product(self) -> List:  # показывает все материалы магазина
-        data = JsonHandler("storage_building.json", "materials").read_file()
+        data = SQL_Handler().SQL_reader()
         return data
 
     def save_buy_product(self, buy_product):  # сохраняет добавленный товар в корзине
@@ -56,8 +91,8 @@ class ServiceFun:
     def add_product(self, product_name: str) -> None:  # добавляет товар в корзину
         catalog = FileManager().get_all_product()
         for material in catalog:
-            item_cost = material['cost']
-            item_material = material['material_name']
+            item_cost = material[2]
+            item_material = material[1]
             if product_name == item_material:
                 result = {item_material: item_cost}
                 ServiceFun.buy_product.append(result)
@@ -97,14 +132,14 @@ class SHOP:
     def make_choice(choice: int):
         if choice == 1:
             print('СПИСОК ДОСТУПНЫХ ТОВАРОВ:')
-            product = ServiceFun().adaptor(FileManager().get_all_product())
-            message = ServiceFun().format_product(product)
+            product = FileManager().get_all_product()
+            message = SQL_Handler().format_product_SQL(product)
             result = message
         elif choice == 2:
             product_name = input('Введите желаемый товар: ')
             result = ServiceFun().add_product(product_name)
         elif choice == 3:
-            result = FileManager().save_buy_product(ServiceFun().buy_product)
+            result = SQL_Handler().SQL_writer(ServiceFun().buy_product)
         elif choice == 4:
             result = ServiceFun().get_buy_product()
         elif choice == 5:
