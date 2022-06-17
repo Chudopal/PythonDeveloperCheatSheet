@@ -1,5 +1,6 @@
 import json
 import psycopg2
+from psycopg2 import sql
 from dataclasses import dataclass, asdict
 from abc import ABC, abstractmethod
 from uuid import uuid4
@@ -48,12 +49,12 @@ class DBStorage:
         self._password = kwargs.get('password', '')
         self._dbname = kwargs.get('dbname')
 
-    def execute(self, *sql_query: str) -> psycopg2:
+    def execute(self, *sql_query: dict) -> psycopg2:
         try:
             connector = psycopg2.connect(host=self._host, user=self._user, password=self._password, dbname=self._dbname)
             cursor = connector.cursor()
-            for item in sql_query:
-                cursor.execute(item)
+            for query in sql_query:
+                cursor.execute(**query)
             connector.commit()
             return cursor
         except Exception as error:
@@ -84,44 +85,65 @@ class DBStorageAdaptor(StorageAdaptor):
         self.table_name = table_name
 
     def get_data(self) -> list[dict]:
-        _SQL = """SELECT * FROM {table_name};""".format(table_name=self.table_name)
-        db_response = self.db_storage.execute(_SQL)
+        sql_query = self._select_query()
+        db_response = self.db_storage.execute(sql_query)
         columns = [item[0] for item in db_response.description]
         data = [dict(zip(columns, row)) for row in db_response.fetchall()]
         return data
 
-    def add_item(self, new_item: dict):
-        columns = ", ".join(new_item.keys())
-        values = self._format_values(new_item.values())
-        _SQL = """INSERT INTO {table_name} ({table_columns}) VALUES ({values});""".format(
-            table_name=self.table_name,
-            table_columns=columns,
-            values=values
-        )
-        self.db_storage.execute(_SQL)
+    def add_item(self, item: dict):
+        sql_query = self._insert_query(item)
+        self.db_storage.execute(sql_query)
 
     def remove_item(self, item: dict):
-        key = tuple(item.keys())[0]
-        value = item.get(key)
-        _SQL = """DELETE FORM {table_name} WHERE {key}={value};""".format(
-            table_name=self.table_name,
-            key=key,
-            value=value
-        )
-        self.db_storage.execute(_SQL)
+        sql_query = self._delete_query(item)
+        self.db_storage.execute(sql_query)
 
     def clear_data(self):
-        _SQL = """DELETE FROM {table_name};""".format(table_name=self.table_name)
-        self.db_storage.execute(_SQL)
+        sql_query = self._delete_query()
+        self.db_storage.execute(sql_query)
 
-    def _format_values(self, values):
-        result = list()
-        for value in values:
-            if type(value) == str:
-                result.append(f"'{value}'")
-            else:
-                result.append(str(value))
-        return ", ".join(result)
+    def _select_query(self, columns: list = None, filer_params: dict = None) -> psycopg2.sql:
+        if columns:
+            query = sql.SQL("SELECT {columns} FROM {table}").format(
+                table=sql.SQL(self.table_name),
+                columns=sql.SQL(", ").join([sql.Identifier(col) for col in columns])
+            )
+        else:
+            query = sql.SQL("SELECT * FROM {table}").format(
+                table=sql.SQL(self.table_name)
+            )
+
+        if filer_params:
+            query += self._format_where_params(filer_params)
+        query += sql.SQL(";")
+
+        return {"query": query, "vars": filer_params}
+
+    def _insert_query(self, variables: dict) -> psycopg2.sql:
+        query = sql.SQL("INSERT INTO {table} ({columns}) VALUES ({values})").format(
+            table=sql.SQL(self.table_name),
+            columns=sql.SQL(", ").join([sql.Identifier(col) for col in variables.keys()]),
+            values=sql.SQL(", ").join([sql.Placeholder(val) for val in variables.keys()])
+        )
+        query += sql.SQL(";")
+
+        return {"query": query, "vars": variables}
+
+    def _delete_query(self, filer_params: dict = None) -> psycopg2.sql:
+        query = sql.SQL("DELETE FROM {table}").format(
+            table=sql.SQL(self.table_name),
+        )
+
+        if filer_params:
+            query += self._format_where_params(filer_params)
+        query += sql.SQL(";")
+
+        return {"query": query, "vars": filer_params}
+
+    def _format_where_params(self, variables: dict) -> psycopg2.sql:
+        return sql.SQL(" WHERE ") + sql.SQL(" AND ").join([sql.SQL("{}={}").format(
+            sql.Identifier(identifier), sql.Placeholder(identifier)) for identifier in variables])
 
 
 class JsonStorageAdaptor(StorageAdaptor):
@@ -469,7 +491,7 @@ class ShopApplication:
             action = self._menu_input_controller()
             try:
                 self._get_action().get(action, self._show_error_message)()
-            except DBException as error:
+            except Exception as error:
                 self.io.execute_output(error)
 
     def _get_action(self) -> dict[int, callable]:
