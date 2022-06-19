@@ -9,8 +9,40 @@
 Выбор товара - это ввод пользователем строки названия товара
 """
 
-import json
+import json, psycopg2
 from typing import List, Dict
+from psycopg2 import sql
+
+
+class SQL_Handler:
+
+    def SQL_reader(self):
+        connection = psycopg2.connect(dbname='building_shop', user='postgres')
+        cursor = connection.cursor()
+        cursor.execute(
+            """SELECT * FROM materials;"""
+        )
+        SQL_list = cursor.fetchall()
+        return SQL_list
+
+    def SQL_writer(self, buy_product):
+        for material in buy_product:
+            product = buy_product.pop()
+            name = product.keys()
+            price = product.values()
+        connection = psycopg2.connect(dbname='building_shop', user='postgres')
+        cursor = connection.cursor()
+        cursor.execute(
+            """INSERT INTO buy_materials (name, price) VALUES
+            ({name}, {price})""".format(name=name, price=price)
+        )
+        return "Товар успешно сохранён в БД корзины!"
+
+    def format_product_SQL(self, product) -> str:
+        return '\n'.join([
+            f'{product_name} - {cost} руб'
+            for id, product_name, cost in product
+        ])
 
 
 class JsonHandler:
@@ -18,28 +50,32 @@ class JsonHandler:
         self.path = path
         self.name = name
 
-    def read_file(self) -> List:  # чтение json файла
+    def read_file(self) -> List:
         with open(self.path) as file:
             data = json.load(file)
         return data.get(self.name)
 
-    def read_buy_file(self, path) -> List:  # чтение json файла
+    def read_buy_file(self, path) -> List:
         with open(self.path) as file:
             data = json.load(file)
         return data
 
-    def write_file(self, data) -> None:  # запись json файла
+    def write_file(self, data) -> None:
         with open(self.path, 'w') as file:
             json.dump(data, file, indent=4)
 
 
 class FileManager:
 
-    def get_all_product(self) -> List:  # показывает все материалы магазина
-        data = JsonHandler("storage_building.json", "materials").read_file()
+    # def get_all_product(self) -> List:
+    #     data = JsonHandler("storage_building.json", "materials").read_file()
+    #     return data
+
+    def get_all_product(self) -> List:
+        data = SQL_Handler().SQL_reader()
         return data
 
-    def save_buy_product(self, buy_product):  # сохраняет добавленный товар в корзине
+    def save_buy_product(self, buy_product):
         data = JsonHandler('buy_materials.json', "materials").write_file(buy_product)
         return "Товар успешно сохранён в корзину!"
 
@@ -47,23 +83,23 @@ class FileManager:
 class ServiceFun:
     buy_product = []
 
-    def adaptor(self, data: List) -> Dict:  # конвертация листа в словарь
+    def adaptor(self, data: List) -> Dict:
         result = {}
         for materials in data:
             result[materials.get('material_name')] = materials.get('cost')
         return result
 
-    def add_product(self, product_name: str) -> None:  # добавляет товар в корзину
+    def add_product(self, product_name: str) -> None:
         catalog = FileManager().get_all_product()
         for material in catalog:
-            item_cost = material['cost']
-            item_material = material['material_name']
+            item_cost = material[2]
+            item_material = material[1]
             if product_name == item_material:
                 result = {item_material: item_cost}
                 ServiceFun.buy_product.append(result)
         return "Спасибо! Товар добавлен в корзину!"
 
-    def get_buy_product(self) -> List:  # показывает сумму покупки
+    def get_buy_product(self) -> List:
         result_list = []
         for material in ServiceFun.buy_product:
             result = list(material.values())
@@ -97,14 +133,14 @@ class SHOP:
     def make_choice(choice: int):
         if choice == 1:
             print('СПИСОК ДОСТУПНЫХ ТОВАРОВ:')
-            product = ServiceFun().adaptor(FileManager().get_all_product())
-            message = ServiceFun().format_product(product)
+            product = FileManager().get_all_product()
+            message = SQL_Handler().format_product_SQL(product)
             result = message
         elif choice == 2:
             product_name = input('Введите желаемый товар: ')
             result = ServiceFun().add_product(product_name)
         elif choice == 3:
-            result = FileManager().save_buy_product(ServiceFun().buy_product)
+            result = SQL_Handler().SQL_writer(ServiceFun().buy_product)
         elif choice == 4:
             result = ServiceFun().get_buy_product()
         elif choice == 5:
