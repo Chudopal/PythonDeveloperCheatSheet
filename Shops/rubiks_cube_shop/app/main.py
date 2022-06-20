@@ -77,9 +77,6 @@ class SQLProcessing():
         return result
 
 
-
-
-
 class Console:
     
     def select_choose(self, choose: int) -> int:
@@ -184,7 +181,7 @@ class Shop():
                 self._seller.sum_purchase(self._purchase_product_range.read()))
         return massage
 
-# product_range = FileProcessing("Shops/rubiks_cube_shop/app/rubiks_cube_product_range.json")
+# product_range = FileProcessing("Shops/rubiks_cube_shop/app/rubiks_cube_product_range.json")# - для работы с файлами 
 # purchase_product_range = FileProcessing("Shops/rubiks_cube_shop/app/purchase_range.json")
 
 product_range = SQLProcessing(
