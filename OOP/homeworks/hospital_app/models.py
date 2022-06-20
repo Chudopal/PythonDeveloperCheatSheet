@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Doctor:
+class Patient:
     name: str
     birth_data: str
     weight: int
@@ -12,7 +12,7 @@ class Doctor:
 
 
 @dataclass
-class Patient:
+class Doctor:
     name: str
     category: str
     position: str
