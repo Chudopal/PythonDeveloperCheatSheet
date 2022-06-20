@@ -27,15 +27,14 @@ class SQL_Handler:
 
     def SQL_writer(self, buy_product):
         for material in buy_product:
-            product = buy_product.pop()
-            name = product.keys()
-            price = product.values()
-        connection = psycopg2.connect(dbname='building_shop', user='postgres')
-        cursor = connection.cursor()
-        cursor.execute(
-            """INSERT INTO buy_materials (name, price) VALUES
-            ({name}, {price})""".format(name=name, price=price)
-        )
+            name, price = list(material.items())[0]
+            connection = psycopg2.connect(dbname='building_shop', user='postgres')
+            cursor = connection.cursor()
+            cursor.execute(
+                """INSERT INTO buy_materials (name, price) VALUES
+                ('{name}', '{price}')""".format(name=name, price=price)
+            )
+            connection.commit()
         return "Товар успешно сохранён в БД корзины!"
 
     def format_product_SQL(self, product) -> str:
