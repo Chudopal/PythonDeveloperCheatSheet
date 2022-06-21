@@ -38,7 +38,6 @@ def get_cars():
     return data
 
 def get_car(data: Dict)-> list: 
-    data = get_cars()
     return [
         {"id": car.get("id", {}),
         "price_usd": car.get("price", {}).get("amount", {}),
@@ -49,12 +48,18 @@ def get_car(data: Dict)-> list:
         "rain_detector": car.get("properties", {})[4].get("value", {}),
         "interior_material": car.get("properties", {})[5].get("value", {}),
         "created_advert": car.get("publishedAt", {})
-        }
-    for car in data] 
+        } for car in data
+    ] 
 
 @app.route("/cars")
 def get_cars_view():
-    cars = get_car()
-    return jsonify(cars)
+    car = get_cars()
+    cars = get_car(car)
+    return jsonify(
+        {
+            "cars_number": len(cars),
+            "cars": cars       
+        }
+    )
 
-app.run(port=5000, debug=True)
+app.run(port=5000)
