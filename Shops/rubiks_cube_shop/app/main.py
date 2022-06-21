@@ -58,22 +58,25 @@ class SQLProcessing():
         self._cursor.execute("""
         INSERT INTO purchase(name, price, counter) VALUES('{}', {}, 1);
         """.format(name, price))
+        self._connection.commit()
+
 
     def update_purchase(self, name)->None:
         self._cursor.execute("""
         UPDATE purchase SET counter =counter + 1 WHERE name = '{}';
         """.format(name))
+        self._connection.commit()
 
     def conv_product(self, data: list)->dict:
         result = {}
-        for i in data:
-            result[i[0]] = i[1]
+        for product in data:
+            result[product[0]] = product[1]
         return result
 
     def conv_purchase(self, data: list)->dict:
         result = {}
-        for i in data:
-            result[i[0]] = {"price":i[1], "counter":i[2]}
+        for product in data:
+            result[product[0]] = {"price":product[1], "counter":product[2]}
         return result
 
 
