@@ -57,4 +57,4 @@ def get_cars_view():
     cars = get_car()
     return jsonify(cars)
 
-app.run(port=5000)
+app.run(port=5000, debug=True)
