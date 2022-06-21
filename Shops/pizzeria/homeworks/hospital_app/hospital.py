@@ -25,15 +25,18 @@ class DBStorage:
             for query in sql_query:
                 cursor.execute(**query)
             connector.commit()
-            return cursor
+            return self._format_response(cursor)
         except Exception as error:
             raise DBException(error)
 
-    def get_data(self, table: str, columns: tuple = None, where: dict = None) -> list[dict]:
-        sql_query = self._select_query(table, columns, where)
-        db_response = self.execute(sql_query)
+    def _format_response(self, db_response: 'DB connection cursor'):
         columns = [item[0] for item in db_response.description]
         data = [dict(zip(columns, row)) for row in db_response.fetchall()]
+        return data
+
+    def get_data(self, table: str, columns: tuple = None, where: dict = None) -> list[dict]:
+        sql_query = self._select_query(table, columns, where)
+        data = self.execute(sql_query)
         return data
 
     def add_data(self, table: str, data: dict):
@@ -53,6 +56,7 @@ class DBStorage:
 
         if where:
             query += self._format_where_params(where)
+
         query += sql.SQL(";")
 
         return {"query": query, "vars": where}
@@ -107,7 +111,10 @@ class Hospital:
         """Добавляет новый диагноз для пациента. Возвращает объект диагноза."""
         patient = self.get_patient(patient_uuid)
         doctor = self.get_doctor(doctor_uuid)
-        return Diagnosis(patient=patient, doctor=doctor, description=description, treatment=treatment)
+        table = 'anamnesis'
+        diagnosis = Diagnosis(patient=patient, doctor=doctor, description=description, treatment=treatment)
+        self.storage.add_data(table=table, data=asdict(diagnosis))
+        return diagnosis
 
     def get_doctor(self, doctor_uuid: str) -> Doctor:
         table = "doctors"
@@ -135,13 +142,39 @@ class Hospital:
 
     def get_all_anamnesis(self) -> List[Diagnosis]:
         """Вернуть список всех диагнозов."""
-        table = "anamnesis"
-        columns = ("diagnosis",)
-        data = self.storage.get_data(table=table, columns=columns)
-        return [diagnosis.get('diagnosis') for diagnosis in data]
+        _SQL = sql.SQL("SELECT patients.uuid AS patient_uuid, patients.name AS patient_name, "
+                       "patients.birth_date AS patient_birth_date, patients.weight AS patient_weight, "
+                       "patients.height AS patient_height, patients.sex AS patient_sex, "
+                       "doctors.uuid AS doctor_uuid, doctors.name AS doctor_name, "
+                       "doctors.category AS doctor_category,"
+                       "doctors.position AS doctor_position, diagnosis,"
+                       "treatment "
+                       "FROM anamnesis "
+                       "JOIN patients ON anamnesis.patient_uuid = patients.uuid "
+                       "JOIN doctors ON anamnesis.doctor_uuid = doctors.uuid")
+        data = self.storage.execute({'query': _SQL})
+        return [Diagnosis(Doctor(name=diagnosis.get('doctor_name'),
+                                 position=diagnosis.get('doctor_position'),
+                                 category=diagnosis.get('doctor_category'),
+                                 uuid=diagnosis.get('doctor_uuid')),
+                          Patient(name=diagnosis.get('patient_name'),
+                                  birth_date=diagnosis.get('patient_birth_date'),
+                                  weight=diagnosis.get('patient_weight'),
+                                  height=diagnosis.get('patient_height'),
+                                  sex=diagnosis.get('patient_sex'),
+                                  uuid=diagnosis.get('patient_uuid')),
+                          description=diagnosis.get('diagnosis'),
+                          treatment=diagnosis.get('treatment'))
+                for diagnosis in data]
 
     def get_doctor_patients_count(self, doctor_uuid: str) -> int:
         """Получить количество пациентов для определенного доктора."""
+        _SQL = sql.SQL("SELECT COUNT(anamnesis.patient_uuid) AS patients_num "
+                       "FROM anamnesis "
+                       "JOIN doctors ON doctors.uuid = anamnesis.doctor_uuid "
+                       "WHERE anamnesis.doctor_uuid={uuid}").format(uuid=sql.Literal(doctor_uuid))
+        data = self.storage.execute({'query': _SQL})
+        return data[0].get('patients_num')
 
     def get_bmi(self, patient_uuid: str) -> float:
         """Получить имт для определенного пациента."""
@@ -156,8 +189,12 @@ class Hospital:
     ) -> List[Patient]:
         """Выбрать пациентов по заданным критериям."""
         table = "patients"
-        where_params = {"name": name,
-                        "sex": sex,
-                        "patient_uuid": patient_uuid}
+        where_params = {}
+        if name:
+            where_params.update({"name": name})
+        if sex:
+            where_params.update({"sex": sex})
+        if patient_uuid:
+            where_params.update({"uuid": patient_uuid})
         data = self.storage.get_data(table=table, where=where_params)
         return [Patient(**patient) for patient in data]
