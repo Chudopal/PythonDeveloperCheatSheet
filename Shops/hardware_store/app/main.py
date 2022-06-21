@@ -1,16 +1,23 @@
 import json
 from typing import List, Dict
 from abc import ABC, abstractmethod
+import psycopg2
+from contextlib import closing
+from psycopg2.extras import DictCursor
 
 
 class StorageHandler(ABC):
 
     @abstractmethod
-    def write(self, path, data):
+    def add_items(self, path, new_items):
         pass
 
     @abstractmethod
-    def read(self, path) -> List:
+    def get_data(self, path) -> List:
+        pass
+
+    @abstractmethod
+    def remove_all(self, path):
         pass
 
 
@@ -28,14 +35,26 @@ class Storage():
     def strategy(self, strategy: StorageHandler) -> None:
         self._strategy = strategy
 
-    def write(self, data) -> None:
-        self._strategy.write(self._path, data)
+    def add_items(self, new_items) -> None:
+        self._strategy.add_items(self._path, new_items)
 
-    def read(self) -> List:
-        return self._strategy.read(self._path)
+    def get_data(self) -> List:
+        return self._strategy.get_data(self._path)
+
+    def remove_all(self) -> None:
+        self._strategy.remove_all(self._path)
 
 
 class DataBaseHandler(StorageHandler):
+
+    def __init__(self, connection_config):
+        self._connection_config = connection_config
+
+    def execute(self, sql_query):
+        with closing(psycopg2.connect(self._connection_config)) as conn:
+            with conn.cursor(cursor_factory=DictCursor) as cursor:
+                cursor.execute(sql_query)
+
 
     def write(self, path, data) -> None:
         with open(path, 'w') as file:
