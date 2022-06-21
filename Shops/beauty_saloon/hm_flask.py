@@ -13,5 +13,10 @@ def index():
 def user(name: str, age: int):
     return f"Hello {name.capitalize()}! Your age is {age}!"
 
+<<<<<<< HEAD
 
 app.run(port=5000, debug=True)
+=======
+ 
+app.run(port=5000, debug=True)
+>>>>>>> 9b79568823889bc36e819d31de8236786f5a6f05
