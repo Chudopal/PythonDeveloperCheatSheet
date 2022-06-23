@@ -11,33 +11,31 @@
 
 import json, psycopg2
 from typing import List, Dict
-from psycopg2 import sql
 
 
-class SQL_Handler:
+class DB_Handler:
+    def __init__(self):
+        self.connection = psycopg2.connect(dbname='building_shop', user='postgres')
+        self.cursor = self.connection.cursor()
 
-    def SQL_reader(self):
-        connection = psycopg2.connect(dbname='building_shop', user='postgres')
-        cursor = connection.cursor()
-        cursor.execute(
+    def DB_reader(self):
+        self.cursor.execute(
             """SELECT * FROM materials;"""
         )
-        SQL_list = cursor.fetchall()
-        return SQL_list
+        DB_list = self.cursor.fetchall()
+        return DB_list
 
-    def SQL_writer(self, buy_product):
+    def DB_writer(self, buy_product):
         for material in buy_product:
             name, price = list(material.items())[0]
-            connection = psycopg2.connect(dbname='building_shop', user='postgres')
-            cursor = connection.cursor()
-            cursor.execute(
+            self.cursor.execute(
                 """INSERT INTO buy_materials (name, price) VALUES
                 ('{name}', '{price}')""".format(name=name, price=price)
             )
-            connection.commit()
+            self.connection.commit()
         return "Товар успешно сохранён в БД корзины!"
 
-    def format_product_SQL(self, product) -> str:
+    def format_product_DB(self, product) -> str:
         return '\n'.join([
             f'{product_name} - {cost} руб'
             for id, product_name, cost in product
@@ -71,7 +69,7 @@ class FileManager:
     #     return data
 
     def get_all_product(self) -> List:
-        data = SQL_Handler().SQL_reader()
+        data = DB_Handler().DB_reader()
         return data
 
     def save_buy_product(self, buy_product):
@@ -133,13 +131,13 @@ class SHOP:
         if choice == 1:
             print('СПИСОК ДОСТУПНЫХ ТОВАРОВ:')
             product = FileManager().get_all_product()
-            message = SQL_Handler().format_product_SQL(product)
+            message = DB_Handler().format_product_DB(product)
             result = message
         elif choice == 2:
             product_name = input('Введите желаемый товар: ')
             result = ServiceFun().add_product(product_name)
         elif choice == 3:
-            result = SQL_Handler().SQL_writer(ServiceFun().buy_product)
+            result = DB_Handler().DB_writer(ServiceFun().buy_product)
         elif choice == 4:
             result = ServiceFun().get_buy_product()
         elif choice == 5:
