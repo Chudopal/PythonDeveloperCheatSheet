@@ -35,8 +35,8 @@ class Table:
     def select(self, *fields: Union[TableField, str]) -> 'QueryBuilder':
         return QueryBuilder().select(self.table_name, tuple(str(field) for field in fields))
 
-    def insert(self, field_value: dict) -> 'QueryBuilder':
-        return QueryBuilder().insert_into(self.table_name, field_value)
+    def insert(self, fields_values: dict) -> 'QueryBuilder':
+        return QueryBuilder().insert_values(self.table_name, fields_values)
 
 
 class QueryBuilder:
@@ -78,15 +78,15 @@ class QueryBuilder:
         )
         return self
 
-    def insert_into(self, table_name: str, field_value: dict) -> 'QueryBuilder':
-        pass
+    def insert_values(self, table_name: str, fields_values: dict) -> 'QueryBuilder':
+        self._query = sql.SQL("INSERT INTO {table} ({columns}) VALUES ({values})").format(
+            table=sql.Identifier(table_name),
+            columns=sql.SQL(", ").join([sql.SQL(field) for field in fields_values.keys()]),
+            values=sql.SQL(", ").join([sql.Literal(val) for val in fields_values.values()])
+        )
+        return self
 
 
 def count(field) -> str:
     return f'COUNT({field})'
-
-
-doctors = Table('doctors', 'uuid', 'name', 'category', 'position')
-anamnesis = Table('anamnesis', 'anamnesis', 'patient_uuid', 'doctor_uuid', 'diagnosis', 'treatment')
-patients = Table('patients', 'uuid', 'name', 'birth_date', 'weight', 'height', 'sex')
 
