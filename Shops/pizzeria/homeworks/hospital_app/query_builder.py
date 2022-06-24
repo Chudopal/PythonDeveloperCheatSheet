@@ -69,13 +69,11 @@ class QueryBuilder:
             )
         return self
 
-    def on(self, fields: str) -> 'QueryBuilder':
-        pass
-
-    def where(self, filter_params: dict) -> 'QueryBuilder':
-        self._query += sql.SQL(" WHERE ") + sql.SQL(" AND ").join([sql.SQL("{}={}").format(
-            sql.Identifier(identifier), sql.Literal(value)) for identifier, value in filter_params.items()]
-        )
+    def where(self, where_params: dict) -> 'QueryBuilder':
+        if where_params:
+            self._query += sql.SQL(" WHERE ") + sql.SQL(" AND ").join([sql.SQL("{}={}").format(
+                sql.SQL(identifier), sql.Literal(value)) for identifier, value in where_params.items()]
+            )
         return self
 
     def insert_values(self, table_name: str, fields_values: dict) -> 'QueryBuilder':
@@ -89,4 +87,3 @@ class QueryBuilder:
 
 def count(field) -> str:
     return f'COUNT({field})'
-
