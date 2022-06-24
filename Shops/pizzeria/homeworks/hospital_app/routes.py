@@ -1,10 +1,8 @@
-from config import app
-from flask import jsonify, request, abort
-from hospital import DBStorage, Hospital, DBException
 from functools import wraps
-
-storage = DBStorage(dbname="homeworks", host="localhost", user="admin", password="admin")
-hospital = Hospital(storage)
+from flask import jsonify, request, abort
+from config import app, hospital
+from storage_handler import DBException
+from hospital import NotFoundException
 
 
 def error_handler(func):
@@ -13,6 +11,8 @@ def error_handler(func):
         try:
             return func(*args, **kwargs)
         except DBException:
+            abort(404)
+        except NotFoundException:
             abort(404)
 
     return wrapper
