@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS pizzas(
+	pizza_id uuid PRIMARY KEY,
+ 	name CHARACTER VARYING(255) NOT NULL,
+	category CHARACTER VARYING(255) NOT NULL,
+	description CHARACTER VARYING(255) DEFAULT 'No description',
+	price NUMERIC(4,2) NOT NULL,
+	calories SMALLINT
+);
+
+CREATE TABLE orders(
+  order_id UUID PRIMARY KEY,
+	name CHARACTER VARYING(255) NOT NULL,
+	amount SMALLINT NOT NULL,
+	price NUMERIC(4,2) NOT NULL,
+	calories SMALLINT
+);

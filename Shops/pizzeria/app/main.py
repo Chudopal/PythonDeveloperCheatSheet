@@ -1,6 +1,9 @@
 import json
+import psycopg2
+from psycopg2 import sql
 from dataclasses import dataclass, asdict
 from abc import ABC, abstractmethod
+from uuid import uuid4
 
 
 # ----------------- #
@@ -11,22 +14,54 @@ class NoSuchProductException(Exception):
     """raises when no required product at storage"""
 
 
+class DBException(Exception):
+    def __str__(self):
+        return "Database error occurred"
+
+
 # ----------------- #
 # DATA ACCESS LAYER #
 # ----------------- #
 
-class StorageHandler(ABC):
+class StorageAdaptor(ABC):
 
     @abstractmethod
-    def read(self):
-        """reads data from storage"""
+    def get_data(self) -> list[dict]:
+        """returns all data from storage as list[dict]"""
 
     @abstractmethod
-    def save(self, data):
-        """save data to storage"""
+    def add_item(self, new_item: dict):
+        """add data represented as dict object to storage"""
+
+    @abstractmethod
+    def remove_item(self, item: dict):
+        """remove item from storage"""
+
+    @abstractmethod
+    def clear_data(self):
+        """delete all the data from storage"""
 
 
-class JsonStorageHandler(StorageHandler):
+class DBStorage:
+    def __init__(self, **kwargs):
+        self._host = kwargs.get('host', '127.0.0.1')
+        self._user = kwargs.get('user', '')
+        self._password = kwargs.get('password', '')
+        self._dbname = kwargs.get('dbname')
+
+    def execute(self, *sql_query: dict) -> psycopg2:
+        try:
+            connector = psycopg2.connect(host=self._host, user=self._user, password=self._password, dbname=self._dbname)
+            cursor = connector.cursor()
+            for query in sql_query:
+                cursor.execute(**query)
+            connector.commit()
+            return cursor
+        except Exception as error:
+            raise DBException(error)
+
+
+class JsonStorage:
 
     def __init__(self, file_name: str):
         self.file_name = file_name
@@ -44,9 +79,76 @@ class JsonStorageHandler(StorageHandler):
             json.dump(data, file)
 
 
-class StorageAdaptor:
+class DBStorageAdaptor(StorageAdaptor):
+    def __init__(self, db_storage: DBStorage, table_name: str):
+        self.db_storage = db_storage
+        self.table_name = table_name
 
-    def __init__(self, stored_data: StorageHandler):
+    def get_data(self) -> list[dict]:
+        sql_query = self._select_query()
+        db_response = self.db_storage.execute(sql_query)
+        columns = [item[0] for item in db_response.description]
+        data = [dict(zip(columns, row)) for row in db_response.fetchall()]
+        return data
+
+    def add_item(self, item: dict):
+        sql_query = self._insert_query(item)
+        self.db_storage.execute(sql_query)
+
+    def remove_item(self, item: dict):
+        sql_query = self._delete_query(item)
+        self.db_storage.execute(sql_query)
+
+    def clear_data(self):
+        sql_query = self._delete_query()
+        self.db_storage.execute(sql_query)
+
+    def _select_query(self, columns: list = None, filer_params: dict = None) -> psycopg2.sql:
+        if columns:
+            query = sql.SQL("SELECT {columns} FROM {table}").format(
+                table=sql.SQL(self.table_name),
+                columns=sql.SQL(", ").join([sql.Identifier(col) for col in columns])
+            )
+        else:
+            query = sql.SQL("SELECT * FROM {table}").format(
+                table=sql.SQL(self.table_name)
+            )
+
+        if filer_params:
+            query += self._format_where_params(filer_params)
+        query += sql.SQL(";")
+
+        return {"query": query, "vars": filer_params}
+
+    def _insert_query(self, variables: dict) -> psycopg2.sql:
+        query = sql.SQL("INSERT INTO {table} ({columns}) VALUES ({values})").format(
+            table=sql.SQL(self.table_name),
+            columns=sql.SQL(", ").join([sql.Identifier(col) for col in variables.keys()]),
+            values=sql.SQL(", ").join([sql.Placeholder(val) for val in variables.keys()])
+        )
+        query += sql.SQL(";")
+
+        return {"query": query, "vars": variables}
+
+    def _delete_query(self, filer_params: dict = None) -> psycopg2.sql:
+        query = sql.SQL("DELETE FROM {table}").format(
+            table=sql.SQL(self.table_name),
+        )
+
+        if filer_params:
+            query += self._format_where_params(filer_params)
+        query += sql.SQL(";")
+
+        return {"query": query, "vars": filer_params}
+
+    def _format_where_params(self, variables: dict) -> psycopg2.sql:
+        return sql.SQL(" WHERE ") + sql.SQL(" AND ").join([sql.SQL("{}={}").format(
+            sql.Identifier(identifier), sql.Placeholder(identifier)) for identifier in variables])
+
+
+class JsonStorageAdaptor(StorageAdaptor):
+
+    def __init__(self, stored_data: JsonStorage):
         self.stored_data = stored_data
 
     def get_data(self) -> list:
@@ -72,6 +174,7 @@ class StorageAdaptor:
 
 @dataclass
 class Product:
+    pizza_id: str
     name: str
     category: str
     description: str
@@ -81,6 +184,7 @@ class Product:
 
 @dataclass
 class Order:
+    order_id: str
     name: str
     amount: int
     price: float
@@ -139,7 +243,9 @@ class Shop:
             order = Order(name=product_in_storage.name,
                           amount=amount,
                           price=product_in_storage.price * amount,
-                          calories=product_in_storage.calories * amount)
+                          calories=product_in_storage.calories * amount,
+                          order_id=str(uuid4())
+                          )
             self.orders.add_order(order)
         except AttributeError:
             raise NoSuchProductException
@@ -218,7 +324,7 @@ class IOController(ABC):
         """
 
     @abstractmethod
-    def execute_output(self, *output_items: str):
+    def execute_output(self, *output_items: any):
         """
         executes print() function
         """
@@ -280,7 +386,7 @@ class ConsoleAppView(AppView):
         return messages.get(message)
 
     def format_products_list(self, products_list: list[Product]) -> str:
-        template = '- {pizza}: {description} ({calories} kcal) - {price} €\n'
+        template = '- {pizza}: {description} ({calories} kcal) - {price} $\n'
         result = '\nToday on sale:\n'
         categories = {product.category for product in products_list}
         for category in categories:
@@ -383,7 +489,10 @@ class ShopApplication:
         while True:
             self.io.execute_output(self.view.get_menu())
             action = self._menu_input_controller()
-            self._get_action().get(action, self._show_error_message)()
+            try:
+                self._get_action().get(action, self._show_error_message)()
+            except Exception as error:
+                self.io.execute_output(error)
 
     def _get_action(self) -> dict[int, callable]:
         return {
@@ -415,8 +524,15 @@ class ShopApplication:
 
 
 if __name__ == '__main__':
-    pizza_storage = StorageAdaptor(JsonStorageHandler("pizzas.json"))
-    orders_storage = StorageAdaptor(JsonStorageHandler("ordered_pizzas.json"))
-    mega_pizzeria = Shop(pizza_storage, orders_storage)
+    storage = DBStorage(dbname="pizzeria", host="localhost", user="admin", password="admin")
+    pizzas_storage = DBStorageAdaptor(
+        db_storage=storage,
+        table_name="pizzas"
+    )
+    orders_storage = DBStorageAdaptor(
+        db_storage=storage,
+        table_name="orders"
+    )
+    mega_pizzeria = Shop(pizzas_storage, orders_storage)
     app = ShopApplication(mega_pizzeria, ConsoleIOController(), ConsoleAppView())
     app.run_app()

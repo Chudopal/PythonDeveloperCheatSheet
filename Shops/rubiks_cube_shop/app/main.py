@@ -1,4 +1,5 @@
 import json
+import psycopg2
 
 
 class FileProcessing():
@@ -27,6 +28,56 @@ class FileProcessing():
         purchase = self.read()
         purchase[name]["counter"] += 1
         self.write(purchase)
+
+
+class SQLProcessing():
+    
+    def __init__(self, dbname: str, user: str,
+            password: str, host: str, port: int, name_tab: str) -> None:
+        self._connection = psycopg2.connect(
+            dbname = dbname,
+            user = user,
+            password=password,
+            host= host,
+            port = port)
+        self._name_tab = name_tab
+        self._cursor = self._connection.cursor()
+
+    def read(self)->dict:
+        self._cursor.execute("""
+        SELECT * FROM {};
+        """.format(self._name_tab))
+        result = self._cursor.fetchall()
+        if self._name_tab == "product":
+            result = self.conv_product(result)
+        elif self._name_tab == "purchase":
+            result = self.conv_purchase(result)
+        return result
+
+    def insert_purchase(self, name , price)->None:
+        self._cursor.execute("""
+        INSERT INTO purchase(name, price, counter) VALUES('{}', {}, 1);
+        """.format(name, price))
+        self._connection.commit()
+
+
+    def update_purchase(self, name)->None:
+        self._cursor.execute("""
+        UPDATE purchase SET counter =counter + 1 WHERE name = '{}';
+        """.format(name))
+        self._connection.commit()
+
+    def conv_product(self, data: list)->dict:
+        result = {}
+        for product in data:
+            result[product[0]] = product[1]
+        return result
+
+    def conv_purchase(self, data: list)->dict:
+        result = {}
+        for product in data:
+            result[product[0]] = {"price":product[1], "counter":product[2]}
+        return result
 
 
 class Console:
@@ -133,9 +184,25 @@ class Shop():
                 self._seller.sum_purchase(self._purchase_product_range.read()))
         return massage
 
+# product_range = FileProcessing("Shops/rubiks_cube_shop/app/rubiks_cube_product_range.json")# - для работы с файлами 
+# purchase_product_range = FileProcessing("Shops/rubiks_cube_shop/app/purchase_range.json")
 
-product_range = FileProcessing("app/rubiks_cube_product_range.json")
-purchase_product_range = FileProcessing("app/purchase_range.json")
+product_range = SQLProcessing(
+    dbname = 'shop',
+    user = 'jiaxer',
+    password = "dk2509fl",
+    host = "localhost",
+    port = 5432,
+    name_tab = "product")
+
+purchase_product_range= SQLProcessing(
+    dbname = 'shop',
+    user = 'jiaxer',
+    password = "dk2509fl",
+    host = "localhost",
+    port = 5432,
+    name_tab = "purchase")
+
 console = Console()
 seller = Seller()
 buyer = Buyer()
