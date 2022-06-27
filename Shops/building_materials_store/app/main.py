@@ -15,17 +15,19 @@ from typing import List, Dict
 
 class DB_Handler:
     def __init__(self):
-        self.connection = psycopg2.connect(dbname='building_shop', user='postgres')
+        self.dbname = 'building_shop'
+        self.user = 'postgres'
+        self.connection = psycopg2.connect(dbname=self.dbname, user=self.user)
         self.cursor = self.connection.cursor()
 
-    def DB_reader(self):
+    def data_reader(self):
         self.cursor.execute(
             """SELECT * FROM materials;"""
         )
         DB_list = self.cursor.fetchall()
         return DB_list
 
-    def DB_writer(self, buy_product):
+    def data_writer(self, buy_product):
         for material in buy_product:
             name, price = list(material.items())[0]
             self.cursor.execute(
@@ -62,14 +64,10 @@ class JsonHandler:
             json.dump(data, file, indent=4)
 
 
-class FileManager:
-
-    # def get_all_product(self) -> List:
-    #     data = JsonHandler("storage_building.json", "materials").read_file()
-    #     return data
+class DataHandler:
 
     def get_all_product(self) -> List:
-        data = DB_Handler().DB_reader()
+        data = DB_Handler().data_reader()
         return data
 
     def save_buy_product(self, buy_product):
@@ -87,7 +85,7 @@ class ServiceFun:
         return result
 
     def add_product(self, product_name: str) -> None:
-        catalog = FileManager().get_all_product()
+        catalog = DataHandler().get_all_product()
         for material in catalog:
             item_cost = material[2]
             item_material = material[1]
@@ -130,14 +128,14 @@ class SHOP:
     def make_choice(choice: int):
         if choice == 1:
             print('СПИСОК ДОСТУПНЫХ ТОВАРОВ:')
-            product = FileManager().get_all_product()
+            product = DataHandler().get_all_product()
             message = DB_Handler().format_product_DB(product)
             result = message
         elif choice == 2:
             product_name = input('Введите желаемый товар: ')
             result = ServiceFun().add_product(product_name)
         elif choice == 3:
-            result = DB_Handler().DB_writer(ServiceFun().buy_product)
+            result = DB_Handler().data_writer(ServiceFun().buy_product)
         elif choice == 4:
             result = ServiceFun().get_buy_product()
         elif choice == 5:
