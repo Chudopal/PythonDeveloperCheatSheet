@@ -2,30 +2,27 @@ from typing import List, Dict
 from abc import ABC, abstractmethod
 from psycopg2 import sql
 import psycopg2
-from contextlib import closing
-from psycopg2.extras import DictCursor
 
 
 class StorageHandler(ABC):
 
     @abstractmethod
-    def add_items(self, path, new_items):
+    def add_item(self, new_item):
         pass
 
     @abstractmethod
-    def get_data(self, path) -> List:
+    def get_data(self) -> List:
         pass
 
     @abstractmethod
-    def remove_all(self, path):
+    def remove_all(self):
         pass
 
 
 class Storage():
 
-    def __init__(self, strategy: StorageHandler, table_name: str) -> None:
+    def __init__(self, strategy: StorageHandler) -> None:
         self._strategy = strategy
-        self._table_name = table_name
 
     @property
     def strategy(self) -> StorageHandler:
@@ -35,130 +32,104 @@ class Storage():
     def strategy(self, strategy: StorageHandler) -> None:
         self._strategy = strategy
 
-    def add_items(self, new_items) -> None:
-        self._strategy.add_items(self._table_name, new_items)
+    def add_item(self, new_item) -> None:
+        self._strategy.add_item(new_item)
 
     def get_data(self) -> List:
-        return self._strategy.get_data(self._table_name)
+        return self._strategy.get_data()
 
     def remove_all(self) -> None:
-        self._strategy.remove_all(self._table_name)
+        self._strategy.remove_all()
 
 
 class DataBaseHandler(StorageHandler):
 
     def __init__(self, dbname: str, user: str,
-            password: str, host: str) -> None:
+                 password: str, host: str, table_name: str) -> None:
         self._dbname = dbname
         self._user = user
         self._password = password
         self._host = host
+        self._table_name = table_name
 
-    def get_data(self) -> List:
+    def get_data(self) -> Dict:
         sql_query = self._select_query()
-        db_response = self.db_storage.execute(sql_query)
-        columns = [item[0] for item in db_response.description]
-        data = [dict(zip(columns, row)) for row in db_response.fetchall()]
-        return data
+        db_response = self.execute(sql_query)
+        return db_response.fetchall()
 
-    def add_items(self, item: dict):
+    def add_item(self, item: dict):
         sql_query = self._insert_query(item)
-        self.db_storage.execute(sql_query)
+        self.execute(sql_query)
 
-    def remove_all(self, item: dict):
-        sql_query = self._delete_query(item)
-        self.db_storage.execute(sql_query)
+    def remove_all(self):
+        sql_query = self._delete_query()
+        self.execute(sql_query)
 
     def execute(self, sql_query):
-        with closing(psycopg2.connect(dbname=self._dbname, user=self._user,
-                              password=self._password, host=self._host)) as conn:
-            with conn.cursor(cursor_factory=DictCursor) as cursor:
-                cursor.execute(sql_query)
-                conn.commit()
-                return cursor
+        connector = psycopg2.connect(host=self._host, user=self._user, password=self._password, dbname=self._dbname)
+        cursor = connector.cursor()
+        cursor.execute(sql_query)
+        connector.commit()
+        return cursor
 
-
-class DBStorageAdaptor(StorageHandler):
-
-    def __init__(self, db_storage: DataBaseHandler, table_name: str):
-        self.db_storage = db_storage
-        self.table_name = table_name
-
-    def _select_query(self, columns: list = None, filer_params: dict = None) -> psycopg2.sql:
-        if columns:
-            query = sql.SQL("SELECT {columns} FROM {table}").format(
-                table=sql.SQL(self.table_name),
-                columns=sql.SQL(", ").join([sql.Identifier(col) for col in columns])
-            )
-        else:
-            query = sql.SQL("SELECT * FROM {table}").format(
-                table=sql.SQL(self.table_name)
-            )
-
-        if filer_params:
-            query += self._format_where_params(filer_params)
+    def _select_query(self) -> psycopg2.sql:
+        query = sql.SQL("SELECT * FROM {table}").format(
+            table=sql.SQL(self._table_name))
         query += sql.SQL(";")
-
-        return {"query": query, "vars": filer_params}
+        return query
 
     def _insert_query(self, variables: dict) -> psycopg2.sql:
         query = sql.SQL("INSERT INTO {table} ({columns}) VALUES ({values})").format(
-            table=sql.SQL(self.table_name),
+            table=sql.SQL(self._table_name),
             columns=sql.SQL(", ").join([sql.Identifier(col) for col in variables.keys()]),
-            values=sql.SQL(", ").join([sql.Placeholder(val) for val in variables.keys()])
+            values=sql.SQL(", ").join([sql.Literal(val) for val in variables.values()])
         )
         query += sql.SQL(";")
+        return query
 
-        return {"query": query, "vars": variables}
-
-    def _delete_query(self, filer_params: dict = None) -> psycopg2.sql:
+    def _delete_query(self) -> psycopg2.sql:
         query = sql.SQL("DELETE FROM {table}").format(
-            table=sql.SQL(self.table_name),
+            table=sql.SQL(self._table_name),
         )
-
-        if filer_params:
-            query += self._format_where_params(filer_params)
         query += sql.SQL(";")
-
-        return {"query": query, "vars": filer_params}
-
-    def _format_where_params(self, variables: dict) -> psycopg2.sql:
-        return sql.SQL(" WHERE ") + sql.SQL(" AND ").join([sql.SQL("{}={}").format(
-            sql.Identifier(identifier), sql.Placeholder(identifier)) for identifier in variables])
+        return query
 
 
 class ShopService:
-    BUY_PRODUCTS = []
     SHOP = {}
 
-    def __init__(self, shop_invent_table_name: str, shopping_card_table_name: str):
-        self._shop_invent_storage = Storage(DataBaseHandler('banking_system', 'postgres',
-                                                            'mypassword', 'host'), shop_invent_table_name)
-        self._shopping_card_storage = Storage(DataBaseHandler('banking_system', 'postgres',
-                                                              'mypassword', 'host'), shopping_card_table_name)
+    def __init__(self, dbname: str, user: str,
+                 password: str, host: str,
+                 shop_invent_table_name: str, shopping_card_table_name: str):
+        self._shop_invent_storage = Storage(DataBaseHandler(dbname, user,
+                                                            password, host, shop_invent_table_name))
+        self._shopping_card_storage = Storage(DataBaseHandler(dbname, user,
+                                                              password, host, shopping_card_table_name))
 
     def get_all_product(self) -> Dict:
         if not self.SHOP:
-            self.SHOP.update(self._shop_invent_storage.get_data())
+            all_product = self._shop_invent_storage.get_data()
+            all_product_dict = {x[1]: x for x in all_product}
+            self.SHOP.update(all_product_dict)
         return self.SHOP
 
     def add_product(self, product_name: str) -> None:
-        self.BUY_PRODUCTS.append(self.get_all_product().get(product_name))
-        self._shopping_card_storage.add_items(self.BUY_PRODUCTS)
+        price = self.get_all_product().get(product_name)[2]
+        self._shopping_card_storage.add_item({'price': price})
 
     def get_buy_product(self) -> List:
-        total_price = sum(self.BUY_PRODUCTS)
-        result = (f'Your purchase amount is {total_price} dollars')
+        shopping_cart = self._shopping_card_storage.get_data()
+        prices = list(map(lambda x: x[1], shopping_cart))
+        result = prices
         return result
 
     def format_product(self, product_list: Dict) -> str:
         return '\n'.join([
-            f'{product_name} - {cost} dollars'
-            for product_name, cost in product_list.items()
+            f'{product_name} - {product[2]} dollars'
+            for product_name, product in product_list.items()
         ])
 
     def clear_buy_products(self):
-        self.BUY_PRODUCTS.clear()
         self._shopping_card_storage.remove_all()
 
     def check_product(self, product_name):
@@ -207,8 +178,9 @@ class Shop:
 
 def run() -> None:
     shop_invent_table_name = 'shop_invent'
-    shopping_card_table_name = 'shopping_card'
-    shop = Shop(ShopService(shop_invent_table_name, shopping_card_table_name))
+    shopping_card_table_name = 'shopping_cart'
+    shop = Shop(ShopService('banking_system', 'postgres',
+                            'mypassword', 'localhost', shop_invent_table_name, shopping_card_table_name))
     choice = None
     while choice != 5:
         shop.show_menu()
