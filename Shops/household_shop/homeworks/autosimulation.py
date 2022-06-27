@@ -48,7 +48,7 @@ class Car:
         total_time = 0
         distance = int(input('Enter distance :\n'))        
 
-        for curenctDict in range(0, distance):
+        for curenctDict in range(distance):
             result_msg += f'{curenctDict + 1} km\n'
             total_time += self.engine.power
             time.sleep(self.engine.power)

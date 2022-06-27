@@ -1,8 +1,26 @@
-from abc import ABC, abstractmethod
+import uuid
+import psycopg2
 from typing import List
-
-from config import connection, cursor
+# from config import DB_CONNECTION
 from models import Doctor, Patient, Diagnosis
+
+
+DB_CONNECTION = {
+    "dbname": "hospital_system",
+    "user": "postgres",
+    "password": "Vl987654321",
+    "host": "localhost",
+}
+
+
+connection = psycopg2.connect(
+    dbname=DB_CONNECTION.get("dbname"),
+    user=DB_CONNECTION.get("user"),
+    password=DB_CONNECTION.get("password"),
+    host=DB_CONNECTION.get("host"),
+)
+
+cursor = connection.cursor() 
 
 
 class DoctorRepo:
@@ -13,14 +31,16 @@ class DoctorRepo:
             VALUES ({}, {}, {}, {}}, {}),
         """
 
+
     def get_all_doctors(self):
         return "SELECT * FROM doctors;"
+
 
     def get_doctor_patients_count(self):
         return """
             SELECT name, COUNT(DISTINCT anamnesis.patient_uuid) FROM doctors
-            JOIN anamnesis ON doctors.uuid = {}
-            GROUP BY name
+            JOIN anamnesis ON doctors.uuid = '{}'
+            GROUP BY name;
         """
 
 
@@ -32,8 +52,17 @@ class PatientRepo:
             VALUES ({}, {}, {}, {}}, {}),
         """
 
+
     def get_all_patients(self):
         return "SELECT * FROM patients;"
+
+
+    def get_bmi(self):
+        return """
+        SELECT (weight / (height * height * 0.0001)) as patient_bmi FROM patients
+		WHERE uuid = '{}';
+        """
+
 
     def select_patients(self):
         pass
@@ -61,7 +90,7 @@ class Hospital:
     def __init__(self) -> None:
         self.patients_repo = PatientRepo()
         self.doctor_repo = DoctorRepo()
-        self.diagnosis_Repo = DiagnosisRepo()
+        self.diagnosis_repo = DiagnosisRepo()
 
 
     def _get_select_data(self):
@@ -104,18 +133,39 @@ class Hospital:
 
     def get_all_patients(self) -> List[Patient]:
         """Вернуть список всех пациентов."""
+        cursor.execute(
+            self.patients_repo.get_all_patients()
+        )
+
+        return self._get_select_data()
 
 
     def get_all_anamnesis(self) -> List[Diagnosis]:
         """Вернуть список всех диагнозов."""
-        
+        cursor.execute(
+            self.diagnosis_repo.get_all_anamnesis()
+        )
+
+        return self._get_select_data()
+
 
     def get_doctor_patients_count(self, doctor_uuid: str) -> int:
         """Получить количество пациентов для определенного доктора."""
+        cursor.execute(
+            self.doctor_repo.get_doctor_patients_count().format(doctor_uuid)
+        )
+
+        return self._get_select_data()
 
 
     def get_bmi(self, patient_uuid: str) -> float:
         """Получить имт для определенного пациента."""
+        cursor.execute(
+            self.patients_repo.get_bmi().format(patient_uuid)
+        )
+
+        return self._get_select_data()
+
 
     def select_patients(
         self, name: str=None,

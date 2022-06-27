@@ -1,7 +1,4 @@
-import psycopg2
-from hospital import Hospital
-from config import connection, cursor
+from routes import app
 
 
-hospital = Hospital()
-print(*hospital.get_all_doctors(), sep='\n')
+app.run()

@@ -1,9 +1,8 @@
 from flask import Flask, jsonify
-from hospital import Hospital
+from config import hospital
 
 
 app = Flask(__name__)
-hospital = Hospital()
 
 
 @app.route("/doctors/<doctor_uuid>/patients/count")
@@ -18,17 +17,14 @@ def get_bmi(patient_uuid):
 
 @app.route("/doctors")
 def get_all_doctors():
-    return jsonify({"bmi": hospital.get_all_doctors()})   
+    return jsonify({"doctors": hospital.get_all_doctors()})   
 
 
 @app.route("/patients")
-def select_patients():
-    hospital.select_patients()
+def get_all_patients():
+    return jsonify({"patients": hospital.get_all_patients()})  
 
 
-@app.route("/doctors")
-def get_all_doctors():
-    hospital.get_all_doctors()
-
-
-app.run(port=5000)
+@app.route("/anamnesis")
+def get_all_anamnesis():
+    return jsonify({"anamnesis": hospital.get_all_anamnesis()})
