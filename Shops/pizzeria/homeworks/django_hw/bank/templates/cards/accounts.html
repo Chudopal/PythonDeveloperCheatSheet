@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Accounts{% endblock%}
+{% block body%}
+<h1>Customer accounts:</h1>
+{% if accounts %}
+<table>
+    <tr>
+        <th>IBAN Number</th>
+        <th>Amount</th>
+    </tr>
+    <tr>
+    {% for account in accounts %}
+        <td>{{ account.iban }}</td>
+        <td>{{ account.amount }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<h2>You don`t have an account in our bank</h2>
+{% endif %}
+{% endblock %}
+

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Accounts{% endblock%}
+{% block body%}
+<h1>Customer cards:</h1>
+{% if cards %}
+<table>
+    <tr>
+        <th>Card Number</th>
+        <th>Expiration date</th>
+        <th>CVV code</th>
+        <th>Account IBAN number</th>
+    </tr>
+    <tr>
+    {% for card in cards %}
+        <td>{{ card.card_number }}</td>
+        <td>{{ card.exp_date }}</td>
+        <td>{{ card.cvv_code }}</td>
+        <td>{{ card.account_id }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<h2>You don`t have any cards</h2>
+{% endif %}
+{% endblock %}
