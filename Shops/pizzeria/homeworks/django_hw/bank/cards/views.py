@@ -7,7 +7,6 @@ from .models import BankAccount, BankCard, BankCustomer
 def cards_view(request, user_uuid):
     data = BankCard.objects.filter(customer=user_uuid).values()
     return render(request=request, template_name='cards/cards.html', context={'cards': data})
-    # return HttpResponse(data)
 
 
 def accounts_view(request, user_uuid):
