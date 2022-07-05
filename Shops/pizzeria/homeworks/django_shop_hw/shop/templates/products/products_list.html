@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}All products{% endblock%}
+{% block body%}
+<h1>Our products:</h1>
+{% if products %}
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Manufacturer</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Amount</th>
+    </tr>
+    <tr>
+    {% for product in products %}
+        <td>{{ product.name }}</td>
+        <td>{{ product.manufacturer }}</td>
+        <td>{{ product.description }}</td>
+        <td>{{ product.price }}</td>
+        <td>{{ product.amount }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<h2>Everything is sold! Please come back later.</h2>
+{% endif %}
+{% endblock %}
