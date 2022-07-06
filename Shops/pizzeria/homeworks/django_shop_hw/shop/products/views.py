@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.http import Http404
+from django.core.exceptions import ValidationError
 from .models import Manufacturer, Tag, Product
 
 
@@ -29,9 +31,12 @@ def filter_products(request_get):
 
 
 def product_detail(request, product_uuid):
-    product = Product.objects.select_related('manufacturer').prefetch_related('tags').get(uuid=product_uuid)
-    tags = product.tags.all()
-    return render(request=request, template_name='products/product_detail.html', context={'product': product, 'tags':tags})
+    try:
+        product = Product.objects.select_related('manufacturer').prefetch_related('tags').get(uuid=product_uuid)
+        tags = product.tags.all()
+        return render(request=request, template_name='products/product_detail.html', context={'product': product, 'tags':tags})
+    except (Product.DoesNotExist, ValidationError):
+        raise Http404
 
 
 def products_view(request):
