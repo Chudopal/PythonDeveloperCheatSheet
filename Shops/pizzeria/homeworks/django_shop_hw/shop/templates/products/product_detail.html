@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }}{% endblock%}
+{% block body%}
+<h1>Product: {{ product.manufacturer }} {{ product.name }}</h1>
+<p>Manufacturer: {{ product.manufacturer }}</p>
+<p>Description: {{ product.description }}</p>
+<p>Amount: {{ product.amount }}</p>
+<p>Price: {{ product.price }}</p>
+<p>Tags:</p>
+{% for tag in tags %}
+<blockquote>{{ tag.name }}, discount {{ tag.discount }}% from {{ tag.quantity }} pcs.</blockquote>
+{% endfor %}
+{% endblock %}
