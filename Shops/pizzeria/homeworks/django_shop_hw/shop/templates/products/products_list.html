@@ -6,18 +6,12 @@
 <table>
     <tr>
         <th>Name</th>
-        <th>Manufacturer</th>
-        <th>Description</th>
         <th>Price</th>
-        <th>Amount</th>
     </tr>
     <tr>
     {% for product in products %}
-        <td>{{ product.name }}</td>
-        <td>{{ product.manufacturer }}</td>
-        <td>{{ product.description }}</td>
+        <td><a href="{% url 'product_detail' product.uuid %}">{{ product.manufacturer }} {{ product.name }}</a></td>
         <td>{{ product.price }}</td>
-        <td>{{ product.amount }}</td>
     </tr>
     {% endfor %}
 </table>
