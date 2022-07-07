@@ -6,4 +6,5 @@ class Command(BaseCommand):
     help = 'Implemented to Django application telegram bot run command'
 
     def handle(self, *args, **kwargs):
-        bot.polling(none_stop=True, interval=0)
+        print('Bot starts polling...')
+        bot.infinity_polling()
