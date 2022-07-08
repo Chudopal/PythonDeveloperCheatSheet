@@ -2,7 +2,6 @@ from django.contrib import admin
 from .models import Tag, Manufacturer, Product
 
 
-# Register your models here.
 class TagAdmin(admin.ModelAdmin):
     model = Tag
     list_display = ('name', 'quantity', 'discount')
