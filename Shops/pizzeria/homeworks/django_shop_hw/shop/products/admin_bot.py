@@ -5,21 +5,11 @@ from telebot.storage import StateMemoryStorage
 from telebot.callback_data import CallbackData
 from django.conf import settings
 from .models import Product, Tag, Manufacturer
+from .shop_service import ProductsService
 
 state_storage = StateMemoryStorage()
 callback_factory = CallbackData("model_name", "item_pk", "user_id", "chat_id", prefix="products")
-
-
-def save_product(data):
-    new_product = Product.objects.create(
-        name=data['name'],
-        description=data['description'],
-        amount=data['amount'],
-        price=data['price'],
-        manufacturer=data['manufacturer']
-    )
-    new_product.tags.set(data['tags'])
-    new_product.save()
+product_service = ProductsService()
 
 
 def make_keyboard(queryset, user_id, chat_id):
@@ -194,7 +184,7 @@ def show_result(message):
                    f'<b>Price:</b> <em>{storage["price"]}</em>\n'
                    f'<b>Tags:</b> <em>{[str(tag) for tag in storage["tags"]]}</em>')
 
-        save_product(storage)
+        product_service.add_product(**storage)
     bot.send_message(chat_id=message.chat.id, text='Ready! Your product has been added!')
     bot.send_message(chat_id=message.chat.id, text=result, parse_mode="html")
     bot.delete_state(user_id=message.chat.id, chat_id=message.chat.id)
