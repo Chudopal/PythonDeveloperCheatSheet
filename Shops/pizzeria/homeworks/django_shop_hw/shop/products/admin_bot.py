@@ -1,4 +1,3 @@
-import logging
 import telebot
 from telebot import custom_filters, SimpleCustomFilter, types
 from telebot.handler_backends import State, StatesGroup
@@ -6,9 +5,6 @@ from telebot.storage import StateMemoryStorage
 from telebot.callback_data import CallbackData
 from django.conf import settings
 from .models import Product, Tag, Manufacturer
-
-logger = telebot.logger
-telebot.logger.setLevel(logging.DEBUG)
 
 state_storage = StateMemoryStorage()
 callback_factory = CallbackData("model_name", "item_pk", "user_id", "chat_id", prefix="products")
@@ -50,12 +46,12 @@ class ProductAddStates(StatesGroup):
     tags = State()
 
 
-class IsDigitFilter(SimpleCustomFilter):
+class IsFloatDigitFilter(SimpleCustomFilter):
     """
     Filter to check the given string is digit (float or int).
     """
 
-    key = 'is_digit'
+    key = 'is_float_digit'
 
     def check(self, message):
         try:
@@ -69,7 +65,8 @@ bot = telebot.TeleBot(settings.BOT_TOKEN, state_storage=state_storage)
 
 bot.set_update_listener(listener)
 bot.add_custom_filter(custom_filters.StateFilter(bot))
-bot.add_custom_filter(IsDigitFilter())
+bot.add_custom_filter(custom_filters.IsDigitFilter())
+bot.add_custom_filter(IsFloatDigitFilter())
 
 
 @bot.message_handler(commands=["start"])
@@ -134,9 +131,9 @@ def add_amount(message):
 @bot.message_handler(state=ProductAddStates.amount, is_digit=False)
 def add_amount_error(message):
     """
-    State 4. Error handler. Will process when user entered a string.
+    Error handler. Will process when user entered a string or float number.
     """
-    bot.send_message(message.chat.id, 'Looks like you are submitting a string. Please enter a number.')
+    bot.send_message(message.chat.id, 'Something wrong! Please check your submit and enter correct product price.')
 
 
 @bot.message_handler(state=ProductAddStates.amount)
@@ -151,12 +148,20 @@ def add_price(message):
     bot.set_state(message.from_user.id, ProductAddStates.price, message.chat.id)
 
 
+@bot.message_handler(state=ProductAddStates.price, is_float_digit=False)
+def add_price_error(message):
+    """
+    Error handler. Will process when user entered a string.
+    """
+    bot.send_message(message.chat.id, 'Looks like you are submitting a string. Please enter a number.')
+
+
 @bot.message_handler(state=ProductAddStates.price)
 def add_tags(message):
     """
     State 5. Will process when user's state is ProductAddStates.price.
     """
-    if IsDigitFilter().check(message):
+    if IsFloatDigitFilter().check(message):
         with bot.retrieve_data(message.from_user.id, message.chat.id) as storage:
             storage['price'] = message.text
 
@@ -165,14 +170,10 @@ def add_tags(message):
         bot.send_message(message.chat.id, 'And finally please select tags for your product', reply_markup=keyboard)
         bot.set_state(message.from_user.id, ProductAddStates.tags, message.chat.id)
 
-    else:
-        bot.send_message(message.chat.id, 'Something wrong! Please check your submit and enter correct product price.')
-        return
-
 
 def add_another_tag(chat_id, user_id):
     tags = Tag.objects.all()
-    text = 'Wanna add another one tag? Or type "/enough_tags" to go to the next step.'
+    text = 'Wanna add another one tag? Or type /enough_tags to go to the next step.'
     keyboard = make_keyboard(queryset=tags, user_id=user_id, chat_id=chat_id)
     bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 
@@ -185,13 +186,13 @@ def show_result(message):
     """
     result = str()
     with bot.retrieve_data(user_id=message.chat.id, chat_id=message.chat.id) as storage:
-        result += (f'Your product:\n<b>'
-                   f'Product: {storage["name"]}\n'
-                   f'Manufacturer: {storage["manufacturer"]}\n'
-                   f'Description: {storage["description"]}\n'
-                   f'Amount: {storage["amount"]}\n'
-                   f'Price: {storage["price"]}\n'
-                   f'Tags: {storage["tags"]}</b>')
+        result += (f'<b>Your product:\n</b>'
+                   f'<b>Product:</b> <em>{storage["name"]}</em>\n'
+                   f'<b>Manufacturer:</b> <em>{storage["manufacturer"]}</em>\n'
+                   f'<b>Description:</b> <em>{storage["description"]}</em>\n'
+                   f'<b>Amount:</b> <em>{storage["amount"]}</em>\n'
+                   f'<b>Price:</b> <em>{storage["price"]}</em>\n'
+                   f'<b>Tags:</b> <em>{[str(tag) for tag in storage["tags"]]}</em>')
 
         save_product(storage)
     bot.send_message(chat_id=message.chat.id, text='Ready! Your product has been added!')
@@ -200,22 +201,23 @@ def show_result(message):
 
 
 def process_tags(data: dict):
-    chat_id = data.get('chat_id')
-    user_id = data.get('user_id')
+    chat_id = int(data.get('chat_id'))
+    user_id = int(data.get('user_id'))
     item_pk = data.get('item_pk')
 
     tag = Tag.objects.get(pk=item_pk)
 
     with bot.retrieve_data(user_id=user_id, chat_id=chat_id) as storage:
-        tags = storage.get('tags', [])
-        storage['tags'] = tags.append(tag)
+        tags = storage.get('tags', set())
+        tags.add(tag)
+        storage['tags'] = tags
 
     add_another_tag(chat_id=chat_id, user_id=user_id)
 
 
 def process_manufacturer(data: dict):
-    chat_id = data.get('chat_id')
-    user_id = data.get('user_id')
+    chat_id = int(data.get('chat_id'))
+    user_id = int(data.get('user_id'))
     item_pk = data.get('item_pk')
 
     manufacturer = Manufacturer.objects.get(pk=item_pk)
