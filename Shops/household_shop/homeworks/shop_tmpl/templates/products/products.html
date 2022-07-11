@@ -6,7 +6,8 @@
 <ul>
     {% for product in products %}
         <li>
-			<h2> {{product.product_name}} {{product.description}} - {{product.price}} </h1>
+			<h2> {{product.product_name}} - {{product.price}} </h2>
+			<h3> {{product.description}} </h3>
         </li>
     {% endfor %}
 </ul>

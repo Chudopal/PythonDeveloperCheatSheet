@@ -23,7 +23,7 @@ class Tag(models.Model):
 
 class Product(models.Model):
     product_name = models.CharField(max_length=55, null=False)
-    description = models.CharField(max_length=100)
+    description = models.CharField(max_length=255)
     quantity = models.IntegerField(default=1)
     price = models.FloatField(max_length=35, null=False)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, null=False)
