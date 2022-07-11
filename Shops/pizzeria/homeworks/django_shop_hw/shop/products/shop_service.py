@@ -31,3 +31,15 @@ class ProductsService:
 
     def _format_query_params(self, url_query_params: dict) -> dict:
         return {key: value.replace(' ', '').strip().split(",") for key, value in url_query_params.items()}
+
+    def get_all_tags(self):
+        return Tag.objects.all()
+
+    def get_tag(self, tag_pk):
+        return Tag.objects.get(pk=tag_pk)
+
+    def get_all_manufacturers(self):
+        return Manufacturer.onjects.all()
+
+    def get_manufacturer(self, manufacturer_pk):
+        return Manufacturer.objects.get(pk=manufacturer_pk)

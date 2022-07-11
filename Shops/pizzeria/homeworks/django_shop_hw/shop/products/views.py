@@ -13,7 +13,9 @@ def product_detail(request, product_uuid):
         tags = product.tags.all()
         return render(request=request, template_name='products/product_detail.html',
                       context={'product': product, 'tags': tags})
-    except (Product.DoesNotExist, ValidationError):
+    except Product.DoesNotExist:
+        raise Http404
+    except ValidationError:
         raise Http404
 
 

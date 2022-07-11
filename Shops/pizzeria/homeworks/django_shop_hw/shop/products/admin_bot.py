@@ -4,7 +4,6 @@ from telebot.handler_backends import State, StatesGroup
 from telebot.storage import StateMemoryStorage
 from telebot.callback_data import CallbackData
 from django.conf import settings
-from .models import Product, Tag, Manufacturer
 from .shop_service import ProductsService
 
 state_storage = StateMemoryStorage()
@@ -87,12 +86,12 @@ def clear_state(message):
 @bot.message_handler(state=ProductAddStates.product_name)
 def add_manufacturer(message):
     """
-    State 1. Will process when user's state is ProductAddStates.product_name.
+    Will process when user's state is ProductAddStates.product_name.
     """
     with bot.retrieve_data(user_id=message.from_user.id, chat_id=message.chat.id) as storage:
         storage['name'] = message.text
 
-    manufacturers = Manufacturer.objects.all()
+    manufacturers = product_service.get_all_manufacturers()
     keyboard = make_keyboard(queryset=manufacturers, chat_id=message.chat.id, user_id=message.from_user.id)
     bot.send_message(chat_id=message.chat.id, text='OK. Now choose a manufacturer', reply_markup=keyboard)
     bot.set_state(chat_id=message.chat.id, state=ProductAddStates.manufacturer, user_id=message.from_user.id)
@@ -100,7 +99,7 @@ def add_manufacturer(message):
 
 def add_description(chat_id, user_id):
     """
-    State 2. Will process when user's state is ProductAddStates.manufacturer.
+    Will process when user's state is ProductAddStates.manufacturer.
     """
     bot.set_state(chat_id=chat_id, state=ProductAddStates.description, user_id=user_id)
     bot.send_message(chat_id=chat_id, text='Great! Now please provide a short description of your product')
@@ -109,7 +108,7 @@ def add_description(chat_id, user_id):
 @bot.message_handler(state=ProductAddStates.description)
 def add_amount(message):
     """
-    State 3. Will process when user's state is ProductAddStates.description.
+    Will process when user's state is ProductAddStates.description.
     """
     with bot.retrieve_data(message.from_user.id, message.chat.id) as storage:
         storage['description'] = message.text
@@ -129,7 +128,7 @@ def add_amount_error(message):
 @bot.message_handler(state=ProductAddStates.amount)
 def add_price(message):
     """
-    State 4. Will process when user's state is ProductAddStates.amount.
+    Will process when user's state is ProductAddStates.amount.
     """
     with bot.retrieve_data(message.from_user.id, message.chat.id) as storage:
         storage['amount'] = message.text
@@ -149,41 +148,43 @@ def add_price_error(message):
 @bot.message_handler(state=ProductAddStates.price)
 def add_tags(message):
     """
-    State 5. Will process when user's state is ProductAddStates.price.
+    Will process when user's state is ProductAddStates.price.
     """
     if IsFloatDigitFilter().check(message):
         with bot.retrieve_data(message.from_user.id, message.chat.id) as storage:
             storage['price'] = message.text
 
-        tags = Tag.objects.all()
+        tags = product_service.get_all_tags()
         keyboard = make_keyboard(queryset=tags, user_id=message.from_user.id, chat_id=message.chat.id)
         bot.send_message(message.chat.id, 'And finally please select tags for your product', reply_markup=keyboard)
         bot.set_state(message.from_user.id, ProductAddStates.tags, message.chat.id)
 
 
 def add_another_tag(chat_id, user_id):
-    tags = Tag.objects.all()
+    tags = product_service.get_all_tags()
     text = 'Wanna add another one tag? Or type /enough_tags to go to the next step.'
     keyboard = make_keyboard(queryset=tags, user_id=user_id, chat_id=chat_id)
     bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 
 
+def format_result_message(data) -> str:
+    return (f'<b>Your product:\n</b>'
+            f'<b>Product:</b> <em>{data["name"]}</em>\n'
+            f'<b>Manufacturer:</b> <em>{data["manufacturer"]}</em>\n'
+            f'<b>Description:</b> <em>{data["description"]}</em>\n'
+            f'<b>Amount:</b> <em>{data["amount"]}</em>\n'
+            f'<b>Price:</b> <em>{data["price"]}</em>\n'
+            f'<b>Tags:</b> <em>{[str(tag) for tag in data["tags"]]}</em>')
+
+
 @bot.message_handler(state=ProductAddStates.tags, commands=["enough_tags"])
 def show_result(message):
     """
-    State 6. Will process when user's state is ProductAddStates.tags.
+    Will process when user's state is ProductAddStates.tags.
     Final state of cycle
     """
-    result = str()
     with bot.retrieve_data(user_id=message.chat.id, chat_id=message.chat.id) as storage:
-        result += (f'<b>Your product:\n</b>'
-                   f'<b>Product:</b> <em>{storage["name"]}</em>\n'
-                   f'<b>Manufacturer:</b> <em>{storage["manufacturer"]}</em>\n'
-                   f'<b>Description:</b> <em>{storage["description"]}</em>\n'
-                   f'<b>Amount:</b> <em>{storage["amount"]}</em>\n'
-                   f'<b>Price:</b> <em>{storage["price"]}</em>\n'
-                   f'<b>Tags:</b> <em>{[str(tag) for tag in storage["tags"]]}</em>')
-
+        result = format_result_message(storage)
         product_service.add_product(**storage)
     bot.send_message(chat_id=message.chat.id, text='Ready! Your product has been added!')
     bot.send_message(chat_id=message.chat.id, text=result, parse_mode="html")
@@ -195,7 +196,7 @@ def process_tags(data: dict):
     user_id = int(data.get('user_id'))
     item_pk = data.get('item_pk')
 
-    tag = Tag.objects.get(pk=item_pk)
+    tag = product_service.get_tag(tag_pk=item_pk)
 
     with bot.retrieve_data(user_id=user_id, chat_id=chat_id) as storage:
         tags = storage.get('tags', set())
@@ -210,7 +211,7 @@ def process_manufacturer(data: dict):
     user_id = int(data.get('user_id'))
     item_pk = data.get('item_pk')
 
-    manufacturer = Manufacturer.objects.get(pk=item_pk)
+    manufacturer = product_service.get_manufacturer(manufacturer_pk=item_pk)
 
     with bot.retrieve_data(user_id=user_id, chat_id=chat_id) as storage:
         storage['manufacturer'] = manufacturer
