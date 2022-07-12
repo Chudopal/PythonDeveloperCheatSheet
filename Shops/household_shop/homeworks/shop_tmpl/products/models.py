@@ -25,7 +25,7 @@ class Product(models.Model):
     price = models.FloatField(max_length=35, null=False)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, null=False)
     product_id = models.UUIDField(primary_key=True)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, null=False)
+    tag = models.ManyToManyField('Tag')
 
     class Meta:
         db_table = 'products'
