@@ -13,9 +13,9 @@ def ger_all_products(request):
 
 def get_sort_products(request):
     
-    test_dict = {key: value for key, value in dict(request.GET).items()}
+    query_dict = {key.replace("_", "__"): value[0] for key, value in dict(request.GET).items()}
 
-    product = Product.objects.filter(**test_dict)
+    product = Product.objects.filter(**query_dict)
     context = {
         "products": product
     }
