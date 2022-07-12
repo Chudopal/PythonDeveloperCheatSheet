@@ -4,7 +4,7 @@ from django.conf import settings
 from .models import Product, Manufacturer, Tag
 
 
-TG_TOKEN = '5598216948:AAEfDGcb78ry64Gg-6CT2EmfUArL9RUxp04'
+TG_TOKEN = ''
 
 bot = telebot.TeleBot(TG_TOKEN, threaded=False)
 b_get_products = "Current products"
