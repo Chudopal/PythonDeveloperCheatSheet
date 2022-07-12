@@ -1,6 +1,5 @@
 #product_bot - name
 #jiaxer_bot - user name
-#5408828001:AAHza90NiuESn34EqwFwsWzIm-XR_QUHDoQ - token
 from cgitb import text
 from typing import Counter
 import telebot
