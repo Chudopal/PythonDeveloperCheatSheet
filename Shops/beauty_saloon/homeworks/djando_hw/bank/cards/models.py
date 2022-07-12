@@ -5,11 +5,11 @@ from dateutil.relativedelta import relativedelta
 
 # Create your models here.
 class Card(models.Model):
-    number = models.PositiveBigIntegerField(max_length=16, null=False)
+    number = models.PositiveBigIntegerField(null=False)
     expiration_date = models.DateField(default=(date.today() + relativedelta(years=3)))
     user_name = models.ForeignKey('User', on_delete=models.CASCADE, null=False)
     account = models.ForeignKey('Account', on_delete=models.CASCADE, null=False)
-    cvv = models.IntegerField(null=False, max_length=3)
+    cvv = models.IntegerField(null=False)
 
     class Meta:
         db_table = 'cards'
