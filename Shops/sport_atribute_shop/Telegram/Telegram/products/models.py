@@ -4,9 +4,14 @@ import uuid
 class Manufacturer(models.Model):
     name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.name    
+
 class Teg(models.Model):
     name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.name
 class Product(models.Model):
     name = models.CharField(max_length=50, null=False)
     description = models.CharField(max_length=200)
@@ -16,3 +21,5 @@ class Product(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     teg = models.ManyToManyField(Teg)
 
+    def __str__(self):
+        return self.name
