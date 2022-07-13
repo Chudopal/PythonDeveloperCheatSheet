@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }}{% endblock%}
+{% block body%}
+<h1>Product: {{ product.manufacturer }} {{ product.name }}</h1>
+<p><strong>Manufacturer:</strong> {{ product.manufacturer }}</p>
+<p><strong>Description:</strong> {{ product.description }}</p>
+<p><strong>Amount:</strong> {{ product.amount }}</p>
+<p><strong>Price:</strong> {{ product.price }}</p>
+{% if tags %}
+<p><strong>Tags:</strong></p>
+<ul>
+    {% for tag in tags %}
+    <li>{{ tag.name }}, discount {{ tag.discount }}% from {{ tag.quantity }} pcs.</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
