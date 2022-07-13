@@ -14,5 +14,5 @@ class Product(models.Model):
     cost = models.PositiveIntegerField(null=False)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, null=False)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    teg = models.ForeignKey(Teg, on_delete=models.CASCADE, null=False)
+    teg = models.ManyToManyField(Teg)
 
