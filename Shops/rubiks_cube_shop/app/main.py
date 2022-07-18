@@ -1,4 +1,5 @@
 import json
+import psycopg2
 
 
 class FileProcessing():
@@ -8,12 +9,75 @@ class FileProcessing():
 
     def read(self) -> list:
         with open(self._path) as file:
-            result = json.load(file)
+            try:
+                result = json.load(file)
+            except:
+                self.write([])
         return result
 
     def write(self, data : list) -> None:
         with open(self._path, "w") as file:
             json.dump(data, file)
+
+    def insert_purchase(self, name , price)->None:
+        purchase = self.read()
+        purchase[name]= {"counter":1, "price":price}
+        self.write(purchase)
+        
+    def update_purchase(self, name)->None:
+        purchase = self.read()
+        purchase[name]["counter"] += 1
+        self.write(purchase)
+
+
+class SQLProcessing():
+    
+    def __init__(self, dbname: str, user: str,
+            password: str, host: str, port: int, name_tab: str) -> None:
+        self._connection = psycopg2.connect(
+            dbname = dbname,
+            user = user,
+            password=password,
+            host= host,
+            port = port)
+        self._name_tab = name_tab
+        self._cursor = self._connection.cursor()
+
+    def read(self)->dict:
+        self._cursor.execute("""
+        SELECT * FROM {};
+        """.format(self._name_tab))
+        result = self._cursor.fetchall()
+        if self._name_tab == "product":
+            result = self.conv_product(result)
+        elif self._name_tab == "purchase":
+            result = self.conv_purchase(result)
+        return result
+
+    def insert_purchase(self, name , price)->None:
+        self._cursor.execute("""
+        INSERT INTO purchase(name, price, counter) VALUES('{}', {}, 1);
+        """.format(name, price))
+        self._connection.commit()
+
+
+    def update_purchase(self, name)->None:
+        self._cursor.execute("""
+        UPDATE purchase SET counter =counter + 1 WHERE name = '{}';
+        """.format(name))
+        self._connection.commit()
+
+    def conv_product(self, data: list)->dict:
+        result = {}
+        for product in data:
+            result[product[0]] = product[1]
+        return result
+
+    def conv_purchase(self, data: list)->dict:
+        result = {}
+        for product in data:
+            result[product[0]] = {"price":product[1], "counter":product[2]}
+        return result
 
 
 class Console:
@@ -65,25 +129,27 @@ class Seller():
         return result
 
 
-
 class Buyer():
 
-    def update_purchase(self, purchase : dict, list_product: dict) -> dict and str:
+    def update_purchase(self, purchase_product_range, product_range) -> str:
+        purchase = purchase_product_range.read()
+        list_product = product_range.read()
         price, name_product = self.choose_product(list_product)
         if price == None:
             massage = "Такого товара не существует!\n"
         else:   
-            purchase = self.add_product(purchase, list_product, name_product, price)
+            self.add_product(purchase_product_range, name_product, price)
             massage = "Товар добавлен!\n"
-        return purchase, massage
+        return massage
 
-    def add_product (self, purchase : dict, list_product: dict, name_product : str, price : int) -> dict:
+    def add_product (self, purchase_product_range, name_product : str, price : int) -> dict:
+        purchase = purchase_product_range.read()
         count = purchase.get(name_product)
         if count == None:
-            purchase[name_product]= {"counter":1, "price":price}
+            purchase_product_range.insert_purchase(name_product, price)
         else:
-            purchase[name_product]["counter"] += 1
-        return purchase
+            purchase_product_range.update_purchase(name_product)
+        
 
     def choose_product(self, product_range: dict)->int: 
         name_product  = input("Введите название подуката:") 
@@ -106,27 +172,37 @@ class Shop():
         while self._choose != 4: 
             self._choose = self._console.select_choose(self._choose) 
             print(self.select_action(self._choose))
-        
-    def add_purchase(self) -> str:
-        list_purchase = self._purchase_product_range.read()
-        list_purchase, massage = self._buyer.update_purchase(self._purchase_product_range.read(), self._product_range.read())
-        purchase_product_range.write(list_purchase)
-        return massage
 
     def select_action(self, choose: int) -> str:
         massage = ""
         if choose == 1:
             massage = self._seller.massage_product_range(self._product_range.read())
         elif choose == 2:
-            massage = self.add_purchase()
+            massage = self._buyer.update_purchase(self._purchase_product_range, self._product_range)
         elif choose == 3:
             massage = self._seller.massage_purchase(self._purchase_product_range.read(), 
                 self._seller.sum_purchase(self._purchase_product_range.read()))
         return massage
 
+# product_range = FileProcessing("Shops/rubiks_cube_shop/app/rubiks_cube_product_range.json")# - для работы с файлами 
+# purchase_product_range = FileProcessing("Shops/rubiks_cube_shop/app/purchase_range.json")
 
-product_range = FileProcessing("app/rubiks_cube_product_range.json")
-purchase_product_range = FileProcessing("app/purchase_range.json")
+product_range = SQLProcessing(
+    dbname = 'shop',
+    user = 'jiaxer',
+    password = "dk2509fl",
+    host = "localhost",
+    port = 5432,
+    name_tab = "product")
+
+purchase_product_range= SQLProcessing(
+    dbname = 'shop',
+    user = 'jiaxer',
+    password = "dk2509fl",
+    host = "localhost",
+    port = 5432,
+    name_tab = "purchase")
+
 console = Console()
 seller = Seller()
 buyer = Buyer()
