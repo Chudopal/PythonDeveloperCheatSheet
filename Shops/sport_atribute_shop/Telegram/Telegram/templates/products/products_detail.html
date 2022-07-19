@@ -1,0 +1,19 @@
+{% extends 'products.html' %}
+
+{% block title %} Продукты {% endblock %}
+
+{% block content %}
+<ul>
+    {% if products %}
+
+        {% for a in products %}
+            <li>{{a.name}} - {{a.cost}};</li>
+        {% endfor %}
+        
+        {% else %}
+        Товары не найдены!
+        
+    {% endif %}
+
+{% endblock %}
+</ul>
