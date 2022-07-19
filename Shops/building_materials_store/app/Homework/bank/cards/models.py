@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 
+
 # Create your models here.
 
 class Bank_score(models.Model):
@@ -20,7 +21,3 @@ class Bank_cards(models.Model):
     user_card = models.ForeignKey(Users, on_delete=models.CASCADE)
     bank_account = models.ForeignKey(Bank_score, on_delete=models.CASCADE)
     cvv = models.CharField(max_length=3, null=False)
-
-
-
-
