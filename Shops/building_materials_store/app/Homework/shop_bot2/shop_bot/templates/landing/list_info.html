@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %} Продукты {% endblock %}
+
+{% block content %}
+<ul>
+    {% if all_product  %}
+
+        {% for a in all_product %}
+            <li>{{a.name_product}} - {{a.cost}}, description: {{a.description}}, weight: {{a.weight}}, made_product: {{a.made_product}};</li>
+        {% endfor %}
+    {% else %}
+        Товары не найдены!
+    {% endif %}
+
+{% endblock %}
+</ul>
