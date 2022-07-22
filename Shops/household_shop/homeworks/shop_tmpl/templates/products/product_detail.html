@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %} {{title}} {% endblock %}
+
+{% block content %} 
+
+    <h1> {{title}} </h1>
+    <p> {{description}} </p>
+
+    {% for product in products %}
+        <li>
+			<h1>{{product.product_name}}, {{product.manufacturer.manufacturer}} - {{product.price}} р.  </h1>
+			<h2> {{product.description}} </h2>
+			<h3> Количество: {{product.quantity}} </h3>
+			<h3> Тег: {{product.tag.name}} </h3>
+        </li>
+    {% endfor %}
+
+{% endblock %}
