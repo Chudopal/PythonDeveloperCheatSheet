@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}All products{% endblock%}
+{% block body%}
+<h1>Our products:</h1>
+{% if products %}
+<table class="table table-hover table-borderless">
+    <tr>
+        <th>Product</th>
+        <th>Price</th>
+    </tr>
+    <tr>
+    {% for product in products %}
+        <td><a href="{% url 'product_detail' product.uuid %}">{{ product.manufacturer }} {{ product.name }}</a></td>
+        <td>{{ product.price }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<h2>Everything is sold! Please come back later.</h2>
+{% endif %}
+{% endblock %}
