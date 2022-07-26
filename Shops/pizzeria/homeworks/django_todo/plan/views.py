@@ -1,3 +1,4 @@
+import json
 from django.views.generic import (
     CreateView,
     DetailView,
@@ -8,13 +9,13 @@ from django.views.generic import (
 )
 from django.urls import reverse
 
-from .forms import EventForm
-from .models import Event
+from .forms import EventFromCreate, EventFormUpdate
+from .models import Event, Status
 
 
 class EventCreateView(CreateView):
     template_name: str = "plan/event_add.html"
-    form_class: type = EventForm
+    form_class: type = EventFromCreate
 
     def get_success_url(self):
         return reverse('event-list')
@@ -66,7 +67,7 @@ class EventDeleteView(DeleteView):
 
 class EventUpdateView(UpdateView):
     template_name: str = "plan/event_update.html"
-    form_class: type = EventForm
+    form_class: type = EventFormUpdate
     model = Event
 
     def get_success_url(self):
@@ -75,3 +76,19 @@ class EventUpdateView(UpdateView):
 
 class EventAnalyticsView(TemplateView):
     template_name: str = "plan/analytics.html"
+
+    def count_event_percentage(self, events_num, total_events):
+        return events_num / total_events * 100
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        events = Event.objects.all()
+        events_count = len(events)
+        chart_data = [
+            {'id': status.name,
+             'nested': {'value': self.count_event_percentage(events.filter(status=status.value).count(), events_count)}
+             }
+            for status in Status
+        ]
+        context['chart_data'] = json.dumps(chart_data)
+        return context
