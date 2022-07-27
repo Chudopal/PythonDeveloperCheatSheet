@@ -8,12 +8,14 @@
 <h3 class="h2 my-3">Твои события:</h3>
 
 <div class="list-group">
-
+    
     {% for event in object_list %}
         {% if event.status == "expired" %}
             <a href="{% url 'event-detail' event.pk %}" class="list-group-item list-group-item-action list-group-item-danger">{{ event.title }} </a>
         {% elif event.status == "finished" %}
             <a href="{% url 'event-detail' event.pk %}" class="list-group-item list-group-item-action list-group-item-success">{{ event.title }} </a>
+        {% elif event.status == "in progress" %}
+            <a href="{% url 'event-detail' event.pk %}" class="list-group-item list-group-item-action list-group-item-warning">{{ event.title }} </a>
         {% else %}
             <a href="{% url 'event-detail' event.pk %}" class="list-group-item list-group-item-action ">{{ event.title }} </a>
         {% endif %}
