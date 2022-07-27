@@ -2,6 +2,7 @@ const ctx = document.getElementById('myChart');
 const myChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
+        labels: chart_labels,
         datasets: [{
             data: chart_data,
             backgroundColor: [
@@ -23,9 +24,6 @@ const myChart = new Chart(ctx, {
         }]
     },
     options: {
-        parsing: {
-            key: 'nested.value'
-        },
         layout: {
             padding: 20
         },

@@ -1,7 +1,5 @@
 from datetime import date, timedelta
-
 from django import forms
-
 from .models import Event, Status
 
 
@@ -41,7 +39,7 @@ class EventFromCreate(EventForm):
         started_at = self.cleaned_data['started_at']
 
         if started_at < date.today():
-            raise forms.ValidationError("Вы не можете создать событие, которое начась в прошлом!")
+            raise forms.ValidationError("Вы не можете создать событие, которое началось в прошлом!")
 
         return started_at
 

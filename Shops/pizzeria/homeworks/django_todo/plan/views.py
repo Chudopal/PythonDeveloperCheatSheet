@@ -24,10 +24,10 @@ class EventCreateView(CreateView):
 class EventListView(ListView):
     template_name: str = "plan/event_list.html"
     model: type = Event
-    buttons_context: dict = None
+    buttons_styles: dict = None
 
     def set_buttons_style(self, **filters):
-        buttons_bootstrap_styles = {
+        buttons_styles = {
             'is_waiting': 'btn-outline-primary',
             'in_progress': 'btn-outline-primary',
             'finished': 'btn-outline-primary',
@@ -36,18 +36,18 @@ class EventListView(ListView):
             'all': 'btn-outline-primary',
         }
         status = filters.get('status', 'all').replace(" ", "_")
-        buttons_bootstrap_styles[status] = 'btn-primary'
-        self.buttons_context = buttons_bootstrap_styles
+        buttons_styles[status] = 'btn-primary'
+        self.buttons_styles = buttons_styles
 
     def get_queryset(self, **kwargs):
-        qs = super().get_queryset(**kwargs)
+        qs = super().get_queryset()
         request_params = dict(self.request.GET.items())
         self.set_buttons_style(**request_params)
         return qs.filter(**request_params)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(self.buttons_context)
+        context.update(self.buttons_styles)
         return context
 
 
@@ -85,10 +85,13 @@ class EventAnalyticsView(TemplateView):
         events = Event.objects.all()
         events_count = len(events)
         chart_data = [
-            {'id': status.name,
-             'nested': {'value': self.count_event_percentage(events.filter(status=status.value).count(), events_count)}
-             }
+            self.count_event_percentage(
+                events.filter(status=status.value).count(),
+                events_count
+            )
             for status in Status
         ]
+        chart_labels = [status.value for status in Status]
         context['chart_data'] = json.dumps(chart_data)
+        context['chart_labels'] = json.dumps(chart_labels)
         return context

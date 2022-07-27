@@ -11,6 +11,7 @@
     </div>
     <script type=text/javascript>
         var chart_data = JSON.parse("{{ chart_data|escapejs }}");
+        var chart_labels = JSON.parse("{{ chart_labels|escapejs }}");
     </script>
     {% load static %}
     <script src="{% static 'chart.js' %}" type=text/javascript></script>
