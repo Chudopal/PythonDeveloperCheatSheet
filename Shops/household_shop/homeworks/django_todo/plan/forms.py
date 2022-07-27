@@ -34,6 +34,7 @@ class EventForm(forms.ModelForm):
             })
         }
 
+
     def clean_started_at(self):
         started_at = self.cleaned_data['started_at']
         
@@ -49,10 +50,8 @@ class EventForm(forms.ModelForm):
         if finished_at < date.today() or finished_at < started_at:
             raise forms.ValidationError("Вы не можете создать событие, которое закончится в прошлом!")
         
-        period = str(finished_at - started_at)
-        period = int(period[:period.index(" ")])
-
-        if period > 14:
+        period = finished_at - started_at
+        if period.days > 14:
             raise forms.ValidationError("Слишком долгий период, ты сможешь сделать это быстрее!")
 
         return finished_at
