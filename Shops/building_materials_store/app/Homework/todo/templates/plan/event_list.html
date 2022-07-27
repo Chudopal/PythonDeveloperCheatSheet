@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block bar_list %}class="nav-link active" {% endblock %}
+
+{% block content %}
+<div class="container">
+    <form>
+        <button type="button" class="btn btn-success">in progress</button>
+        <button type="button" class="btn btn-success">finished</button>
+        <button type="button" class="btn btn-success">is waiting</button>
+        <button type="button" class="btn btn-success">expired</button>
+        <button type="button" class="btn btn-success">blocked</button>
+    </form>
+    <h3 class="h2 my-3">Твои события:</h3>
+
+    <div class="list-group">
+
+        {% for event in object_list %}
+        {% if event.status == "expired" %}
+        <a href="{% url 'event-detail' event.pk %}"
+           class="list-group-item list-group-item-action list-group-item-danger">{{ event.title }} </a>
+        {% elif event.status == "finished" %}
+        <a href="{% url 'event-detail' event.pk %}"
+           class="list-group-item list-group-item-action list-group-item-success">{{ event.title }} </a>
+        {% else %}
+        <a href="{% url 'event-detail' event.pk %}"
+           class="list-group-item list-group-item-action list-group-item-warning ">{{ event.title }} </a>
+        {% endif %}
+        {% empty %}
+        <a href="{% url 'event-add'%}" class="list-group-item list-group-item-action ">Попробуй добавь какое-нибудь
+            событие... </a>
+        {% endfor %}
+
+    </div>
+
+</div>
+{% endblock %}
