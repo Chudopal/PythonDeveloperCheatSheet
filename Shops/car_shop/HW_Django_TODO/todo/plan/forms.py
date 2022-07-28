@@ -55,4 +55,3 @@ class EventForm(forms.ModelForm):
             raise forms.ValidationError("Дэдлайн должен быть максимум 14 дней")
         
         return finished_at
-
