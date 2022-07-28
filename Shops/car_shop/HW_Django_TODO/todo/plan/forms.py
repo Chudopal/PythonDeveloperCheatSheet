@@ -50,6 +50,9 @@ class EventForm(forms.ModelForm):
 
         if finished_at < started_at:
             raise forms.ValidationError("Вы не можете создать событие, которое закончится раньше начала!")
+
+        if (finished_at - started_at).days > 14:
+            raise forms.ValidationError("Дэдлайн должен быть максимум 14 дней")
         
         return finished_at
 
