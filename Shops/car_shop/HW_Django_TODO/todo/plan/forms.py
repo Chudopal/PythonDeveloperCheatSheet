@@ -42,3 +42,14 @@ class EventForm(forms.ModelForm):
             raise forms.ValidationError("Вы не можете создать событие, которое начась в прошлом!")
         
         return started_at
+
+
+    def clean_finished_at(self):
+        finished_at = self.cleaned_data['finished_at']
+        started_at = self.cleaned_data['started_at']
+
+        if finished_at < started_at:
+            raise forms.ValidationError("Вы не можете создать событие, которое закончится раньше начала!")
+        
+        return finished_at
+
