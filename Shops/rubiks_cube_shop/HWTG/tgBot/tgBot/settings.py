@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+TOKEN_TG = ''
 # Application definition
 
 INSTALLED_APPS = [
@@ -80,8 +80,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'products',
-        'USER': 'admin',
-        'PASSWORD': 'admin',
+        'USER': '',
+        'PASSWORD': '',
         'HOST': "localhost",
         'PORT': 5432
     }

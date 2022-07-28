@@ -1,12 +1,9 @@
-#product_bot - name
-#jiaxer_bot - user nam
-from cgitb import text
-from typing import Counter
+from Shops.rubiks_cube_shop.HWTG.tgBot.tgBot.settings import TOKEN_TG
 import telebot
 from telebot import types
-from .models import *
+from .models import Teg, Manufacturer
 
-bot = telebot.TeleBot('')
+bot = telebot.TeleBot(TOKEN_TG)
 
 @bot.message_handler(commands=["start"])
 def start(m, res=False):
@@ -110,10 +107,6 @@ def callback_worker(call):
         stop(call)        
         
 
-
-    
-
-
 def menu(message):
     keyboard = types.InlineKeyboardMarkup()
     teg_button = types.InlineKeyboardButton(text='Создать тег', callback_data='teg')
@@ -124,7 +117,6 @@ def menu(message):
     keyboard.add(product_button)
     question = 'Your chose?'
     bot.send_message(message.from_user.id, text=question, reply_markup=keyboard)
-
 
 
 @bot.message_handler(commands=['stop'])
