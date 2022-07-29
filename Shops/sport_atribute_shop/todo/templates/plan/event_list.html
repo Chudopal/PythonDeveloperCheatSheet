@@ -6,7 +6,13 @@
 <div class="container">
 
 <h3 class="h2 my-3">Твои события:</h3>
-
+<div>
+    <a class="btn {{ is_waiting }} btn-sm" href="{% url 'event-list' %}?status=is waiting" role="button">Waiting</a>
+    <a class="btn {{ in_progress }} btn-sm" href="{% url 'event-list' %}?status=in progress" role="button">In Progress</a>
+    <a class="btn {{ finished }} btn-sm" href="{% url 'event-list' %}?status=finished" role="button" >Finished</a>
+    <a class="btn {{ expired }} btn-sm" href="{% url 'event-list' %}?status=expired" role="button">Expired</a>
+    <a class="btn {{ blocked }} btn-sm" href="{% url 'event-list' %}?status=blocked" role="button">Blocked</a>
+</div>
 <div class="list-group">
     
     {% for event in object_list %}
