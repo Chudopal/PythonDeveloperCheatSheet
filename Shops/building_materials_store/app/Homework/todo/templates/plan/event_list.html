@@ -4,13 +4,16 @@
 
 {% block content %}
 <div class="container">
-    <form>
-        <button type="button" class="btn btn-success">in progress</button>
-        <button type="button" class="btn btn-success">finished</button>
-        <button type="button" class="btn btn-success">is waiting</button>
-        <button type="button" class="btn btn-success">expired</button>
-        <button type="button" class="btn btn-success">blocked</button>
-    </form>
+    <div>
+
+        <a class="btn btn-outline-primary" href="{% url 'event-list' %}?status=in progress" role="button">In
+            progress</a>
+        <a class="btn btn-outline-primary" href="{% url 'event-list' %}?status=finished" role="button">Finished</a>
+        <a class="btn btn-outline-primary" href="{% url 'event-list' %}?status=is waiting" role="button">Waiting</a>
+        <a class="btn btn-outline-primary" href="{% url 'event-list' %}?status=expired" role="button">Expired</a>
+        <a class="btn btn-outline-primary" href="{% url 'event-list' %}?status=blocked" role="button">Blocked</a>
+
+    </div>
     <h3 class="h2 my-3">Твои события:</h3>
 
     <div class="list-group">

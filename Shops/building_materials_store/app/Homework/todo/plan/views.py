@@ -23,6 +23,13 @@ class EventListView(ListView):
     template_name: str = "plan/event_list.html"
     model: type = Event
 
+    def get_queryset(self):
+        status = self.request.GET.get("status")
+        result = Event.objects.all()
+        if status:
+            result = Event.objects.filter(status=status)
+        return result
+
 
 class EventDetailView(DetailView):
     template_name: str = "plan/event_detail.html"
@@ -33,7 +40,7 @@ class EventDeleteView(DeleteView):
     template_name: str = "plan/event_delete.html"
     model: type = Event
     success_url: str = "#"
-    
+
     def get_success_url(self):
         return reverse('event-list')
 
