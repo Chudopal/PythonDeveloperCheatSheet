@@ -1,8 +1,19 @@
 {% extends "base.html" %}
 
-{% block bar_analitics %}class="nav-link active" {% endblock %}
+{% block bar_analitics %} class="nav-link active" {% endblock %}
 
 {% block content %}
 <div class="container">
 
-<h3 class="h2 my-3">Твои события:</h3>
+<h3 class="h2 my-3">Аналитика событий:</h3>
+
+<div class="list-group">
+
+    {% for status, percentage in events.items %}
+        <a class="list-group-item list-group-item-action ">{{ status }} - {{ percentage }}% </a>
+    {% endfor %}
+
+</div>
+
+</div>
+{% endblock %}
