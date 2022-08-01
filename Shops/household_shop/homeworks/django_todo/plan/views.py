@@ -4,11 +4,12 @@ from django.views.generic import (
     DeleteView,
     ListView,
     UpdateView,
+    TemplateView,
 )
 from django.urls import reverse
 
-from .forms import EventForm
-from .models import Event
+from plan.forms import EventForm
+from plan.models import Event, Status
 
 
 class EventCreateView(CreateView):
@@ -24,10 +25,10 @@ class EventListView(ListView):
     model: type = Event
 
     def get_queryset(self):
-        name = self.request.GET.get("status")
+        status = self.request.GET.get("status")
         result = Event.objects.all()
-        if name:
-            result = Event.objects.filter(status=name) 
+        if status:
+            result = Event.objects.filter(status=status) 
         
         return result
 
@@ -55,6 +56,22 @@ class EventUpdateView(UpdateView):
         return reverse('event-list')
 
 
-class EventanalyticsView(ListView):
+class EventAnalyticsView(TemplateView):
     template_name: str = "plan/event_analytics.html"
-    model: type = Event
+    
+    def get_context_data(self, **kwargs):
+        all_events = Event.objects.all()
+        cnt_all_events = len(all_events)
+        out_dict = dict()
+
+        for status in Status:
+            cnt_events = len(Event.objects.filter(status=status.value))
+            percentage = cnt_events * 100 / cnt_all_events
+
+            out_dict[status.value] = round(percentage, 2)
+
+        context = {
+            "events": out_dict,
+        }
+
+        return context

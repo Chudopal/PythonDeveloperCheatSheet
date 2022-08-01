@@ -82,8 +82,6 @@ DATABASES = {
         'NAME': 'todo',
         'USER': os.environ.get("DATABASE_USER"),
         'PASSWORD': os.environ.get("DATABASE_PASS"),
-        'HOST': 'localhost',
-        'PORT': '5432',
     }
 }
 

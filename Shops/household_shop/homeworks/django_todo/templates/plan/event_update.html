@@ -5,7 +5,8 @@
 
 {% block content %}
 
-<form action="" method="post">{% csrf_token %}
+<form action="" method="post">
+    {% csrf_token %}
         
     <div class="d-grid gap-2 col-6 mx-auto">
 
@@ -37,6 +38,10 @@
             <span class="input-group-text" id="title-descr">Дэдлайн</span>
             {{ form.finished_at }}
         </div>
+
+        {{form.started_at.errors}}
+        {{form.finished_at.errors}}
+        {{form.status.errors}}
 
         <button class="btn btn-primary btn-info" type="submit">
             Обновить событие

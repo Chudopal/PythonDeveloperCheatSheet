@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from django import forms
 
-from .models import Event
+from .models import Event, Status
 
 
 class EventForm(forms.ModelForm):
@@ -55,3 +55,12 @@ class EventForm(forms.ModelForm):
             raise forms.ValidationError("Слишком долгий период, ты сможешь сделать это быстрее!")
 
         return finished_at
+
+    def clean_status(self):
+        status = self.cleaned_data['status']
+        depends_event = self.cleaned_data['depends_on']
+
+        if depends_event and depends_event.status != Status.FINISHED.value and status == Status.FINISHED.value: 
+            raise forms.ValidationError("Дружок, сначала разберись с прошлым событием!")
+        
+        return status

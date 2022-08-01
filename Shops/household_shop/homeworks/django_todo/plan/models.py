@@ -30,4 +30,4 @@ class Event(models.Model):
         db_table = "events"
 
     def  __str__(self) -> str:
-        return f"{self.title}: {self.status}"
+        return f"{self.title}"
