@@ -16,7 +16,7 @@ class Account(models.Model):
 
 class BankCard(models.Model):
 
-    card_number = models.IntegerField(primary_key=True)
+    card_number = models.PositiveBigIntegerField(primary_key=True)
     end_date = models.DateField(auto_now=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=False)
     account = models.ForeignKey(Account, on_delete=models.CASCADE, null=False)
