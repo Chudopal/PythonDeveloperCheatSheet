@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block bar_add %}class="nav-link active" {% endblock %}
+
+
+{% block content %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    
+    <div class="d-grid gap-2 col-6 mx-auto">
+        <h3 class="h2 my-3">Добавить событие</h3>
+
+    <div class="input-group input-group-sm mb-3">
+        <span class="input-group-text">Название</span>
+        {{ form.title }}
+    </div>
+
+    <div class="input-group input-group-sm mb-3">
+        <span class="input-group-text" >Описание</span>
+        {{ form.description }}
+    </div>
+
+    <div class="input-group input-group-sm mb-3">
+        <span class="input-group-text" >Статус</span>
+        {{ form.status }}
+    </div>
+
+    <div class="input-group input-group-sm mb-3">
+        <span class="input-group-text" >Зависит от</span>
+        {{ form.depends_on }}
+    </div>
+
+    <div class="input-group input-group-sm mb-3">
+        <span class="input-group-text" id="title-descr">Старт</span>
+        {{ form.started_at }}
+        <span class="input-group-text" id="title-descr">Дэдлайн</span>
+        {{ form.finished_at }}
+    </div>
+
+    {% if form.errors %}
+        {% for field in form %}
+           {% for error in field.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error|escape }}
+                </div>
+           {% endfor %}
+        {% endfor %}
+    {% endif %}
+
+    <button class="btn btn-primary" type="submit">
+        Создать событие
+    </button>
+
+</div>
+</form>
+
+{% endblock %}
