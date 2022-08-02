@@ -1,9 +1,14 @@
-from Shops.rubiks_cube_shop.HWTG.tgBot.tgBot.settings import TOKEN_TG
+from tgBot.settings import TOKEN_TG
 import telebot
 from telebot import types
 from .models import Teg, Manufacturer
 
 bot = telebot.TeleBot(TOKEN_TG)
+global NAME
+global PRICE
+global DESCRIPTION
+global COUNT
+
 
 @bot.message_handler(commands=["start"])
 def start(m, res=False):
@@ -34,21 +39,18 @@ def manufacturer_create():
 def product_create():
     @bot.message_handler(content_types=["text"])
     def get_name(message):
-        global NAME
         NAME = message.text
         bot.send_message(message.chat.id, "Введите описанние продукта:")
         bot.register_next_step_handler(message, get_description)
 
 
     def get_description(message):
-        global DESCRIPTION
         DESCRIPTION = message.text
         bot.send_message(message.chat.id, "Введите количество:")
         bot.register_next_step_handler(message, get_count)
 
 
     def get_count(message):
-        global COUNT
         try:
             COUNT = int(message.text)
         except:
@@ -59,7 +61,6 @@ def product_create():
 
     @bot.message_handler(commands=['stop'])
     def get_price(message):
-        global PRICE
         try:
             PRICE = int(message.text)
         except:
@@ -86,9 +87,6 @@ def product_create():
         question = 'Your chose?'
         bot.send_message(message.from_user.id, text=question, reply_markup=keyboard)
         stop(message)        
-
-
-
 
 
 @bot.callback_query_handler(func=lambda call: True)

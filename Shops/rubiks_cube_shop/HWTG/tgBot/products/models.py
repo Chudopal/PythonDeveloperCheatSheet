@@ -21,7 +21,5 @@ class Product(models.Model):
     count = models.IntegerField(null=True, default=1)
     price = models.FloatField(null=False)
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.CASCADE, null=False)
-    teg = models.ForeignKey(Teg, on_delete=models.CASCADE, null=False)
+    teg = models.ManyToManyField(Teg, on_delete=models.CASCADE, null=False)
     
-#Product.objects.create(uuid=uuid.uuid4(), name='X5', description='car', count=2, price=30, manufacturer=p, teg=t)
-#env\Scripts\activate 
