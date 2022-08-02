@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block bar_analitics %} class="nav-link active" {% endblock %}
+
+{% block content %}
+<div class="container">
+
+<div class="list-group">
+
+    {% for account in accounts %}
+        <a class="list-group-item list-group-item-action ">iban: {{ account.iban }}, amount: {{ account.amount }}</a>
+    {% endfor %}
+
+</div>
+
+</div>
+{% endblock %}

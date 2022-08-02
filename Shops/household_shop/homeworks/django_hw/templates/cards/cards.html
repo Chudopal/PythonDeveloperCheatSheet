@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block bar_analitics %} class="nav-link active" {% endblock %}
+
+{% block content %}
+<div class="container">
+
+<div class="list-group">
+
+    {% for card in cards %}
+        <a class="list-group-item list-group-item-action ">card_number: {{ card.card_number }} {{ card.exp_date }} {{ card.account_id }} </a>
+    {% endfor %}
+
+</div>
+
+</div>
+{% endblock %}
