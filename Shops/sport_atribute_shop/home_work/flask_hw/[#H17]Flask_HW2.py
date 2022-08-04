@@ -39,7 +39,8 @@ def get_cars():
 
 def get_car(data: Dict)-> list: 
     return [
-        {"id": car.get("id", {}),
+        {
+        "id": car.get("id", {}),
         "price_usd": car.get("price", {}).get("amount", {}),
         "brand": car.get("properties", {})[0].get("value", {}),
         "model": car.get("properties", {})[1].get("value", {}),
