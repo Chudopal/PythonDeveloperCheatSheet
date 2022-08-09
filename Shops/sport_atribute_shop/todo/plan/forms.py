@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from django import forms
 
@@ -39,6 +39,19 @@ class EventForm(forms.ModelForm):
         started_at = self.cleaned_data['started_at']
         
         if started_at < date.today():
-            raise forms.ValidationError("Вы не можете создать событие, которое начась в прошлом!")
+            raise forms.ValidationError("Вы не можете создать событие, которое началось в прошлом!")
         
         return started_at
+
+    def clean_finished_at(self):
+        started_at = self.cleaned_data['started_at']
+        finished_at = self.cleaned_data['finished_at']
+
+        if finished_at < date.today() or finished_at < started_at:
+            raise forms.ValidationError("Вы не можете создать событие, которое закончилось в прошлом!")
+
+        started_at = timedelta(days=14)
+        if finished_at > started_at + date.today():
+            raise forms.ValidationError("Вы не можете задать дедлайн, больше 14 дней!")
+            
+        return finished_at
