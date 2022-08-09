@@ -24,11 +24,13 @@
     <div class="input-group input-group-sm mb-3">
         <span class="input-group-text" >Статус</span>
         {{ form.status }}
+        
     </div>
 
     <div class="input-group input-group-sm mb-3">
-        <span class="input-group-text" >Зависит от</span>
-        {{ form.depends_on }}
+        <span class="input-group-text">Зависит от</span>
+        {{ form.depends_on }} 
+        
     </div>
 
     <div class="input-group input-group-sm mb-3">
@@ -39,6 +41,7 @@
     </div>
 
     {{form.started_at.errors}}
+    {{form.finished_at.errors}}
 
     <button class="btn btn-primary" type="submit">
         Создать событие

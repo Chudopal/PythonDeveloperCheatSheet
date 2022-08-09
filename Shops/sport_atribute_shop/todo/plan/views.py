@@ -4,7 +4,7 @@ from django.views.generic import (
     DeleteView,
     ListView,
     UpdateView,
-)
+    )
 from django.urls import reverse
 
 from .forms import EventForm
@@ -22,6 +22,17 @@ class EventCreateView(CreateView):
 class EventListView(ListView):
     template_name: str = "plan/event_list.html"
     model: type = Event
+
+    def get_queryset(self):
+        queryset = Event.objects.all()
+        event_status = self.request.GET.get('status')
+        if event_status:
+            status_filters = {
+                'status': event_status,
+            }
+            queryset = queryset.filter(**status_filters)
+            return queryset
+        return queryset
 
 
 class EventDetailView(DetailView):
