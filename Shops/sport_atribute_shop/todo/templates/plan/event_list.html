@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block bar_list %}class="nav-link active" {% endblock %}
+
+{% block content %}
+<div class="container">
+
+<h3 class="h2 my-3">Твои события:</h3>
+<div>
+    <a class="btn {{ is_waiting }} btn-sm" href="{% url 'event-list' %}?status=is waiting" role="button">Waiting</a>
+    <a class="btn {{ in_progress }} btn-sm" href="{% url 'event-list' %}?status=in progress" role="button">In Progress</a>
+    <a class="btn {{ finished }} btn-sm" href="{% url 'event-list' %}?status=finished" role="button" >Finished</a>
+    <a class="btn {{ expired }} btn-sm" href="{% url 'event-list' %}?status=expired" role="button">Expired</a>
+    <a class="btn {{ blocked }} btn-sm" href="{% url 'event-list' %}?status=blocked" role="button">Blocked</a>
+</div>
+<div class="list-group">
+    
+    {% for event in object_list %}
+        {% if event.status == "expired" %}
+            <a href="{% url 'event-detail' event.pk %}" class="list-group-item list-group-item-action list-group-item-danger">{{ event.title }} </a>
+        {% elif event.status == "finished" %}
+            <a href="{% url 'event-detail' event.pk %}" class="list-group-item list-group-item-action list-group-item-success">{{ event.title }} </a>
+        {% elif event.status == "in progress" %}
+            <a href="{% url 'event-detail' event.pk %}" class="list-group-item list-group-item-action list-group-item-warning">{{ event.title }} </a>
+        {% else %}
+            <a href="{% url 'event-detail' event.pk %}" class="list-group-item list-group-item-action ">{{ event.title }} </a>
+        {% endif %}
+    {% empty %}
+        <a href="{% url 'event-add'%}" class="list-group-item list-group-item-action">Попробуй добавь какое-нибудь событие... </a>
+    {% endfor %}
+
+</div>
+
+</div>
+{% endblock %}
