@@ -5,4 +5,4 @@ from plan.models import Event
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = '__all__'
+        fields = ['created_at', 'started_at', 'finished_at', 'title', 'description', 'depends_on', 'status']
