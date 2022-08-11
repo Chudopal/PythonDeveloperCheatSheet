@@ -99,7 +99,7 @@ class DataBaseHandler(StorageHandler):
         query = sql.SQL("INSERT INTO {table} ({columns}) VALUES ({values})").format(
             table=sql.SQL(self._table_name),
             columns=sql.SQL(", ").join([sql.Identifier(col) for col in variables.keys()]),
-            values=sql.SQL(", ").join([sql.Literal(val) for val in variables.keys()])
+            values=sql.SQL(", ").join([sql.Literal(val) for val in variables.values()])
         )
         query += sql.SQL(";")
         return query
