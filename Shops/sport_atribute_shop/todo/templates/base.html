@@ -22,6 +22,9 @@
                 <div class="nav-item">
                   <a {% block bar_add %}class="nav-link" {% endblock %} href="{% url 'event-add' %}">Добавить событие</a>
                 </div>
+                <div class="nav-item">
+                    <a {% block bar_analitics %}class="nav-link" {% endblock %} href="{% url 'event-add' %}">Аналитика</a>
+                  </div>
             </nav>
 
             {% block sidebar %}<!-- insert default navigation text for every page -->{% endblock %}
