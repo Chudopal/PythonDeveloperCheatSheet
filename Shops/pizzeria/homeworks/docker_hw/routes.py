@@ -1,5 +1,10 @@
-from config import app, users
 from flask import request, jsonify
+from config import app, db
+from registration_service import UsersAuthService
+from models import User
+
+users = UsersAuthService(User, app.config.get('SECRET_KEY'))
+db.create_tables([User], safe=True)
 
 
 @app.route('/register', methods=['POST'])
@@ -8,7 +13,7 @@ def register_user():
     response = None
     http_code = None
     if not users.get_user(user_credentials.get('email')):
-        users.save_user(user_credentials)
+        users.create_user(user_credentials)
         response = {"status": "ok"}
         http_code = 201
     else:

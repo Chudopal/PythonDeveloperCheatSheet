@@ -1,17 +1,17 @@
+import os
 from dataclasses import dataclass
 from flask import Flask
-from registration_service import Users
+from peewee import SqliteDatabase
 
 
 @dataclass
 class BaseConfig:
     SERVER_NAME = '127.0.0.1:5000'
     DEBUG = True
-    SECRET_KEY = 'eu%lwzmzp22^052go0&94k*nm0hik7_8_ewm^h0b6gsc#c71je'
-    STORAGE_FILE = 'users.json'
+    SECRET_KEY = os.environ.get('os_secret_key')
+    DB_NAME = 'sqlite.db'
 
 
 app = Flask(__name__)
 app.config.from_object(BaseConfig)
-
-users = Users(app.config.get('STORAGE_FILE'), app.config.get('SECRET_KEY'))
+db = SqliteDatabase(app.config.get('DB_NAME'))
