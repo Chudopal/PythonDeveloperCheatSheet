@@ -4,8 +4,6 @@ COPY . /app
 
 WORKDIR /app
 
-ENV DB_AUTH_SERVICE
-
 RUN pip3 install -r requirements.txt
 
 CMD ["python3", "run.py"]
