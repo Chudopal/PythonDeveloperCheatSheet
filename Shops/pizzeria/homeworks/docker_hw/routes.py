@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from flask import request, jsonify
 from config import app, db
 from registration_service import UsersAuthService
@@ -15,10 +16,10 @@ def register_user():
     if not users.get_user(user_credentials.get('email')):
         users.create_user(user_credentials)
         response = {"status": "ok"}
-        http_code = 201
+        http_code = HTTPStatus.CREATED
     else:
         response = {"status": "error", "detail": "User already exists"}
-        http_code = 400
+        http_code = HTTPStatus.BAD_REQUEST
     return jsonify(response), http_code
 
 
@@ -30,8 +31,8 @@ def login():
     token = users.check_credentials(user_credentials)
     if token:
         response = {"status": "ok", "token": token}
-        http_code = 200
+        http_code = HTTPStatus.OK
     else:
         response = {"status": "error", "detail": "Incorrect email or password"}
-        http_code = 400
+        http_code = HTTPStatus.BAD_REQUEST
     return jsonify(response), http_code
