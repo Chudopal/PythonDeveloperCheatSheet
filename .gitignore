@@ -155,3 +155,5 @@ cython_debug/
 
 /Shops/pizzeria/app/ordered_pizzas.json
 /Shops/pizzeria/app/pizzas.json
+/Shops/pizzeria/homeworks/docker_hw/sqlite.db
+/Shops/pizzeria/homeworks/docker_hw/config.json
