@@ -11,7 +11,7 @@ def registrate(account):
     account['password'] = hash_md5(account.get('password'))
     email = account.get("email")
     db = storage.get_by_email(email)
-    saved_email = db.get(email)
+    saved_email = db.get("email")
     if email != saved_email:
         return storage.add(account)
 
