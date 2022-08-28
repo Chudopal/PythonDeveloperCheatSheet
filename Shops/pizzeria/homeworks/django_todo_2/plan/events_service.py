@@ -11,6 +11,9 @@ class EventsService:
 
     @classmethod
     def add_event(cls, host: str, port: str, data: json):
+        headers = {
+            "Content-type": "application/json",
+        }
         endpoint = "/api/events/"
         url = host + ':' + port + endpoint
-        return requests.post(url=url, json=data)
+        return requests.post(url=url, data=data, headers=headers)
