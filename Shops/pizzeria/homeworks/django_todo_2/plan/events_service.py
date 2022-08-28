@@ -7,6 +7,7 @@ class EventsService:
     def get_all_events(cls, host: str, port: str):
         endpoint = "/api/events/"
         url = host + ':' + port + endpoint
+        print("URL:", url)
         return requests.get(url)
 
     @classmethod
@@ -17,9 +18,7 @@ class EventsService:
 
     @classmethod
     def add_event(cls, host: str, port: str, data: json):
-        headers = {
-            "Content-type": "application/json",
-        }
+        headers = {"Content-type": "application/json"}
         endpoint = "/api/events/"
         url = host + ':' + port + endpoint
         return requests.post(url=url, data=data, headers=headers)
