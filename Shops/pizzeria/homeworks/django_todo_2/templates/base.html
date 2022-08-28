@@ -18,10 +18,10 @@
 
             <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-center nav-pills nav-fill">
                 <div class="nav-item">
-                  <a {% block bar_list %}class="nav-link"{% endblock %} href="">Все события</a>
+                  <a {% block bar_list %}class="nav-link"{% endblock %} href="{% url 'event-list' %}">Все события</a>
                 </div>
                 <div class="nav-item">
-                  <a {% block bar_add %}class="nav-link" {% endblock %} href="">Добавить событие</a>
+                  <a {% block bar_add %}class="nav-link" {% endblock %} href="{% url 'event-add' %}">Добавить событие</a>
                 </div>
                 <div class="nav-item">
                   <a {% block bar_analytics %}class="nav-link" {% endblock %} href="">Аналитика</a>

@@ -19,16 +19,16 @@
 
     {% for event in events %}
         {% if event.status == "expired" %}
-            <a href="" class="list-group-item list-group-item-action list-group-item-danger">{{ event.title }} </a>
+            <a href="{% url 'event-detail' event.id %}" class="list-group-item list-group-item-action list-group-item-danger">{{ event.title }} </a>
         {% elif event.status == "finished" %}
-            <a href="" class="list-group-item list-group-item-action list-group-item-success">{{ event.title }} </a>
+            <a href="{% url 'event-detail' event.id %}" class="list-group-item list-group-item-action list-group-item-success">{{ event.title }} </a>
         {% elif event.status == "in progress" %}
-            <a href="" class="list-group-item list-group-item-action list-group-item-warning">{{ event.title }} </a>
+            <a href="{% url 'event-detail' event.id %}" class="list-group-item list-group-item-action list-group-item-warning">{{ event.title }} </a>
         {% else %}
-            <a href="" class="list-group-item list-group-item-action ">{{ event.title }} </a>
+            <a href="{% url 'event-detail' event.id %}" class="list-group-item list-group-item-action ">{{ event.title }} </a>
         {% endif %}
     {% empty %}
-        <a href="" class="list-group-item list-group-item-action">Попробуй добавь какое-нибудь событие... </a>
+        <a href="{% url 'event-add'%}" class="list-group-item list-group-item-action">Попробуй добавь какое-нибудь событие... </a>
     {% endfor %}
 
 </div>

@@ -10,13 +10,19 @@ def events_list_view(request):
     host = 'http://127.0.0.1'
     port = '8000'
 
-    data = EventsService.get_events(host, port)
+    data = EventsService.get_all_events(host, port)
     context = {'events': [Event(**item) for item in data.json()]}
     return render(request=request, template_name=template, context=context)
 
 
-def events_detail_view(request):
-    pass
+def events_detail_view(request, event_uuid):
+    template = "plan/event_detail.html"
+    host = 'http://127.0.0.1'
+    port = '8000'
+
+    data = EventsService.get_event_details(host, port, event_uuid)
+    context = {"object": Event(**data.json())}
+    return render(request=request, template_name=template, context=context)
 
 
 def events_create_view(request):
