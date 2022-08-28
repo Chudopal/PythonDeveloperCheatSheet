@@ -25,12 +25,12 @@ def events_create_view(request):
     port = '8000'
 
     if request.method == 'POST':
+        form = EventForm
+        context = {'form': form}
         data = json.dumps(request.POST)
-        print(data)
         EventsService.add_event(host, port, data=data)
-        return render(request=request, template_name=template)
+        return render(request=request, template_name=template, context=context)
     elif request.method == 'GET':
         form = EventForm
         context = {'form': form}
         return render(request=request, template_name=template, context=context)
-
