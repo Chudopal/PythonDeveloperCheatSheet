@@ -5,15 +5,15 @@
 <div class="container">
 
     <h3 class="h2 my-3">{{ object.title }} ({{ object.status }})</h3>
-    
+
 
     <div class="list-group">
         <div class="list-group-item list-group-item">
             <div class="d-flex w-100 justify-content-between">
                 <p class="mb-3">{{ object.description }}</p>
-                
+
             </div>
-            
+
 
             <div class="container overflow-hidden">
                 <div class="row gy-5">
@@ -36,13 +36,13 @@
 
       <ul class="nav nav-pills justify-content-end">
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'event-update' event.pk %}">Изменить</a>
+            <a class="nav-link" href="">Изменить</a>
         </li>
         <li class="nav-item nav-item-danger">
-          <a class="nav-link list-group-item-danger" href="{% url 'event-delete' event.pk %}">Удалить</a>
+          <a class="nav-link list-group-item-danger" href="">Удалить</a>
         </li>
       </ul>
 
 </div>
 
-{% endblock %}
+{% endblock %} 
