@@ -6,13 +6,15 @@
 <div class="container">
 
 <h3 class="h2 my-3">Твои события:</h3>
-<div class="d-grid gap-2 d-md-flex justify-content-md-end pb-2">
-    <a class="btn {{ is_waiting }} btn-sm" href="" role="button">Waiting</a>
-    <a class="btn {{ in_progress }} btn-sm" href="" role="button">In Progress</a>
-    <a class="btn {{ finished }} btn-sm" href="" role="button">Finished</a>
-    <a class="btn {{ expired }} btn-sm" href="" role="button">Expired</a>
-    <a class="btn {{ blocked }} btn-sm" href="" role="button">Blocked</a>
-    <a class="btn {{ all }} btn-sm" href="" role="button">All events</a>
+
+<div>
+
+    <a class="btn btn-outline-primary" href="{% url 'event-list' %}?status=in progress" role="button">In progress</a>
+    <a class="btn btn-outline-primary" href="{% url 'event-list' %}?status=finished" role="button">Finished</a>
+    <a class="btn btn-outline-primary" href="{% url 'event-list' %}?status=is waiting" role="button">Waiting</a>
+    <a class="btn btn-outline-primary" href="{% url 'event-list' %}?status=expired" role="button">Expired</a>
+    <a class="btn btn-outline-primary" href="{% url 'event-list' %}?status=blocked" role="button">Blocked</a>
+
 </div>
 
 <div class="list-group">
@@ -23,7 +25,7 @@
         {% elif event.status == "finished" %}
             <a href="{% url 'event-detail' event.id %}" class="list-group-item list-group-item-action list-group-item-success">{{ event.title }} </a>
         {% elif event.status == "in progress" %}
-            <a href="{% url 'event-detail' event.id %}" class="list-group-item list-group-item-action list-group-item-warning">{{ event.title }} </a>
+            <a href="{% url 'event-detail' event.id %}" class="list-group-item list-group-item-action list-group-item-warning">{{ event.title }} </a> 
         {% else %}
             <a href="{% url 'event-detail' event.id %}" class="list-group-item list-group-item-action ">{{ event.title }} </a>
         {% endif %}
