@@ -3,22 +3,24 @@ import json
 
 
 class EventsService:
-    @classmethod
-    def get_all_events(cls, host: str, port: str):
+
+    def __init__(self, host: str, port: int):
+        self.host = host
+        self.port = str(port)
+
+    def get_all_events(self):
         endpoint = "/api/events/"
-        url = host + ':' + port + endpoint
+        url = self.host + ':' + self.port + endpoint
         print("URL:", url)
         return requests.get(url)
 
-    @classmethod
-    def get_event_details(cls, host: str, port: str, event_uuid: str):
+    def get_event_details(self, event_uuid: str):
         endpoint = "/api/events/"
-        url = host + ':' + port + endpoint + event_uuid
+        url = self.host + ':' + self.port + endpoint + event_uuid
         return requests.get(url)
 
-    @classmethod
-    def add_event(cls, host: str, port: str, data: json):
+    def add_event(self, data: json):
         headers = {"Content-type": "application/json"}
         endpoint = "/api/events/"
-        url = host + ':' + port + endpoint
+        url = self.host + ':' + self.port + endpoint
         return requests.post(url=url, data=data, headers=headers)
