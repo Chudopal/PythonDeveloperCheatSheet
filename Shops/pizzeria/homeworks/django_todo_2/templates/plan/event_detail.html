@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <h3 class="h2 my-3">{{ object.title }} ({{ object.status }})</h3>
+    
+
+    <div class="list-group">
+        <div class="list-group-item list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+                <p class="mb-3">{{ object.description }}</p>
+                
+            </div>
+            
+
+            <div class="container overflow-hidden">
+                <div class="row gy-5">
+                    <div class="col-6">
+                        <div class="p-3 border bg-light">Старт: {{ object.started_at }}</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 border bg-light">Истекает: {{ object.finished_at }}</div>
+                    </div>
+                </div>
+            </div>
+
+            {% if object.depends_on %}
+                <div class="d-flex w-100 justify-content-between">
+                <p class="mt-3">Зависит от <a href="{% url 'event-detail' object.depends_on.pk %}">{{ object.depends_on.title }} </a></p>
+                </div>
+            {% endif %}
+        </div>
+      </div>
+
+      <ul class="nav nav-pills justify-content-end">
+        <li class="nav-item">
+            <a class="nav-link" href="">Изменить</a>
+        </li>
+        <li class="nav-item nav-item-danger">
+          <a class="nav-link list-group-item-danger" href="">Удалить</a>
+        </li>
+      </ul>
+
+</div>
+
+{% endblock %}
