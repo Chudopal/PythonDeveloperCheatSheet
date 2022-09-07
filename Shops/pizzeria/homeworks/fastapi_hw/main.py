@@ -14,6 +14,7 @@ async def get_info(request: RequestInfo) -> ResponseInfo:
     data = await process_request(request=request.dict())
     return make_response(data=data)
 
+
 if __name__ == "__main__":
     uvicorn.run(
         app=app,

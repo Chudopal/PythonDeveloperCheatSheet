@@ -1,16 +1,17 @@
 from pydantic import BaseModel, ValidationError, validator
-from typing import Optional
 
 
 class RequestInfo(BaseModel):
     cats: int
     dogs: int
 
-    @validator('cats', 'dogs')
-    def num_of_facts(cls, num):
-        if num > 5:
+    @validator('*')
+    def num_of_facts(cls, value):
+        if value > 5:
             raise ValidationError('Too many facts you want to know')
-        return num
+        elif value <= 0:
+            raise ValidationError('Facts number can`t be less or equal zero')
+        return value
 
 
 class DogsFactsResponse(BaseModel):
