@@ -28,6 +28,6 @@ def reg():
     except Exception as e:
         result = ({
                       "status": "error",
-                      "detail": "User already exists."
+                      "detail": "User already exists. "
                   }, 400)
     return make_response(jsonify(result))
