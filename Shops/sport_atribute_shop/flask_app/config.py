@@ -5,6 +5,4 @@ storage = Storage("storage.json")
 app = Flask(__name__)
 
 
-secret_key = 'hello'
-
-
+secret_key = ''
