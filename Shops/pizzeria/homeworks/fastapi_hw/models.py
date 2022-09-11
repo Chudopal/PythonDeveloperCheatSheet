@@ -26,4 +26,4 @@ class CatsFactsResponse(BaseModel):
 
 class ResponseInfo(BaseModel):
     cats: Optional[tuple[str, ...]]
-    dogs: Union[tuple[str, ...], None]
+    dogs: Optional[tuple[str, ...]]
