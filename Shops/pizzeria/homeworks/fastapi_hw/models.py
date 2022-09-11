@@ -1,9 +1,10 @@
 from pydantic import BaseModel, ValidationError, validator
+from typing import Optional, Union
 
 
 class RequestInfo(BaseModel):
-    cats: int
-    dogs: int
+    cats: Optional[int]
+    dogs: Optional[int]
 
     @validator('*')
     def num_of_facts(cls, value):
@@ -24,5 +25,5 @@ class CatsFactsResponse(BaseModel):
 
 
 class ResponseInfo(BaseModel):
-    cats: tuple[str, ...]
-    dogs: tuple[str, ...]
+    cats: Optional[tuple[str, ...]]
+    dogs: Union[tuple[str, ...], None]

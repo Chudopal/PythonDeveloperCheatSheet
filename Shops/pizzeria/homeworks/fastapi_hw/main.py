@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from models import RequestInfo, ResponseInfo
-from services import process_request, make_response
+from services import process_request
 import uvicorn
 
 app = FastAPI(title='Funny facts about Cats and Dogs')
@@ -10,9 +10,9 @@ app = FastAPI(title='Funny facts about Cats and Dogs')
     '/info',
     description='Get funny facts about Cats nd Dogs',
 )
-async def get_info(request: RequestInfo) -> ResponseInfo:
+async def get_info(request: RequestInfo) -> dict:
     data = await process_request(request=request.dict())
-    return make_response(data=data)
+    return ResponseInfo(**data).dict(exclude_none=True)
 
 
 if __name__ == "__main__":
