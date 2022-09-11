@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ValidationError, validator
-from typing import Optional, Union
+from typing import Optional
 
 
 class RequestInfo(BaseModel):
