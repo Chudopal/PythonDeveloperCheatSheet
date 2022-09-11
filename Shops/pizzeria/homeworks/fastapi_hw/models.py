@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import BaseModel, ValidationError, validator, Field
 from typing import Optional
 
 
@@ -22,6 +22,10 @@ class DogsFactsResponse(BaseModel):
 
 class CatsFactsResponse(BaseModel):
     data: tuple[str, ...]
+
+
+class TranslateResponse(BaseModel):
+    translated_text: str = Field(alias='translatedText')
 
 
 class ResponseInfo(BaseModel):
