@@ -50,7 +50,7 @@ async def get_dogs_facts(facts_number: Optional[int]) -> tuple:
 
 facts_about_animals = {
     'cats': get_cats_facts,
-    'dogs': get_dogs_facts
+    'dogs': get_dogs_facts,
 }
 
 
