@@ -7,17 +7,14 @@ DOGS_URL = 'http://dog-api.kinduff.com/api/facts'
 TRANSLATION_URL = 'https://libretranslate.de/translate'
 
 
-async def get_facts(url: str, params: Optional[dict]):
+async def get_data_from_api(url: str, params: Optional[dict], method: str):
     async with aiohttp.ClientSession() as session:
-        async with session.get(url=url, params=params, timeout=5) as response:
-            response = await response.json()
-    return response
-
-
-async def get_translation(url: str, json_data: dict):
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url=url, json=json_data, timeout=5) as response:
-            response = await response.json()
+        if method == 'get':
+            async with session.get(url=url, params=params, timeout=5) as response:
+                response = await response.json()
+        elif method == 'post':
+            async with session.post(url=url, json=params, timeout=5) as response:
+                response = await response.json()
     return response
 
 
@@ -30,7 +27,7 @@ async def prepare_data_to_translation(animal_facts: tuple[str, ...], source: str
             'target': target,
             'format': 'text',
         }
-        translated_response = await get_translation(url=TRANSLATION_URL, json_data=params)
+        translated_response = await get_data_from_api(url=TRANSLATION_URL, params=params, method='post')
         result.append(TranslateResponse(**translated_response).translated_text)
     return result
 
@@ -39,7 +36,7 @@ async def get_cats_facts(facts_number: Optional[int]) -> tuple:
     params = None
     if facts_number:
         params = {'count': facts_number}
-    response = await get_facts(CATS_URL, params)
+    response = await get_data_from_api(CATS_URL, params, method='get')
     return CatsFactsResponse(**response).data
 
 
@@ -47,7 +44,7 @@ async def get_dogs_facts(facts_number: Optional[int]) -> tuple:
     params = None
     if facts_number:
         params = {'number': facts_number}
-    response = await get_facts(DOGS_URL, params)
+    response = await get_data_from_api(DOGS_URL, params, method='get')
     return DogsFactsResponse(**response).facts
 
 
